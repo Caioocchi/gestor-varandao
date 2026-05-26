@@ -1,3 +1,9 @@
 {
-  "outputDirectory": "dist/pwa"
+  "outputDirectory": "dist/pwa",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
