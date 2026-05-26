@@ -61,6 +61,7 @@ const freelas = ref<Freela[]>([]);
 const loadFreelas = async () => {
   const { data } = await api.get('/freelas');
   freelas.value = data;
+  console.log(freelas.value[0]?.urlFoto);
 };
 
 onMounted(loadFreelas);
