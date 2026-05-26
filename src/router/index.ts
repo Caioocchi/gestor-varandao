@@ -33,5 +33,45 @@ export default defineRouter((/* { store, ssrContext } */) => {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
+  const clearAuth = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('tokenExpiry');
+  };
+
+  const hasValidToken = () => {
+    const token = localStorage.getItem('token');
+    const expiry = localStorage.getItem('tokenExpiry');
+
+    if (!token || !expiry) {
+      return false;
+    }
+
+    const expiryTime = Number(expiry);
+    if (Number.isNaN(expiryTime) || Date.now() > expiryTime) {
+      clearAuth();
+      return false;
+    }
+
+    return true;
+  };
+
+  Router.beforeEach((to) => {
+    const publicPages = ['Login'];
+    const tokenValid = hasValidToken();
+
+    if (publicPages.includes(String(to.name))) {
+      if (tokenValid) {
+        return { path: '/home' };
+      }
+      return true;
+    }
+
+    if (!tokenValid) {
+      return { path: '/' };
+    }
+
+    return true;
+  });
+
   return Router;
 });

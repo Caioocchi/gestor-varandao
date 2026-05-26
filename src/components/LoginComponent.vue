@@ -3,11 +3,7 @@
     <q-card class="login-card shadow-24">
       <q-card-section class="text-center q-pt-xl q-pb-md">
         <div class="logo-container q-mb-md">
-          <q-img
-            src="/src/assets/varandao-logo.png"
-            class="logo-img"
-            spinner-color="primary"
-          />
+          <q-img src="/src/assets/varandao-logo.png" class="logo-img" spinner-color="primary" />
         </div>
         <div class="text-h5 text-weight-bold text-primary">Bem-vindo</div>
         <div class="text-subtitle2 text-grey-7">Faça login para continuar</div>
@@ -24,7 +20,7 @@
             bg-color="white"
             class="custom-input"
             lazy-rules
-            :rules="[val => !!val || 'Por favor, digite seu e-mail']"
+            :rules="[(val) => !!val || 'Por favor, digite seu e-mail']"
           >
             <template v-slot:prepend>
               <q-icon name="email" color="primary" />
@@ -41,7 +37,7 @@
             bg-color="white"
             class="custom-input"
             lazy-rules
-            :rules="[val => !!val || 'Por favor, digite sua senha']"
+            :rules="[(val) => !!val || 'Por favor, digite sua senha']"
           >
             <template v-slot:prepend>
               <q-icon name="lock" color="primary" />
@@ -86,6 +82,7 @@
 
 <script lang="ts">
 import { useQuasar } from 'quasar';
+import { api } from 'src/boot/axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -95,33 +92,63 @@ export default {
     const $q = useQuasar();
     const router = useRouter();
 
-    const email = ref<string | null>(null);
-    const password = ref<string | null>(null);
+    const email = ref('');
+    const password = ref('');
+    const usuario = ref({
+      email: '',
+      senha: '',
+    });
 
-    const onSubmit = () => {
-      if (email.value && password.value) {
-        $q.loading.show({
-          message: 'Autenticando...',
-        });
+    const onSubmit = async () => {
+      try {
+        usuario.value = {
+          email: email.value,
+          senha: password.value,
+        };
 
-        // Simulating login delay
-        setTimeout(() => {
-          $q.loading.hide();
-          $q.notify({
-            color: 'positive',
-            textColor: 'white',
-            icon: 'check',
-            message: 'Usuário logado com sucesso!',
-            position: 'top',
+        if (email.value && password.value) {
+          $q.loading.show({
+            message: 'Autenticando...',
           });
-          void router.push('/home');
-        }, 1500);
+
+          console.log(usuario.value);
+
+          const logado = await api.post('/auth/login', usuario.value);
+
+          console.log(logado);
+
+          if (logado.status === 201) {
+            setTimeout(() => {
+              $q.loading.hide();
+              $q.notify({
+                color: 'positive',
+                textColor: 'white',
+                icon: 'check',
+                message: 'Usuário logado com sucesso!',
+              });
+
+              localStorage.setItem('token', logado.data.access_token);
+              localStorage.setItem('tokenExpiry', String(Date.now() + 7 * 24 * 60 * 60 * 1000));
+
+              void router.push('/home');
+            }, 1500);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+
+        $q.notify({
+          color: 'red',
+          textColor: 'white',
+          icon: 'error',
+          message: 'Não foi possível logar',
+        });
       }
     };
 
     const onReset = () => {
-      email.value = null;
-      password.value = null;
+      email.value = '';
+      password.value = '';
     };
 
     return {

@@ -2,7 +2,7 @@
   "name": "gestor-varandao",
   "version": "0.0.1",
   "description": "Projeto Quasar para a gestão do Varandão",
-  "productName": "Gestor Varandao",
+  "productName": "Gestor Varandão",
   "author": "Caio Occhi <caio@buscaepi.com>",
   "type": "module",
   "private": true,

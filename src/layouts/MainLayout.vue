@@ -12,31 +12,45 @@
           class="q-mr-sm"
         />
 
-        <q-toolbar-title class="row items-center">
+        <q-toolbar-title class="row justify-between">
           <q-avatar size="42px" class="q-mr-md shadow-2">
             <img src="/src/assets/varandao-logo.png" />
           </q-avatar>
           <div class="text-weight-bold letter-spacing-1">
             {{ pageName }}
           </div>
+          <div>
+            <q-btn-dropdown flat dropdown-icon="more_vert" no-icon-animation :ripple="false">
+              <q-list style="justify-items: flex-end">
+                <q-item v-close-popup>
+                  <q-btn
+                    flat
+                    no-caps
+                    color="negative"
+                    icon-right="logout"
+                    label="Sair"
+                    @click="sair"
+                    to="/"
+                    class="text-weight-bold justify-between"
+                  />
+                </q-item>
+                <q-separator dark />
+                <q-item v-close-popup>
+                  <q-btn
+                    flat
+                    no-caps
+                    icon-right="account_circle"
+                    label="Perfil"
+                    to="/perfil"
+                    class="text-weight-bold"
+                  />
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </div>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
-
-    <q-footer bordered class="bg-white text-primary">
-      <q-toolbar class="justify-center">
-        <q-btn
-          flat
-          no-caps
-          color="negative"
-          icon="logout"
-          label="Sair do Sistema"
-          to="/"
-          class="full-width text-weight-bold"
-          style="height: 50px"
-        />
-      </q-toolbar>
-    </q-footer>
 
     <q-page-container class="bg-dark-page">
       <router-view />
@@ -45,10 +59,12 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
+const $q = useQuasar();
 const paginaAtual = computed(() => route.path?.toString() || '');
 const pageName = computed(() => route.name?.toString() || 'Home');
 
@@ -60,6 +76,17 @@ const alterarRota = (pageName: string): string => {
     return '/freelas';
   }
   return '/home';
+};
+
+const sair = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('tokenExpiry');
+
+  $q.notify({
+    color: 'green-4',
+    textColor: 'white',
+    message: 'Você foi desconectado.',
+  });
 };
 </script>
 
