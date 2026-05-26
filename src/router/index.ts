@@ -56,7 +56,7 @@ export default defineRouter((/* { store, ssrContext } */) => {
   };
 
   Router.beforeEach((to) => {
-    const publicPages = ['Login'];
+    const publicPages = ['Login', 'Cadastrar Usuário'];
     const tokenValid = hasValidToken();
 
     if (publicPages.includes(String(to.name))) {

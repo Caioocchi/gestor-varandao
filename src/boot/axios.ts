@@ -1,8 +1,11 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
 
+const urlAPIProd = 'https://gestor-varandao-api.onrender.com';
+// const urlAPIdesenv = 'http://localhost:3000';
+
 const api = axios.create({
-  baseURL: 'https://gestor-varandao-api.onrender.com',
+  baseURL: urlAPIProd,
 });
 
 console.log('API URL:', import.meta.env.VITE_URL_API);

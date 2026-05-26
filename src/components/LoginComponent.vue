@@ -71,7 +71,7 @@
               outline
               color="secondary"
               class="full-width register-btn"
-              @click="onReset"
+              to="/cadastrar"
             />
           </div>
         </q-form>
@@ -147,16 +147,10 @@ export default {
       }
     };
 
-    const onReset = () => {
-      email.value = '';
-      password.value = '';
-    };
-
     return {
       email,
       password,
       onSubmit,
-      onReset,
       varandaoLogo,
     };
   },

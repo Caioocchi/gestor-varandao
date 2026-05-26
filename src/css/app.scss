@@ -9,3 +9,139 @@ body {
 .q-page {
   background-color: $dark-page;
 }
+
+.logo-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.freela-card {
+  width: 100%;
+  border-radius: 16px;
+  background-color: #faf9f6; // Accent color
+  overflow: hidden;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.border-primary {
+  border: 2px solid white;
+}
+
+.grid-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.confirm-card {
+  border-radius: 16px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.form-card {
+  border-radius: 16px;
+  background-color: #faf9f6;
+}
+
+.custom-input {
+  :deep(.q-field__control) {
+    border-radius: 12px;
+  }
+}
+
+.custom-submit-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.login-background {
+  min-height: 100vh;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 24px;
+  background-color: #faf9f6; // Accent color as background for the card
+  overflow: hidden;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+}
+
+.logo-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.custom-input {
+  :deep(.q-field__control) {
+    border-radius: 12px;
+  }
+}
+
+.login-btn {
+  height: 54px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-transform: none;
+  letter-spacing: 0.5px;
+}
+
+.register-btn {
+  height: 48px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.letter-spacing-1 {
+  letter-spacing: 0.5px;
+}
+
+.q-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.q-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.border-bottom-accent {
+  border-bottom: 2px solid $accent;
+  display: inline-block;
+}
