@@ -6,6 +6,7 @@ const api = axios.create({
 });
 
 console.log('API URL:', import.meta.env.VITE_URL_API);
+console.log('API URL PROD:', import.meta.env.VITE_URL_API_PROD);
 console.log('BASE URL:', api.defaults.baseURL);
 
 export default boot(({ app }) => {
