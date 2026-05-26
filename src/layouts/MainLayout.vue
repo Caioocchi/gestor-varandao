@@ -14,7 +14,7 @@
 
         <q-toolbar-title class="row justify-between">
           <q-avatar size="42px" class="q-mr-md shadow-2">
-            <img src="/src/assets/varandao-logo.png" />
+            <img :src="varandaoLogo" />
           </q-avatar>
           <div class="text-weight-bold letter-spacing-1">
             {{ pageName }}
@@ -62,6 +62,7 @@
 import { useQuasar } from 'quasar';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import varandaoLogo from 'src/assets/varandao-logo.png';
 
 const route = useRoute();
 const $q = useQuasar();

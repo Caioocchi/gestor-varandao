@@ -5,11 +5,7 @@
         <div class="q-pa-md flex flex-center bg-grey-2">
           <q-avatar size="100px" class="shadow-2 border-primary">
             <q-img
-              :src="
-                props.urlFoto === undefined
-                  ? '/src/assets/avatar.png'
-                  : `http://localhost:3000/freelas/${props.urlFoto}`
-              "
+              :src="props.urlFoto === undefined ? avatar : urlApi + props.urlFoto"
               spinner-color="primary"
             />
           </q-avatar>
@@ -30,14 +26,7 @@
                 icon="edit"
                 :to="`/freelas/editar/${props.id}`"
               />
-              <q-btn
-                flat
-                round
-                dense
-                color="negative"
-                icon="delete"
-                @click="confirm = true"
-              />
+              <q-btn flat round dense color="negative" icon="delete" @click="confirm = true" />
             </div>
           </div>
 
@@ -67,7 +56,8 @@
           </q-card-section>
 
           <q-card-section class="q-pt-md">
-            Você tem certeza que deseja excluir <strong>{{ props.nome }}</strong>? Esta ação não pode ser desfeita.
+            Você tem certeza que deseja excluir <strong>{{ props.nome }}</strong
+            >? Esta ação não pode ser desfeita.
           </q-card-section>
 
           <q-card-actions align="right" class="q-pb-md q-pr-md">
@@ -90,6 +80,7 @@
 import { useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 import { ref } from 'vue';
+import avatar from 'src/assets/avatar.png';
 
 export default {
   name: 'CardFreelaComponent',
@@ -126,6 +117,7 @@ export default {
   setup(props, { emit }) {
     const $q = useQuasar();
     const confirm = ref(false);
+    const urlApi = process.env.VITE_URL_API_PROD;
 
     const copyToClipboard = async (text: string) => {
       try {
@@ -173,6 +165,8 @@ export default {
       copyToClipboard,
       deleteFreela,
       confirm,
+      urlApi,
+      avatar,
     };
   },
 };

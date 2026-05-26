@@ -3,7 +3,7 @@
     <q-card class="login-card shadow-24">
       <q-card-section class="text-center q-pt-xl q-pb-md">
         <div class="logo-container q-mb-md">
-          <q-img src="/src/assets/varandao-logo.png" class="logo-img" spinner-color="primary" />
+          <q-img :src="varandaoLogo" class="logo-img" spinner-color="primary" />
         </div>
         <div class="text-h5 text-weight-bold text-primary">Bem-vindo</div>
         <div class="text-subtitle2 text-grey-7">Faça login para continuar</div>
@@ -85,6 +85,7 @@ import { useQuasar } from 'quasar';
 import { api } from '../boot/axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import varandaoLogo from 'src/assets/varandao-logo.png';
 
 export default {
   name: 'LoginComponent',
@@ -156,6 +157,7 @@ export default {
       password,
       onSubmit,
       onReset,
+      varandaoLogo,
     };
   },
 };
