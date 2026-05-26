@@ -82,7 +82,7 @@
 
 <script lang="ts">
 import { useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
+import { api } from '../boot/axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
