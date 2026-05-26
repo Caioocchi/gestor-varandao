@@ -1,10 +1,23 @@
 <template>
-  <div class="q-pa-md">
-    <div v-if="loading">Carregando freela...</div>
-    <div v-else>
-      <FormFreela :freela="freela" submitLabel="Salvar" @freela="onSubmit" />
+  <q-page class="q-pa-lg flex flex-center">
+    <div class="full-width" style="max-width: 600px">
+      <div v-if="loading">Carregando freela...</div>
+      <div v-else>
+        <div class="q-mb-lg row items-center justify-between">
+          <div class="column">
+            <div class="text-h4 text-weight-bold text-primary">Editar Freela</div>
+            <div class="text-subtitle1 text-grey-7">Atualize as informações do prestador</div>
+          </div>
+        </div>
+        <FormFreela
+          v-if="freela"
+          :freela="freela"
+          submitLabel="Salvar Alterações"
+          @freela="onSubmit"
+        />
+      </div>
     </div>
-  </div>
+  </q-page>
 </template>
 
 <script lang="ts">

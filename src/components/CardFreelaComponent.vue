@@ -1,57 +1,87 @@
 <template>
   <div class="q-pt-md">
-    <q-card class="bg-blue-grey-10 text-white shadow-10" style="width: 100%" bordered>
-      <q-card-section horizontal class="justify-around">
-        <q-img
-          class="col-5 q-ma-md"
-          :src="
-            props.urlFoto === undefined
-              ? '/src/assets/avatar.png'
-              : `http://localhost:3000/freelas/${props.urlFoto}`
-          "
-          style="height: 100%; clip-path: circle(); max-height: 200px; max-width: 170px"
-        />
+    <q-card class="freela-card shadow-light" bordered>
+      <q-card-section horizontal>
+        <div class="q-pa-md flex flex-center bg-grey-2">
+          <q-avatar size="100px" class="shadow-2 border-primary">
+            <q-img
+              :src="
+                props.urlFoto === undefined
+                  ? '/src/assets/avatar.png'
+                  : `http://localhost:3000/freelas/${props.urlFoto}`
+              "
+              spinner-color="primary"
+            />
+          </q-avatar>
+        </div>
 
-        <q-card-section class="content-center">
-          <div class="column items-start">
-            <p>Nome: {{ props.nome }}</p>
-            <p>Idade: {{ props.idade }}</p>
-            <q-btn
-              flat
-              no-caps
-              dense
-              @click="copyToClipboard(props.pix || '')"
-              style="font-weight: 400; text-decoration: underline; padding: 0"
-            >
-              <p>Pix: {{ props.pix }}</p>
-            </q-btn>
-            <p>Telefone: {{ props.telefone }}</p>
-            <p class="text-no-wrap">Função: {{ props.funcao }}</p>
-            <div class="row self-between q-gutter-sm no-wrap">
-              <q-btn icon="delete" no-caps color="red" @click="confirm = true" />
-              <q-btn :to="`/freelas/editar/${props.id}`" icon="edit" no-caps />
+        <q-card-section class="col q-pa-lg">
+          <div class="row justify-between items-start no-wrap">
+            <div class="column">
+              <div class="text-h6 text-weight-bold text-primary">{{ props.nome }}</div>
+              <div class="text-subtitle2 text-secondary">{{ props.funcao }}</div>
             </div>
+            <div class="row q-gutter-x-sm">
+              <q-btn
+                flat
+                round
+                dense
+                color="primary"
+                icon="edit"
+                :to="`/freelas/editar/${props.id}`"
+              />
+              <q-btn
+                flat
+                round
+                dense
+                color="negative"
+                icon="delete"
+                @click="confirm = true"
+              />
+            </div>
+          </div>
 
-            <q-dialog v-model="confirm">
-              <q-card>
-                <q-card-section class="row items-center">
-                  <span class="q-ml-sm">Tem certeza de que deseja exluir este Freela?</span>
-                </q-card-section>
-
-                <q-card-actions align="right">
-                  <q-btn flat label="Cancelar" color="primary" v-close-popup />
-                  <q-btn
-                    @click="deleteFreela(props.id)"
-                    label="Excluir"
-                    color="red"
-                    v-close-popup
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
+          <div class="q-mt-md grid-info">
+            <div class="info-item">
+              <q-icon name="person" color="grey-7" size="18px" />
+              <span class="text-grey-9">{{ props.idade }} anos</span>
+            </div>
+            <div class="info-item">
+              <q-icon name="phone" color="grey-7" size="18px" />
+              <span class="text-grey-9">{{ props.telefone }}</span>
+            </div>
+            <div class="info-item cursor-pointer" @click="copyToClipboard(props.pix || '')">
+              <q-icon name="payments" color="grey-7" size="18px" />
+              <span class="text-secondary text-weight-medium">Pix (copiar)</span>
+            </div>
           </div>
         </q-card-section>
       </q-card-section>
+
+      <q-dialog v-model="confirm">
+        <q-card class="confirm-card">
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h6">Confirmar exclusão</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+
+          <q-card-section class="q-pt-md">
+            Você tem certeza que deseja excluir <strong>{{ props.nome }}</strong>? Esta ação não pode ser desfeita.
+          </q-card-section>
+
+          <q-card-actions align="right" class="q-pb-md q-pr-md">
+            <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            <q-btn
+              unelevated
+              label="Excluir"
+              color="negative"
+              @click="deleteFreela(props.id)"
+              v-close-popup
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-card>
   </div>
 </template>
@@ -62,6 +92,7 @@ import { api } from 'src/boot/axios';
 import { ref } from 'vue';
 
 export default {
+  name: 'CardFreelaComponent',
   props: {
     id: {
       type: String,
@@ -94,13 +125,16 @@ export default {
   emits: ['deleted'],
   setup(props, { emit }) {
     const $q = useQuasar();
+    const confirm = ref(false);
+
     const copyToClipboard = async (text: string) => {
       try {
         await navigator.clipboard.writeText(text.toString());
         $q.notify({
-          color: 'green-4',
+          color: 'positive',
           textColor: 'white',
-          message: 'Pix copiado!',
+          message: 'Pix copiado com sucesso!',
+          icon: 'check',
         });
       } catch (err) {
         console.error('Erro ao copiar: ', err);
@@ -109,23 +143,28 @@ export default {
 
     const deleteFreela = async (id: string) => {
       try {
+        $q.loading.show({ message: 'Excluindo...' });
         const deletado = await api.post(`/freelas/delete/${id}`);
 
         if (deletado.status === 200 || deletado.status === 201 || deletado.status === 204) {
           $q.notify({
-            color: 'green-4',
+            color: 'positive',
             textColor: 'white',
             message: 'Freela excluído com sucesso.',
+            icon: 'delete',
           });
           emit('deleted', id);
         }
       } catch (error) {
         console.error(error);
         $q.notify({
-          color: 'red',
+          color: 'negative',
           textColor: 'white',
           message: 'Erro ao excluir freela.',
+          icon: 'error',
         });
+      } finally {
+        $q.loading.hide();
       }
     };
 
@@ -133,8 +172,45 @@ export default {
       props,
       copyToClipboard,
       deleteFreela,
-      confirm: ref(false),
+      confirm,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.freela-card {
+  width: 100%;
+  border-radius: 16px;
+  background-color: #faf9f6; // Accent color
+  overflow: hidden;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.border-primary {
+  border: 2px solid white;
+}
+
+.grid-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.confirm-card {
+  border-radius: 16px;
+  width: 100%;
+  max-width: 350px;
+}
+</style>

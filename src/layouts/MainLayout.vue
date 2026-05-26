@@ -1,51 +1,56 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header bordered class="bg-blue-grey-10 text-white shadow-10">
-      <q-toolbar>
-        <q-btn :style="alterarVisibilidade(paginaAtual)" flat :to="alterarRota(pageName)">
-          <img src="/src/icons/arrow_back.png" />
-        </q-btn>
-        <q-toolbar-title :class="paginaAtual === 'Home' ? 'text-center' : 'text-left'">
-          <q-avatar>
+    <q-header elevated class="bg-primary text-white">
+      <q-toolbar class="q-py-sm">
+        <q-btn
+          v-if="paginaAtual !== '/home'"
+          flat
+          dense
+          round
+          icon="arrow_back"
+          :to="alterarRota(pageName)"
+          class="q-mr-sm"
+        />
+
+        <q-toolbar-title class="row items-center">
+          <q-avatar size="42px" class="q-mr-md shadow-2">
             <img src="/src/assets/varandao-logo.png" />
           </q-avatar>
-          {{ pageName }}
+          <div class="text-weight-bold letter-spacing-1">
+            {{ pageName }}
+          </div>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
-    <q-btn to="/" no-caps>
-      <q-footer bordered class="bg-red text-white shadow-10">
-        <q-toolbar class="justify-center"> Sair </q-toolbar>
-      </q-footer>
-    </q-btn>
+    <q-footer bordered class="bg-white text-primary">
+      <q-toolbar class="justify-center">
+        <q-btn
+          flat
+          no-caps
+          color="negative"
+          icon="logout"
+          label="Sair do Sistema"
+          to="/"
+          class="full-width text-weight-bold"
+          style="height: 50px"
+        />
+      </q-toolbar>
+    </q-footer>
 
-    <q-page-container>
+    <q-page-container class="bg-dark-page">
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const paginaAtual = computed(() => route.path?.toString() || '');
-const pageName = computed(() => route.name?.toString() || '');
-const visible = ref(false);
-
-// Altera a visibilidade do botão voltar de acordo com a página atual,
-// ou seja, se a página atual for 'Home', não tem necessidade de existir um botão voltar
-const alterarVisibilidade = (paginaAtual: string): string => {
-  if (paginaAtual === '/home') {
-    visible.value = false;
-    return 'display: none;';
-  } else {
-    visible.value = true;
-    return '';
-  }
-};
+const pageName = computed(() => route.name?.toString() || 'Home');
 
 // Altera a rota de acordo com a página atual
 const alterarRota = (pageName: string): string => {
@@ -57,3 +62,17 @@ const alterarRota = (pageName: string): string => {
   return '/home';
 };
 </script>
+
+<style lang="scss">
+.letter-spacing-1 {
+  letter-spacing: 0.5px;
+}
+
+.q-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.q-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+</style>

@@ -1,7 +1,13 @@
 <template>
-  <div class="q-pa-md">
-    <FormFreela submitLabel="Adicionar" @freela="onSubmit" />
-  </div>
+  <q-page class="q-pa-lg flex flex-center">
+    <div class="full-width" style="max-width: 600px">
+      <div class="q-mb-lg">
+        <div class="text-h4 text-weight-bold text-primary">Novo Freela</div>
+        <div class="text-subtitle1 text-grey-7">Preencha os dados para cadastrar</div>
+      </div>
+      <FormFreela submitLabel="Salvar Cadastro" @freela="onSubmit" />
+    </div>
+  </q-page>
 </template>
 
 <script lang="ts">

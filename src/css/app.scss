@@ -1,5 +1,11 @@
 // app global css
 body {
-  background-color: #262e2f;
-  text-align: -webkit-center;
+  background-color: $dark-page;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.q-page {
+  background-color: $dark-page;
 }

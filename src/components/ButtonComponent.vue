@@ -1,17 +1,27 @@
 <template>
   <div class="q-py-md">
     <q-btn
-      class="shadow-10"
+      class="custom-btn shadow-robust"
       :label="props.label"
       :to="props.link"
       :icon="props.icon"
-      type="submit"
-      color="blue-grey-10"
-      style="width: 100%; height: 56px"
+      unelevated
+      color="primary"
       no-caps
     />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.custom-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+</style>
 
 <script lang="ts">
 export default {

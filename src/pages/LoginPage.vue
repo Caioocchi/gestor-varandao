@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <login-component />
-  </div>
+  <q-layout>
+    <q-page-container>
+      <login-component />
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup lang="ts">

@@ -1,89 +1,167 @@
 <template>
-  <q-form ref="formRef" @submit.prevent="enviarFreela" class="q-gutter-md">
-    <q-input
-      filled
-      v-model="nome"
-      label="Nome completo *"
-      color="white"
-      lazy-rules
-      bg-color="white"
-      :rules="[(val) => (val && val.length > 0) || 'Digite o nome completo do Freela']"
-    />
+  <q-form ref="formRef" @submit.prevent="enviarFreela" class="q-gutter-y-md">
+    <q-card class="form-card shadow-light" bordered>
+      <q-card-section class="q-gutter-y-md q-pa-lg">
+        <q-input
+          outlined
+          v-model="nome"
+          label="Nome completo"
+          placeholder="Ex: João Silva"
+          stack-label
+          color="primary"
+          bg-color="white"
+          class="custom-input"
+          lazy-rules
+          :rules="[(val) => (val && val.length > 0) || 'Digite o nome completo do Freela']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="person" color="primary" />
+          </template>
+        </q-input>
 
-    <q-input
-      filled
-      type="date"
-      v-model="dt_nascimento"
-      label="Data de nascimento *"
-      lazy-rules
-      bg-color="white"
-      :rules="[
-        (val) => (val !== null && val !== '') || 'Digite a data de nascimento do Freela',
-        (val) => calcularIdade(val) >= 18 || 'O Freela precisa ser maior que 18 anos',
-      ]"
-    />
+        <q-input
+          outlined
+          type="date"
+          v-model="dt_nascimento"
+          label="Data de nascimento"
+          stack-label
+          color="primary"
+          bg-color="white"
+          class="custom-input"
+          lazy-rules
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Digite a data de nascimento do Freela',
+            (val) => calcularIdade(val) >= 18 || 'O Freela precisa ser maior que 18 anos',
+          ]"
+        >
+          <template v-slot:prepend>
+            <q-icon name="event" color="primary" />
+          </template>
+        </q-input>
 
-    <q-input
-      filled
-      v-model="pix"
-      label="Pix *"
-      lazy-rules
-      bg-color="white"
-      :rules="[(val) => (val !== null && val !== '') || 'Digite o Pix do Freela']"
-    />
+        <q-input
+          outlined
+          v-model="pix"
+          label="Pix"
+          placeholder="Chave Pix para pagamento"
+          stack-label
+          color="primary"
+          bg-color="white"
+          class="custom-input"
+          lazy-rules
+          :rules="[(val) => (val !== null && val !== '') || 'Digite o Pix do Freela']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="payments" color="primary" />
+          </template>
+        </q-input>
 
-    <q-input
-      filled
-      v-model="telefone"
-      label="Telefone *"
-      lazy-rules
-      bg-color="white"
-      mask="(xx) xxxxx-xxxx"
-      :rules="[(val) => (val !== null && val !== '') || 'Digite o telefone do Freela']"
-    />
+        <q-input
+          outlined
+          v-model="telefone"
+          label="Telefone"
+          placeholder="(00) 00000-0000"
+          stack-label
+          color="primary"
+          bg-color="white"
+          class="custom-input"
+          mask="(##) #####-####"
+          lazy-rules
+          :rules="[(val) => (val !== null && val !== '') || 'Digite o telefone do Freela']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="phone" color="primary" />
+          </template>
+        </q-input>
 
-    <q-input
-      filled
-      v-model="cpf"
-      label="CPF *"
-      lazy-rules
-      bg-color="white"
-      mask="xxx.xxx.xxx-xx"
-      :rules="[
-        (val) => (val !== null && val !== '') || 'Digite o CPF do Freela',
-        (val) => validarCPF(val) || 'CPF inválido',
-      ]"
-    />
+        <q-input
+          outlined
+          v-model="cpf"
+          label="CPF"
+          placeholder="000.000.000-00"
+          stack-label
+          color="primary"
+          bg-color="white"
+          class="custom-input"
+          mask="###.###.###-##"
+          lazy-rules
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Digite o CPF do Freela',
+            (val) => validarCPF(val) || 'CPF inválido',
+          ]"
+        >
+          <template v-slot:prepend>
+            <q-icon name="badge" color="primary" />
+          </template>
+        </q-input>
 
-    <q-select
-      filled
-      v-model="funcao"
-      :options="options"
-      label="Função *"
-      bg-color="white"
-      :rules="[(val) => (val !== null && val !== '') || 'Escolha uma função']"
-    />
+        <q-select
+          outlined
+          v-model="funcao"
+          :options="options"
+          label="Função"
+          stack-label
+          color="primary"
+          bg-color="white"
+          class="custom-input"
+          :rules="[(val) => (val !== null && val !== '') || 'Escolha uma função']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="work" color="primary" />
+          </template>
+        </q-select>
 
-    <q-file
-      outlined
-      v-model="urlFoto"
-      accept="image/*"
-      label="Selecione uma foto"
-      bg-color="white"
-    />
+        <q-file
+          outlined
+          v-model="urlFoto"
+          accept="image/*"
+          label="Foto do perfil"
+          stack-label
+          color="primary"
+          bg-color="white"
+          class="custom-input"
+        >
+          <template v-slot:prepend>
+            <q-icon name="image" color="primary" />
+          </template>
+        </q-file>
+      </q-card-section>
+    </q-card>
 
-    <div>
+    <div class="q-pt-md">
       <q-btn
-        class="shadow-10"
-        color="blue-grey-10"
+        class="custom-submit-btn shadow-robust"
+        color="primary"
+        unelevated
         type="submit"
         :label="label"
-        style="width: 100%; height: 56px"
         no-caps
       />
     </div>
   </q-form>
 </template>
+
+<style lang="scss" scoped>
+.form-card {
+  border-radius: 16px;
+  background-color: #faf9f6;
+}
+
+.custom-input {
+  :deep(.q-field__control) {
+    border-radius: 12px;
+  }
+}
+
+.custom-submit-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+</style>
 
 <script setup lang="ts">
 import { calcularIdade } from 'src/utils/calcularIdade';
