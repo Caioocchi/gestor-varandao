@@ -117,7 +117,7 @@ export default {
   setup(props, { emit }) {
     const $q = useQuasar();
     const confirm = ref(false);
-    const urlApi = 'https://gestor-varandao-api.onrender.com';
+    const urlApi = 'https://gestor-varandao-api.onrender.com/';
 
     const copyToClipboard = async (text: string) => {
       try {
