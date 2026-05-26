@@ -37,7 +37,6 @@ export default {
       password,
 
       async onSubmit() {
-        console.log(email.value);
         if (email.value === null) {
           $q.notify({
             color: 'red-5',
@@ -56,8 +55,7 @@ export default {
           $q.notify({
             color: 'green-4',
             textColor: 'white',
-            icon: 'cloud_done',
-            message: 'Submitted',
+            message: 'Usuário logado com sucesso!',
           });
           await router.push('/home');
         }
