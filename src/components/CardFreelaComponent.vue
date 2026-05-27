@@ -1,9 +1,9 @@
 <template>
   <div class="q-pt-md">
-    <q-card class="freela-card shadow-light" bordered>
+    <q-card class="card-base shadow-soft" bordered>
       <q-card-section horizontal>
-        <div class="q-pa-md flex flex-center bg-grey-2">
-          <q-avatar size="100px" class="shadow-2 border-primary">
+        <div class="q-pa-md flex flex-center bg-grey-1" style="border-right: 1px solid rgba(0,0,0,0.05)">
+          <q-avatar size="90px" class="shadow-1" style="border: 2px solid white">
             <q-img
               :src="props.urlFoto === undefined ? avatar : urlApi + props.urlFoto"
               spinner-color="primary"
@@ -15,42 +15,43 @@
           <div class="row justify-between items-start no-wrap">
             <div class="column">
               <div class="text-h6 text-weight-bold text-primary">{{ props.nome }}</div>
-              <div class="text-subtitle2 text-secondary">{{ props.funcao }}</div>
+              <div class="text-subtitle2 text-secondary text-weight-medium">{{ props.funcao }}</div>
             </div>
-            <div class="row q-gutter-x-sm">
+            <div class="row q-gutter-x-xs">
               <q-btn
                 flat
                 round
                 dense
                 color="primary"
                 icon="edit"
+                size="sm"
                 :to="`/freelas/editar/${props.id}`"
               />
-              <q-btn flat round dense color="negative" icon="delete" @click="confirm = true" />
+              <q-btn flat round dense color="negative" icon="delete" size="sm" @click="confirm = true" />
             </div>
           </div>
 
           <div class="q-mt-md grid-info">
             <div class="info-item">
-              <q-icon name="person" color="grey-7" size="18px" />
-              <span class="text-grey-9">{{ props.idade }} anos</span>
+              <q-icon name="person_outline" color="grey-6" size="16px" />
+              <span class="text-grey-8 text-caption">{{ props.idade }} anos</span>
             </div>
             <div class="info-item">
-              <q-icon name="phone" color="grey-7" size="18px" />
-              <span class="text-grey-9">{{ props.telefone }}</span>
+              <q-icon name="phone_iphone" color="grey-6" size="16px" />
+              <span class="text-grey-8 text-caption">{{ props.telefone }}</span>
             </div>
             <div class="info-item cursor-pointer" @click="copyToClipboard(props.pix || '')">
-              <q-icon name="payments" color="grey-7" size="18px" />
-              <span class="text-secondary text-weight-medium">Pix (copiar)</span>
+              <q-icon name="account_balance_wallet" color="secondary" size="16px" />
+              <span class="text-secondary text-caption text-weight-bold">Pix (copiar)</span>
             </div>
           </div>
         </q-card-section>
       </q-card-section>
 
       <q-dialog v-model="confirm">
-        <q-card class="confirm-card">
+        <q-card class="confirm-card card-base">
           <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6">Confirmar exclusão</div>
+            <div class="text-h6 text-weight-bold">Confirmar exclusão</div>
             <q-space />
             <q-btn icon="close" flat round dense v-close-popup />
           </q-card-section>
@@ -61,13 +62,16 @@
           </q-card-section>
 
           <q-card-actions align="right" class="q-pb-md q-pr-md">
-            <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            <q-btn flat label="Cancelar" color="primary" no-caps v-close-popup />
             <q-btn
               unelevated
               label="Excluir"
               color="negative"
+              class="btn-rounded"
+              style="padding: 4px 20px"
               @click="deleteFreela(props.id)"
               v-close-popup
+              no-caps
             />
           </q-card-actions>
         </q-card>
@@ -154,6 +158,7 @@ export default {
           textColor: 'white',
           message: 'Erro ao excluir freela.',
           icon: 'error',
+          iconColor: 'white',
         });
       } finally {
         $q.loading.hide();
@@ -173,38 +178,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.freela-card {
-  width: 100%;
-  border-radius: 16px;
-  background-color: #faf9f6; // Accent color
-  overflow: hidden;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-}
-
-.border-primary {
-  border: 2px solid white;
-}
-
 .grid-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .info-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.95rem;
 }
 
 .confirm-card {
-  border-radius: 16px;
   width: 100%;
-  max-width: 350px;
+  max-width: 380px;
+}
+
+.btn-rounded {
+  border-radius: 8px;
 }
 </style>

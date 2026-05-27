@@ -58,6 +58,17 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/eventos/adicionar',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/eventos/adicionar',
+        component: () => import('pages/Event/AdicionarEvento.vue'),
+        name: 'Adicionar Evento',
+      },
+    ],
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },

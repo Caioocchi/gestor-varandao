@@ -1,6 +1,6 @@
 <template>
   <q-form ref="formRef" @submit.prevent="enviarFreela" class="q-gutter-y-md">
-    <q-card class="form-card shadow-light" bordered>
+    <q-card class="card-base shadow-soft" bordered>
       <q-card-section class="q-gutter-y-md q-pa-lg">
         <q-input
           outlined
@@ -10,12 +10,12 @@
           stack-label
           color="primary"
           bg-color="white"
-          class="custom-input"
+          class="input-rounded"
           lazy-rules
           :rules="[(val) => (val && val.length > 0) || 'Digite o nome completo do Freela']"
         >
           <template v-slot:prepend>
-            <q-icon name="person" color="primary" />
+            <q-icon name="person_outline" color="primary" />
           </template>
         </q-input>
 
@@ -27,7 +27,7 @@
           stack-label
           color="primary"
           bg-color="white"
-          class="custom-input"
+          class="input-rounded"
           lazy-rules
           :rules="[
             (val) => (val !== null && val !== '') || 'Digite a data de nascimento do Freela',
@@ -35,7 +35,7 @@
           ]"
         >
           <template v-slot:prepend>
-            <q-icon name="event" color="primary" />
+            <q-icon name="calendar_today" color="primary" />
           </template>
         </q-input>
 
@@ -47,12 +47,12 @@
           stack-label
           color="primary"
           bg-color="white"
-          class="custom-input"
+          class="input-rounded"
           lazy-rules
           :rules="[(val) => (val !== null && val !== '') || 'Digite o Pix do Freela']"
         >
           <template v-slot:prepend>
-            <q-icon name="payments" color="primary" />
+            <q-icon name="account_balance_wallet" color="primary" />
           </template>
         </q-input>
 
@@ -64,13 +64,13 @@
           stack-label
           color="primary"
           bg-color="white"
-          class="custom-input"
+          class="input-rounded"
           mask="(##) #####-####"
           lazy-rules
           :rules="[(val) => (val !== null && val !== '') || 'Digite o telefone do Freela']"
         >
           <template v-slot:prepend>
-            <q-icon name="phone" color="primary" />
+            <q-icon name="phone_iphone" color="primary" />
           </template>
         </q-input>
 
@@ -82,7 +82,7 @@
           stack-label
           color="primary"
           bg-color="white"
-          class="custom-input"
+          class="input-rounded"
           mask="###.###.###-##"
           lazy-rules
           :rules="[
@@ -91,7 +91,7 @@
           ]"
         >
           <template v-slot:prepend>
-            <q-icon name="badge" color="primary" />
+            <q-icon name="assignment_ind" color="primary" />
           </template>
         </q-input>
 
@@ -103,11 +103,11 @@
           stack-label
           color="primary"
           bg-color="white"
-          class="custom-input"
+          class="input-rounded"
           :rules="[(val) => (val !== null && val !== '') || 'Escolha uma função']"
         >
           <template v-slot:prepend>
-            <q-icon name="work" color="primary" />
+            <q-icon name="work_outline" color="primary" />
           </template>
         </q-select>
 
@@ -119,10 +119,10 @@
           stack-label
           color="primary"
           bg-color="white"
-          class="custom-input"
+          class="input-rounded"
         >
           <template v-slot:prepend>
-            <q-icon name="image" color="primary" />
+            <q-icon name="add_a_photo" color="primary" />
           </template>
         </q-file>
       </q-card-section>
@@ -130,7 +130,7 @@
 
     <div class="q-pt-md">
       <q-btn
-        class="custom-submit-btn shadow-robust"
+        class="btn-primary shadow-elevated"
         color="primary"
         unelevated
         type="submit"
@@ -140,28 +140,6 @@
     </div>
   </q-form>
 </template>
-
-<style lang="scss" scoped>
-.form-card {
-  border-radius: 16px;
-  background-color: #faf9f6;
-}
-
-.custom-input {
-  :deep(.q-field__control) {
-    border-radius: 12px;
-  }
-}
-
-.custom-submit-btn {
-  width: 100%;
-  height: 56px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-</style>
 
 <script setup lang="ts">
 import { calcularIdade } from 'src/utils/calcularIdade';
@@ -238,3 +216,7 @@ function enviarFreela() {
   });
 }
 </script>
+
+<style lang="scss" scoped>
+// Component uses global utility classes from app.scss
+</style>

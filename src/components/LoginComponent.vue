@@ -1,12 +1,14 @@
 <template>
-  <q-page class="flex flex-center login-background q-pa-lg">
-    <q-card class="login-card shadow-24">
+  <q-page class="flex flex-center q-pa-lg" style="min-height: 100vh;">
+    <q-card class="card-base shadow-elevated" style="max-width: 420px; width: 100%;">
       <q-card-section class="text-center q-pt-xl q-pb-md">
-        <div class="logo-container q-mb-md">
-          <q-img :src="varandaoLogo" class="logo-img" spinner-color="primary" />
+        <div class="flex flex-center q-mb-lg">
+          <q-avatar size="110px" style="border: 3px solid rgba(45,62,64,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
+            <q-img :src="varandaoLogo" spinner-color="primary" />
+          </q-avatar>
         </div>
         <div class="text-h5 text-weight-bold text-primary">Bem-vindo</div>
-        <div class="text-subtitle2 text-grey-7">Faça login para continuar</div>
+        <div class="text-body2 text-grey-6 q-mt-xs">Faça login para continuar</div>
       </q-card-section>
 
       <q-card-section class="q-px-xl q-pb-xl">
@@ -18,7 +20,7 @@
             outlined
             color="primary"
             bg-color="white"
-            class="custom-input"
+            class="input-rounded"
             lazy-rules
             :rules="[(val) => !!val || 'Por favor, digite seu e-mail']"
           >
@@ -35,7 +37,7 @@
             outlined
             color="primary"
             bg-color="white"
-            class="custom-input"
+            class="input-rounded"
             lazy-rules
             :rules="[(val) => !!val || 'Por favor, digite sua senha']"
           >
@@ -44,13 +46,13 @@
             </template>
           </q-input>
 
-          <div class="q-pt-sm">
+          <div class="q-pt-xs">
             <q-btn
               label="Entrar"
               type="submit"
               color="primary"
               unelevated
-              class="full-width login-btn"
+              class="full-width btn-primary"
             />
           </div>
 
@@ -60,17 +62,19 @@
               flat
               dense
               color="secondary"
-              class="text-caption text-lowercase"
+              class="text-caption"
+              style="text-transform: none;"
             />
           </div>
 
-          <div class="q-pt-md">
-            <div class="text-center text-grey-7 q-mb-sm text-caption">Não tem uma conta?</div>
+          <div class="q-pt-sm">
+            <div class="text-center text-grey-6 q-mb-sm text-caption">Não tem uma conta?</div>
             <q-btn
               label="Criar conta"
               outline
               color="secondary"
-              class="full-width register-btn"
+              class="full-width btn-primary"
+              style="height: 48px;"
               to="/cadastrar"
             />
           </div>
@@ -157,51 +161,3 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.login-background {
-  min-height: 100vh;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  border-radius: 24px;
-  background-color: #faf9f6; // Accent color as background for the card
-  overflow: hidden;
-}
-
-.logo-container {
-  display: flex;
-  justify-content: center;
-}
-
-.logo-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 4px solid white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.custom-input {
-  :deep(.q-field__control) {
-    border-radius: 12px;
-  }
-}
-
-.login-btn {
-  height: 54px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  text-transform: none;
-  letter-spacing: 0.5px;
-}
-
-.register-btn {
-  height: 48px;
-  border-radius: 12px;
-  font-weight: 600;
-  text-transform: none;
-}
-</style>

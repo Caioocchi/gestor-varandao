@@ -1,7 +1,7 @@
 <template>
   <div class="q-py-md">
     <q-btn
-      class="custom-btn shadow-robust"
+      class="btn-primary shadow-soft"
       :label="props.label"
       :to="props.link"
       :icon="props.icon"
@@ -11,17 +11,6 @@
     />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.custom-btn {
-  width: 100%;
-  height: 56px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-</style>
 
 <script lang="ts">
 export default {
@@ -40,3 +29,7 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+// Component uses global .btn-primary from app.scss
+</style>

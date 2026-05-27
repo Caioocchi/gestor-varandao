@@ -1,147 +1,99 @@
-// app global css
+// =============================================
+// Gestor Varandão — Global Design System
+// =============================================
+
+// ---- Base ----
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: $dark-page;
-  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(160deg, $dark-page 0%, darken($primary, 12%) 100%);
+  font-family: 'Inter', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-.q-page {
-  background-color: $dark-page;
-}
-
-.logo-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 4px solid white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.custom-btn {
-  width: 100%;
-  height: 56px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
-.freela-card {
-  width: 100%;
-  border-radius: 16px;
-  background-color: #faf9f6; // Accent color
-  overflow: hidden;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-}
-
-.border-primary {
-  border: 2px solid white;
-}
-
-.grid-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-}
-
-.confirm-card {
-  border-radius: 16px;
-  width: 100%;
-  max-width: 350px;
-}
-
-.form-card {
-  border-radius: 16px;
-  background-color: #faf9f6;
-}
-
-.custom-input {
-  :deep(.q-field__control) {
-    border-radius: 12px;
-  }
-}
-
-.custom-submit-btn {
-  width: 100%;
-  height: 56px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
-.login-background {
   min-height: 100vh;
 }
 
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  border-radius: 24px;
-  background-color: #faf9f6; // Accent color as background for the card
-  overflow: hidden;
+// ---- Page background ----
+.q-page {
+  background: transparent;
 }
 
-.logo-container {
-  display: flex;
-  justify-content: center;
+// ---- Glassmorphism Header ----
+.q-header {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba($primary, 0.85) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.logo-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 4px solid white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+// ---- Page Transitions ----
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-.custom-input {
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+// ---- Utility classes ----
+.glass-card {
+  background: rgba(#faf9f6, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+}
+
+.shadow-soft {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-elevated {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+// Shared input rounding
+.input-rounded {
   :deep(.q-field__control) {
     border-radius: 12px;
   }
 }
 
-.login-btn {
+// Shared card base
+.card-base {
+  border-radius: 20px;
+  background-color: #faf9f6;
+  overflow: hidden;
+}
+
+// Shared button base
+.btn-primary {
+  width: 100%;
   height: 54px;
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-transform: none;
-  letter-spacing: 0.5px;
-}
+  letter-spacing: 0.3px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-.register-btn {
-  height: 48px;
-  border-radius: 12px;
-  font-weight: 600;
-  text-transform: none;
-}
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba($primary, 0.35);
+  }
 
-.letter-spacing-1 {
-  letter-spacing: 0.5px;
-}
-
-.q-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.q-footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.border-bottom-accent {
-  border-bottom: 2px solid $accent;
-  display: inline-block;
+  &:active {
+    transform: translateY(0);
+  }
 }

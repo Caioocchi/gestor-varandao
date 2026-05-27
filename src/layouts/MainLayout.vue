@@ -12,12 +12,14 @@
           class="q-mr-sm"
         />
 
-        <q-toolbar-title class="row justify-between">
-          <q-avatar size="42px" class="q-mr-md shadow-2">
-            <img :src="varandaoLogo" />
-          </q-avatar>
-          <div class="text-weight-bold letter-spacing-1">
-            {{ pageName }}
+        <q-toolbar-title class="row justify-between items-center">
+          <div class="row items-center">
+            <q-avatar size="38px" class="q-mr-md" style="border: 2px solid rgba(255,255,255,0.2); border-radius: 50%;">
+              <img :src="varandaoLogo" />
+            </q-avatar>
+            <div class="text-weight-bold" style="font-size: 1.1rem; letter-spacing: 0.3px;">
+              {{ pageName }}
+            </div>
           </div>
           <div>
             <q-btn-dropdown flat dropdown-icon="more_vert" no-icon-animation :ripple="false">
@@ -52,8 +54,12 @@
       </q-toolbar>
     </q-header>
 
-    <q-page-container class="bg-dark-page">
-      <router-view />
+    <q-page-container>
+      <router-view v-slot="{ Component }">
+        <transition name="page" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -71,10 +77,12 @@ const pageName = computed(() => route.name?.toString() || 'Home');
 
 // Altera a rota de acordo com a página atual
 const alterarRota = (pageName: string): string => {
-  if (pageName === 'Freelas') {
+  if (pageName === 'Freelas' || pageName === 'Eventos') {
     return '/home';
   } else if (pageName === 'Adicionar Freela' || pageName === 'Editar Freela') {
     return '/freelas';
+  } else if (pageName === 'Adicionar Evento') {
+    return '/home';
   }
   return '/home';
 };
@@ -84,23 +92,11 @@ const sair = () => {
   localStorage.removeItem('tokenExpiry');
 
   $q.notify({
-    color: 'green-4',
+    color: 'positive',
     textColor: 'white',
+    icon: 'check',
     message: 'Você foi desconectado.',
   });
 };
 </script>
 
-<style lang="scss">
-.letter-spacing-1 {
-  letter-spacing: 0.5px;
-}
-
-.q-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.q-footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-</style>
