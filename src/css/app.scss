@@ -67,7 +67,7 @@ body {
 
 // Shared input rounding
 .input-rounded {
-  :deep(.q-field__control) {
+  ::v-deep(.q-field__control) {
     border-radius: 12px;
   }
 }

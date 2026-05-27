@@ -301,11 +301,11 @@ const onSubmit = () => {
 
 .small-quantity-input {
   width: 90px;
-  :deep(.q-field__control) {
+  ::v-deep(.q-field__control) {
     height: 32px;
     min-height: 32px;
   }
-  :deep(.q-field__native) {
+  ::v-deep(.q-field__native) {
     padding: 0 4px;
     text-align: center;
   }
