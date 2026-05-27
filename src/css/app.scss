@@ -10,7 +10,7 @@
 }
 
 body {
-  background: linear-gradient(160deg, $dark-page 0%, darken($primary, 12%) 100%);
+  background: linear-gradient(160deg, $dark-page 0%, $primary 100%);
   font-family: 'Inter', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -33,7 +33,9 @@ body {
 // ---- Page Transitions ----
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .page-enter-from {
@@ -86,7 +88,9 @@ body {
   font-size: 1rem;
   text-transform: none;
   letter-spacing: 0.3px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);

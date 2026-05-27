@@ -4,7 +4,9 @@
       <!-- Header Section -->
       <div class="q-mb-xl">
         <div class="text-h4 text-weight-bold text-primary">Novo Evento</div>
-        <div class="text-subtitle1 text-grey-6">Preencha os detalhes e selecione os itens do cardápio</div>
+        <div class="text-subtitle1 text-grey-6">
+          Preencha os detalhes e selecione os itens do cardápio
+        </div>
       </div>
 
       <q-form @submit="onSubmit" class="q-gutter-y-lg">
@@ -23,7 +25,7 @@
                   bg-color="white"
                   class="input-rounded"
                   lazy-rules
-                  :rules="[val => !!val || 'Contratante é obrigatório']"
+                  :rules="[(val) => !!val || 'Contratante é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="person" color="primary" />
@@ -40,7 +42,7 @@
                   bg-color="white"
                   class="input-rounded"
                   lazy-rules
-                  :rules="[val => !!val || 'Local é obrigatório']"
+                  :rules="[(val) => !!val || 'Local é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="place" color="primary" />
@@ -58,7 +60,7 @@
                   bg-color="white"
                   class="input-rounded"
                   lazy-rules
-                  :rules="[val => !!val || 'Data é obrigatória']"
+                  :rules="[(val) => !!val || 'Data é obrigatória']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="event" color="primary" />
@@ -76,7 +78,7 @@
                   bg-color="white"
                   class="input-rounded"
                   lazy-rules
-                  :rules="[val => !!val || 'Horário é obrigatório']"
+                  :rules="[(val) => !!val || 'Horário é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="schedule" color="primary" />
@@ -111,10 +113,10 @@
               <div class="text-h6 text-weight-bold text-primary">Carnes</div>
               <q-badge color="primary" :label="`${carnesSelecionadas.length} item(s)`" />
             </div>
-            
+
             <div class="row q-col-gutter-md">
               <div v-for="carne in listaCarnes" :key="carne.id" class="col-12 col-sm-6">
-                <div 
+                <div
                   class="selection-item q-pa-sm rounded-borders row items-center"
                   :class="carne.selected ? 'bg-accent-light' : 'bg-grey-1'"
                 >
@@ -146,14 +148,19 @@
               <div class="text-h6 text-weight-bold text-primary">Insumos</div>
               <q-badge color="secondary" :label="`${insumosSelecionados.length} item(s)`" />
             </div>
-            
+
             <div class="row q-col-gutter-md">
               <div v-for="insumo in listaInsumos" :key="insumo.id" class="col-12 col-sm-6">
-                <div 
+                <div
                   class="selection-item q-pa-sm rounded-borders row items-center"
                   :class="insumo.selected ? 'bg-secondary-light' : 'bg-grey-1'"
                 >
-                  <q-checkbox v-model="insumo.selected" :label="insumo.nome" color="secondary" dense />
+                  <q-checkbox
+                    v-model="insumo.selected"
+                    :label="insumo.nome"
+                    color="secondary"
+                    dense
+                  />
                   <q-space />
                   <transition name="fade">
                     <div v-if="insumo.selected" class="row items-center no-wrap">
@@ -214,7 +221,7 @@ const evento = ref<Evento>({
   local: '',
   data: '',
   horario: '',
-  observacoes: ''
+  observacoes: '',
 });
 
 interface ItemBase {
@@ -233,7 +240,7 @@ const listaCarnes = ref<ItemBase[]>([
   { id: 5, nome: 'Frango (Tulipa)', selected: false, quantidade: 1, unidade: 'kg' },
   { id: 6, nome: 'Coração', selected: false, quantidade: 1, unidade: 'kg' },
   { id: 7, nome: 'Costela Bovina', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 8, nome: 'Costelinha Suína', selected: false, quantidade: 1, unidade: 'kg' }
+  { id: 8, nome: 'Costelinha Suína', selected: false, quantidade: 1, unidade: 'kg' },
 ]);
 
 const listaInsumos = ref<ItemBase[]>([
@@ -244,20 +251,20 @@ const listaInsumos = ref<ItemBase[]>([
   { id: 5, nome: 'Guardanapos', selected: false, quantidade: 2, unidade: 'pt' },
   { id: 6, nome: 'Álcool Gel', selected: false, quantidade: 1, unidade: 'un' },
   { id: 7, nome: 'Pão de Alho', selected: false, quantidade: 5, unidade: 'un' },
-  { id: 8, nome: 'Farofa', selected: false, quantidade: 1, unidade: 'kg' }
+  { id: 8, nome: 'Farofa', selected: false, quantidade: 1, unidade: 'kg' },
 ]);
 
-const carnesSelecionadas = computed(() => listaCarnes.value.filter(c => c.selected));
-const insumosSelecionados = computed(() => listaInsumos.value.filter(i => i.selected));
+const carnesSelecionadas = computed(() => listaCarnes.value.filter((c) => c.selected));
+const insumosSelecionados = computed(() => listaInsumos.value.filter((i) => i.selected));
 
 const onSubmit = () => {
   $q.loading.show({ message: 'Salvando evento...' });
-  
+
   // Prepare data (for future API integration)
   const payload = {
     ...evento.value,
-    carnes: carnesSelecionadas.value.map(c => ({ nome: c.nome, quantidade: c.quantidade })),
-    insumos: insumosSelecionados.value.map(i => ({ nome: i.nome, quantidade: i.quantidade }))
+    carnes: carnesSelecionadas.value.map((c) => ({ nome: c.nome, quantidade: c.quantidade })),
+    insumos: insumosSelecionados.value.map((i) => ({ nome: i.nome, quantidade: i.quantidade })),
   };
 
   console.log('Salvar Evento:', payload);
@@ -269,9 +276,9 @@ const onSubmit = () => {
       color: 'positive',
       textColor: 'white',
       icon: 'check',
-      message: 'Evento criado com sucesso!'
+      message: 'Evento criado com sucesso!',
     });
-    router.push('/home');
+    void router.push('/home');
   }, 1200);
 };
 </script>
@@ -304,10 +311,12 @@ const onSubmit = () => {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.3s ease;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
