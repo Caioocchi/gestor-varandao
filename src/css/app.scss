@@ -101,3 +101,53 @@ body {
     transform: translateY(0);
   }
 }
+
+.selection-item {
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.bg-accent-light {
+  background-color: rgba($primary, 0.08);
+  border: 1px solid rgba($primary, 0.2);
+}
+
+.bg-secondary-light {
+  background-color: rgba($secondary, 0.08);
+  border: 1px solid rgba($secondary, 0.2);
+}
+
+.small-quantity-input {
+  width: 90px;
+  ::v-deep(.q-field__control) {
+    height: 32px;
+    min-height: 32px;
+  }
+  ::v-deep(.q-field__native) {
+    padding: 0 4px;
+    text-align: center;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+main {
+  justify-items: center;
+}
+
+.checkbox-ellipsis {
+  min-width: 0;
+}
+
+.checkbox-ellipsis .q-checkbox__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

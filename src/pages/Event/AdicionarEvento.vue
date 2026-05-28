@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-lg">
+  <q-page class="q-pa-md">
     <div class="full-width" style="max-width: 800px; margin: 0 auto">
       <!-- Header Section -->
       <div class="q-mb-xl">
@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <q-form @submit="onSubmit" class="q-gutter-y-lg">
+      <q-form @submit.once="onSubmit" class="q-gutter-y-lg">
         <!-- Event Details Card -->
         <q-card class="card-base shadow-soft" bordered>
           <q-card-section class="q-pa-lg">
@@ -17,7 +17,7 @@
             <div class="row q-col-gutter-md">
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model="evento.contratante"
+                  v-model="evento.nome_contratante"
                   label="Nome do Contratante"
                   outlined
                   stack-label
@@ -34,21 +34,86 @@
               </div>
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model="evento.local"
-                  label="Local do Evento"
+                  v-model="evento.endereco.cep"
+                  label="CEP"
                   outlined
                   stack-label
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
+                  mask="#####-###"
                   lazy-rules
-                  :rules="[(val) => !!val || 'Local é obrigatório']"
+                  :rules="[(val) => !!val || 'CEP é obrigatório']"
+                  :error="cepErro !== ''"
+                  :error-message="cepErro"
                 >
                   <template v-slot:prepend>
                     <q-icon name="place" color="primary" />
                   </template>
+                  <template v-if="!verificado" v-slot:append>
+                    <q-btn :ripple="false" outline @click="validarCep" no-caps label="Verificar" />
+                  </template>
+                  <template v-else v-slot:append>
+                    <q-btn :ripple="false" outline @click="limparEndereco" no-caps label="Limpar" />
+                  </template>
                 </q-input>
               </div>
+              <template v-if="enderecoValidado">
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="evento.endereco.logradouro"
+                    label="Logradouro"
+                    outlined
+                    stack-label
+                    readonly
+                    bg-color="white"
+                    class="input-rounded"
+                  />
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="evento.endereco.numero"
+                    label="Número"
+                    outlined
+                    stack-label
+                    bg-color="white"
+                    class="input-rounded"
+                  />
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="evento.endereco.bairro"
+                    label="Bairro"
+                    outlined
+                    stack-label
+                    readonly
+                    bg-color="white"
+                    class="input-rounded"
+                  />
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="evento.endereco.cidade"
+                    label="Cidade"
+                    outlined
+                    stack-label
+                    readonly
+                    bg-color="white"
+                    class="input-rounded"
+                  />
+                </div>
+                <div class="col-12">
+                  <q-input
+                    v-model="evento.endereco.complemento"
+                    label="Complemento"
+                    outlined
+                    stack-label
+                    color="primary"
+                    bg-color="white"
+                    class="input-rounded"
+                  />
+                </div>
+              </template>
               <div class="col-12 col-md-6">
                 <q-input
                   v-model="evento.data"
@@ -69,7 +134,7 @@
               </div>
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model="evento.horario"
+                  v-model="evento.hora"
                   label="Horário"
                   type="time"
                   outlined
@@ -82,6 +147,24 @@
                 >
                   <template v-slot:prepend>
                     <q-icon name="schedule" color="primary" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input
+                  v-model="evento.qtde_pessoas"
+                  label="Quantidade de pessoas"
+                  type="number"
+                  outlined
+                  stack-label
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
+                  lazy-rules
+                  :rules="[(val) => !!val || 'Quantidade de pessoas é obrigatório']"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="groups" color="primary" />
                   </template>
                 </q-input>
               </div>
@@ -106,80 +189,13 @@
           </q-card-section>
         </q-card>
 
-        <!-- Meats Selection Card -->
-        <q-card class="card-base shadow-soft" bordered>
-          <q-card-section class="q-pa-lg">
-            <div class="row items-center justify-between q-mb-md">
-              <div class="text-h6 text-weight-bold text-primary">Carnes</div>
-              <q-badge color="primary" :label="`${carnesSelecionadas.length} item(s)`" />
-            </div>
-
-            <div class="row q-col-gutter-md">
-              <div v-for="carne in listaCarnes" :key="carne.id" class="col-12 col-sm-6">
-                <div
-                  class="selection-item q-pa-sm rounded-borders row items-center"
-                  :class="carne.selected ? 'bg-accent-light' : 'bg-grey-1'"
-                >
-                  <q-checkbox v-model="carne.selected" :label="carne.nome" color="primary" dense />
-                  <q-space />
-                  <transition name="fade">
-                    <div v-if="carne.selected" class="row items-center no-wrap">
-                      <q-input
-                        v-model.number="carne.quantidade"
-                        type="number"
-                        outlined
-                        dense
-                        suffix="kg"
-                        class="small-quantity-input"
-                        bg-color="white"
-                      />
-                    </div>
-                  </transition>
-                </div>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-
-        <!-- Supplies Selection Card -->
-        <q-card class="card-base shadow-soft" bordered>
-          <q-card-section class="q-pa-lg">
-            <div class="row items-center justify-between q-mb-md">
-              <div class="text-h6 text-weight-bold text-primary">Insumos</div>
-              <q-badge color="secondary" :label="`${insumosSelecionados.length} item(s)`" />
-            </div>
-
-            <div class="row q-col-gutter-md">
-              <div v-for="insumo in listaInsumos" :key="insumo.id" class="col-12 col-sm-6">
-                <div
-                  class="selection-item q-pa-sm rounded-borders row items-center"
-                  :class="insumo.selected ? 'bg-secondary-light' : 'bg-grey-1'"
-                >
-                  <q-checkbox
-                    v-model="insumo.selected"
-                    :label="insumo.nome"
-                    color="secondary"
-                    dense
-                  />
-                  <q-space />
-                  <transition name="fade">
-                    <div v-if="insumo.selected" class="row items-center no-wrap">
-                      <q-input
-                        v-model.number="insumo.quantidade"
-                        type="number"
-                        outlined
-                        dense
-                        :suffix="insumo.unidade"
-                        class="small-quantity-input"
-                        bg-color="white"
-                      />
-                    </div>
-                  </transition>
-                </div>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
+        <div v-for="categoria in categoriasProdutos" :key="categoria.slug">
+          <CategoriaCard
+            :categoria="categoria.label"
+            :produtos="categoria.produtos.value"
+            :color="categoria.color"
+          />
+        </div>
 
         <!-- Submit Button -->
         <div class="q-pt-md">
@@ -201,75 +217,236 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, type Ref, toRaw } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
+import { api } from 'src/boot/axios';
+import CategoriaCard from 'src/components/CategoriaCard.vue';
 
 const $q = useQuasar();
 const router = useRouter();
 
-interface Evento {
-  contratante: string;
-  local: string;
-  data: string;
-  horario: string;
-  observacoes: string;
+interface Endereco {
+  cep: string;
+  logradouro: string;
+  numero: string;
+  complemento: string;
+  bairro: string;
+  cidade: string;
 }
 
-const evento = ref<Evento>({
-  contratante: '',
-  local: '',
-  data: '',
-  horario: '',
-  observacoes: '',
-});
-
-interface ItemBase {
-  id: number;
+interface Itens {
+  produtoId: string;
   nome: string;
-  selected: boolean;
+  categoria: string;
   quantidade: number;
   unidade: string;
 }
 
-const listaCarnes = ref<ItemBase[]>([
-  { id: 1, nome: 'Picanha', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 2, nome: 'Alcatra', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 3, nome: 'Cupim', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 4, nome: 'Linguiça Tosc.', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 5, nome: 'Frango (Tulipa)', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 6, nome: 'Coração', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 7, nome: 'Costela Bovina', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 8, nome: 'Costelinha Suína', selected: false, quantidade: 1, unidade: 'kg' },
-]);
+interface Evento {
+  nome_contratante: string;
+  endereco: Endereco;
+  data: string;
+  hora: string;
+  qtde_pessoas: number;
+  observacoes: string;
+  itens: Itens;
+}
 
-const listaInsumos = ref<ItemBase[]>([
-  { id: 1, nome: 'Carvão', selected: false, quantidade: 1, unidade: 'sc' },
-  { id: 2, nome: 'Sal Grosso', selected: false, quantidade: 1, unidade: 'kg' },
-  { id: 3, nome: 'Pratos Descart.', selected: false, quantidade: 50, unidade: 'un' },
-  { id: 4, nome: 'Talheres Descart.', selected: false, quantidade: 50, unidade: 'un' },
-  { id: 5, nome: 'Guardanapos', selected: false, quantidade: 2, unidade: 'pt' },
-  { id: 6, nome: 'Álcool Gel', selected: false, quantidade: 1, unidade: 'un' },
-  { id: 7, nome: 'Pão de Alho', selected: false, quantidade: 5, unidade: 'un' },
-  { id: 8, nome: 'Farofa', selected: false, quantidade: 1, unidade: 'kg' },
-]);
+const evento = ref<Evento>({
+  nome_contratante: '',
+  endereco: {
+    cep: '',
+    logradouro: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+  },
+  data: '',
+  hora: '',
+  qtde_pessoas: 0,
+  observacoes: '',
+  itens: {
+    produtoId: '',
+    nome: '',
+    categoria: '',
+    quantidade: 0,
+    unidade: '',
+  },
+});
 
-const carnesSelecionadas = computed(() => listaCarnes.value.filter((c) => c.selected));
-const insumosSelecionados = computed(() => listaInsumos.value.filter((i) => i.selected));
+const cepErro = ref('');
+const enderecoValidado = ref(false);
+const verificado = ref(false);
 
-const onSubmit = () => {
+const limparEndereco = () => {
+  evento.value.endereco.cep = '';
+  evento.value.endereco.logradouro = '';
+  evento.value.endereco.numero = '';
+  evento.value.endereco.bairro = '';
+  evento.value.endereco.cidade = '';
+  enderecoValidado.value = false;
+  verificado.value = false;
+};
+
+const validarCep = async () => {
+  cepErro.value = '';
+  enderecoValidado.value = false;
+  verificado.value = false;
+
+  const cep = evento.value.endereco.cep.replace(/\D/g, '');
+
+  if (cep.length !== 8) {
+    cepErro.value = 'CEP inválido';
+    limparEndereco();
+    return;
+  }
+
+  $q.loading.show({
+    message: 'Verificando endereço...',
+  });
+
+  try {
+    const { data } = await api.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+    if (data.erro) {
+      cepErro.value = 'CEP não encontrado';
+      limparEndereco();
+      return;
+    }
+
+    evento.value.endereco.logradouro = data.logradouro ?? '';
+
+    evento.value.endereco.bairro = data.bairro ?? '';
+
+    evento.value.endereco.cidade = data.localidade ?? '';
+
+    enderecoValidado.value = true;
+    verificado.value = true;
+  } catch (error) {
+    console.log(error);
+
+    cepErro.value = 'Erro ao buscar CEP';
+
+    limparEndereco();
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+interface Produto {
+  produtoId: number;
+  nome: string;
+  selected: boolean;
+  categoria: string;
+  quantidade: number;
+  unidade: string;
+}
+
+interface CategoriaProduto {
+  slug: string;
+  label: string;
+  color: string;
+  produtos: Ref<Produto[]>;
+}
+
+const categoriasProdutos: CategoriaProduto[] = [
+  { slug: 'proteina', label: 'Carnes', color: 'primary', produtos: ref<Produto[]>([]) },
+  {
+    slug: 'limpeza_identidade',
+    label: 'Limpeza e Identidade',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  {
+    slug: 'servico_mesa',
+    label: 'Serviço de Mesa',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  {
+    slug: 'molho_finalizacao',
+    label: 'Molhos e Finalização',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  {
+    slug: 'acompanhamento',
+    label: 'Acompanhamentos',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  { slug: 'equipamento', label: 'Equipamentos', color: 'secondary', produtos: ref<Produto[]>([]) },
+];
+
+const mapProdutoParaItem = (produto: Produto, categoria: string): Produto => ({
+  produtoId: produto.produtoId,
+  nome: produto.nome,
+  selected: false,
+  categoria,
+  quantidade: 0,
+  unidade: produto.unidade,
+});
+
+const buscarProdutosPorCategoria = async (categoria: string) => {
+  const { data } = await api.get(`/produto/${categoria}`);
+  if (!Array.isArray(data)) {
+    return [] as Produto[];
+  }
+
+  return data.map((produto: Produto) => mapProdutoParaItem(produto, categoria));
+};
+
+const carregarProdutos = async () => {
+  try {
+    $q.loading.show({ message: 'Carregando produtos...' });
+
+    await Promise.all(
+      categoriasProdutos.map(async (categoria) => {
+        categoria.produtos.value = await buscarProdutosPorCategoria(categoria.slug);
+      }),
+    );
+  } catch (error) {
+    console.error('Erro ao buscar produtos:', error);
+    $q.notify({
+      color: 'negative',
+      textColor: 'white',
+      icon: 'warning',
+      message: 'Não foi possível carregar os produtos. Atualize a página e tente novamente.',
+    });
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+onMounted(carregarProdutos);
+
+const itensSelecionados = computed(() =>
+  categoriasProdutos.flatMap((cat) => cat.produtos.value.filter((p) => p.selected)),
+);
+
+const onSubmit = async () => {
   $q.loading.show({ message: 'Salvando evento...' });
 
-  // Prepare data (for future API integration)
+  // Garantir que o payload não contenha Proxies reativos
+  const rawEvento = toRaw(evento.value);
   const payload = {
-    ...evento.value,
-    carnes: carnesSelecionadas.value.map((c) => ({ nome: c.nome, quantidade: c.quantidade })),
-    insumos: insumosSelecionados.value.map((i) => ({ nome: i.nome, quantidade: i.quantidade })),
+    ...rawEvento,
+    endereco: { ...(rawEvento.endereco ? toRaw(rawEvento.endereco) : {}) },
+    itens: itensSelecionados.value.map((p) => ({
+      produtoId: p.produtoId,
+      nome: p.nome,
+      categoria: p.categoria,
+      quantidade: p.quantidade,
+      unidade: p.unidade,
+    })),
   };
 
-  console.log('Salvar Evento:', payload);
+  console.log('payload', payload);
 
-  // Simulate API delay
+  await api.post('/eventos', payload);
+
   setTimeout(() => {
     $q.loading.hide();
     $q.notify({
@@ -282,41 +459,3 @@ const onSubmit = () => {
   }, 1200);
 };
 </script>
-
-<style lang="scss" scoped>
-.selection-item {
-  border-radius: 12px;
-  transition: background-color 0.3s ease;
-}
-
-.bg-accent-light {
-  background-color: rgba($primary, 0.08);
-  border: 1px solid rgba($primary, 0.2);
-}
-
-.bg-secondary-light {
-  background-color: rgba($secondary, 0.08);
-  border: 1px solid rgba($secondary, 0.2);
-}
-
-.small-quantity-input {
-  width: 90px;
-  ::v-deep(.q-field__control) {
-    height: 32px;
-    min-height: 32px;
-  }
-  ::v-deep(.q-field__native) {
-    padding: 0 4px;
-    text-align: center;
-  }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
