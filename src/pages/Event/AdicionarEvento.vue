@@ -4,9 +4,7 @@
       <!-- Header Section -->
       <div class="q-mb-xl">
         <div class="text-h4 text-weight-bold text-primary">Novo Evento</div>
-        <div class="text-subtitle1 text-grey-6">
-          Preencha os detalhes e selecione os itens do cardápio
-        </div>
+        <div class="text-subtitle1 text-grey-6">Preencha os dados da contratante</div>
       </div>
 
       <q-form @submit.once="onSubmit" class="q-gutter-y-lg">
@@ -26,6 +24,25 @@
                   class="input-rounded"
                   lazy-rules
                   :rules="[(val) => !!val || 'Contratante é obrigatório']"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="person" color="primary" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input
+                  v-model="evento.telefone"
+                  label="Telefone do Contratante"
+                  mask="(xx) xxxxx-xxxx"
+                  placeholder="(00) 00000-0000"
+                  outlined
+                  stack-label
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
+                  lazy-rules
+                  :rules="[(val) => !!val || 'Telefone é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="person" color="primary" />
@@ -117,7 +134,7 @@
               <div class="col-12 col-md-6">
                 <q-input
                   v-model="evento.data"
-                  label="Data"
+                  label="Data do evento"
                   type="date"
                   outlined
                   stack-label
@@ -135,7 +152,7 @@
               <div class="col-12 col-md-6">
                 <q-input
                   v-model="evento.hora"
-                  label="Horário"
+                  label="Horário do evento"
                   type="time"
                   outlined
                   stack-label
@@ -149,6 +166,46 @@
                     <q-icon name="schedule" color="primary" />
                   </template>
                 </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-select
+                  v-model="evento.menu"
+                  label="Tipo de menu"
+                  outlined
+                  stack-label
+                  :options="options"
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
+                  lazy-rules
+                  :rules="[(val) => !!val || 'Selecione um tipo de menu']"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="groups" color="primary" />
+                  </template>
+                </q-select>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-select
+                  v-model="evento.bebidas"
+                  label="O evento terá bebidas?"
+                  :options="bebidasOptions"
+                  option-label="label"
+                  option-value="value"
+                  emit-value
+                  map-options
+                  outlined
+                  stack-label
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
+                  lazy-rules
+                  :rules="[(val) => val != null || 'Quantidade de pessoas é obrigatório']"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="groups" color="primary" />
+                  </template>
+                </q-select>
               </div>
               <div class="col-12 col-md-6">
                 <q-input
@@ -189,13 +246,13 @@
           </q-card-section>
         </q-card>
 
-        <div v-for="categoria in categoriasProdutos" :key="categoria.slug">
+        <!-- <div v-for="categoria in categoriasProdutos" :key="categoria.slug">
           <CategoriaCard
             :categoria="categoria.label"
             :produtos="categoria.produtos.value"
             :color="categoria.color"
           />
-        </div>
+        </div> -->
 
         <!-- Submit Button -->
         <div class="q-pt-md">
@@ -217,11 +274,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, type Ref, toRaw } from 'vue';
+import { ref, onMounted, type Ref, toRaw } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
-import CategoriaCard from 'src/components/CategoriaCard.vue';
+// import CategoriaCard from 'src/components/CategoriaCard.vue';
 
 const $q = useQuasar();
 const router = useRouter();
@@ -235,26 +292,35 @@ interface Endereco {
   cidade: string;
 }
 
-interface Itens {
-  produtoId: string;
-  nome: string;
-  categoria: string;
-  quantidade: number;
-  unidade: string;
-}
+// interface Itens {
+//   produtoId: string;
+//   nome: string;
+//   categoria: string;
+//   quantidade: number;
+//   unidade: string;
+// }
 
 interface Evento {
   nome_contratante: string;
+  telefone: string;
   endereco: Endereco;
   data: string;
   hora: string;
-  qtde_pessoas: number;
+  qtde_pessoas: number | null;
+  menu: string;
+  bebidas: boolean | null;
   observacoes: string;
-  itens: Itens;
+  // itens: Itens;
 }
+
+const bebidasOptions = [
+  { value: true, label: 'Sim' },
+  { value: false, label: 'Não' },
+];
 
 const evento = ref<Evento>({
   nome_contratante: '',
+  telefone: '',
   endereco: {
     cep: '',
     logradouro: '',
@@ -265,16 +331,20 @@ const evento = ref<Evento>({
   },
   data: '',
   hora: '',
-  qtde_pessoas: 0,
+  qtde_pessoas: null,
   observacoes: '',
-  itens: {
-    produtoId: '',
-    nome: '',
-    categoria: '',
-    quantidade: 0,
-    unidade: '',
-  },
+  menu: '',
+  bebidas: null,
+  // itens: {
+  //   produtoId: '',
+  //   nome: '',
+  //   categoria: '',
+  //   quantidade: 0,
+  //   unidade: '',
+  // },
 });
+
+const options = ['Menu Premium', 'Menu Exclusivo', 'Menu VIP', 'Menu Mar e Terra'];
 
 const cepErro = ref('');
 const enderecoValidado = ref(false);
@@ -422,9 +492,9 @@ const carregarProdutos = async () => {
 
 onMounted(carregarProdutos);
 
-const itensSelecionados = computed(() =>
-  categoriasProdutos.flatMap((cat) => cat.produtos.value.filter((p) => p.selected)),
-);
+// const itensSelecionados = computed(() =>
+//   categoriasProdutos.flatMap((cat) => cat.produtos.value.filter((p) => p.selected)),
+// );
 
 const onSubmit = async () => {
   $q.loading.show({ message: 'Salvando evento...' });
@@ -434,13 +504,13 @@ const onSubmit = async () => {
   const payload = {
     ...rawEvento,
     endereco: { ...(rawEvento.endereco ? toRaw(rawEvento.endereco) : {}) },
-    itens: itensSelecionados.value.map((p) => ({
-      produtoId: p.produtoId,
-      nome: p.nome,
-      categoria: p.categoria,
-      quantidade: p.quantidade,
-      unidade: p.unidade,
-    })),
+    // itens: itensSelecionados.value.map((p) => ({
+    //   produtoId: p.produtoId,
+    //   nome: p.nome,
+    //   categoria: p.categoria,
+    //   quantidade: p.quantidade,
+    //   unidade: p.unidade,
+    // })),
   };
 
   console.log('payload', payload);

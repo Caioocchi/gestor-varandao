@@ -1,6 +1,6 @@
 {
   "name": "Gestor Varandão",
-  "short_name": "GestorVarandao",
+  "short_name": "Gestor Varandão",
   "description": "Aplicativo de gerenciamento do Varandão",
   "display": "standalone",
   "orientation": "portrait",
