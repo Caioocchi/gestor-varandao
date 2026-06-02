@@ -1,48 +1,62 @@
 <template>
   <q-card class="card-base shadow-soft" bordered>
-    <q-card-section class="q-pa-lg">
-      <div class="row items-center justify-between q-mb-md">
-        <div class="text-h6 text-weight-bold text-primary">{{ categoria }}</div>
-        <q-badge :color="checkboxColor" :label="`${selectedCount} item(s)`" />
-      </div>
+    <q-expansion-item
+      expand-separator
+      icon="category"
+      header-class="text-primary"
+      :default-opened="route.path === '/eventos/adicionar' ? false : true"
+    >
+      <template v-slot:header>
+        <q-item-section>
+          <q-item-label class="text-h6 text-weight-bold text-primary">{{ categoria }}</q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-badge :color="checkboxColor" :label="`${selectedCount} item(s)`" />
+        </q-item-section>
+      </template>
 
-      <div class="row q-col-gutter-md">
-        <div v-for="produto in produtos" :key="produto.produtoId" class="col-12 col-sm-6">
-          <div
-            class="selection-item q-pa-sm rounded-borders row items-center no-wrap"
-            :class="produto.selected ? 'bg-accent-light' : 'bg-grey-1'"
-          >
-            <q-checkbox
-              v-model="produto.selected"
-              :label="produto.nome"
-              :color="checkboxColor"
-              class="checkbox-ellipsis col"
-              dense
-            />
+      <q-card-section class="q-pa-lg q-pt-none">
+        <div class="row q-col-gutter-md">
+          <div v-for="produto in produtos" :key="produto.produtoId" class="col-12 col-sm-6">
+            <div
+              class="selection-item q-pa-sm rounded-borders row items-center no-wrap"
+              :class="produto.selected ? 'bg-accent-light' : 'bg-grey-1'"
+            >
+              <q-checkbox
+                v-model="produto.selected"
+                :label="produto.nome"
+                :color="checkboxColor"
+                class="checkbox-ellipsis col"
+                dense
+              />
 
-            <transition name="fade">
-              <div v-if="produto.selected" class="q-ml-sm">
-                <q-input
-                  v-model="produto.quantidade"
-                  type="number"
-                  min="0"
-                  outlined
-                  dense
-                  :suffix="produto.unidade || 'un'"
-                  class="small-quantity-input"
-                  bg-color="white"
-                />
-              </div>
-            </transition>
+              <transition name="fade">
+                <div v-if="produto.selected" class="q-ml-sm">
+                  <q-input
+                    v-model="produto.quantidade"
+                    type="number"
+                    min="0"
+                    outlined
+                    dense
+                    :suffix="produto.unidade || 'un'"
+                    class="small-quantity-input"
+                    bg-color="white"
+                  />
+                </div>
+              </transition>
+            </div>
           </div>
         </div>
-      </div>
-    </q-card-section>
+      </q-card-section>
+    </q-expansion-item>
   </q-card>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 interface Produto {
   produtoId: string;

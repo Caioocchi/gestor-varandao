@@ -49,8 +49,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 import CardEventoComponent from 'src/components/CardEventoComponent.vue';
+
+const $q = useQuasar();
 
 interface Endereco {
   cep: string;
@@ -76,8 +79,22 @@ interface Evento {
 const eventos = ref<Evento[]>([]);
 
 const loadEventos = async () => {
-  const { data } = await api.get('/eventos');
-  eventos.value = data;
+  $q.loading.show({
+    message: 'Carregando eventos...',
+  });
+  try {
+    const { data } = await api.get('/eventos');
+    eventos.value = data;
+  } catch (error) {
+    console.error('Erro ao carregar eventos:', error);
+    $q.notify({
+      color: 'negative',
+      message: 'Erro ao carregar eventos',
+      icon: 'warning',
+    });
+  } finally {
+    $q.loading.hide();
+  }
 };
 
 onMounted(loadEventos);

@@ -30,7 +30,6 @@ export default {
       pix: string;
       telefone: string;
       cpf: string;
-      funcao: string;
       urlFoto: File | null;
     }
 
@@ -43,10 +42,11 @@ export default {
         formData.append('pix', freela.pix);
         formData.append('telefone', freela.telefone);
         formData.append('cpf', freela.cpf);
-        formData.append('funcao', freela.funcao);
 
         if (freela.urlFoto) {
           formData.append('urlFoto', freela.urlFoto);
+        } else {
+          formData.append('urlFoto', '');
         }
 
         await api.post('/freelas', formData, {

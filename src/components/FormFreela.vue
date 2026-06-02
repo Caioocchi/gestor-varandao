@@ -6,13 +6,10 @@
           outlined
           v-model="nome"
           label="Nome completo"
-          placeholder="Ex: João Silva"
           stack-label
           color="primary"
           bg-color="white"
           class="input-rounded"
-          lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Digite o nome completo do Freela']"
         >
           <template v-slot:prepend>
             <q-icon name="person_outline" color="primary" />
@@ -21,21 +18,16 @@
 
         <q-input
           outlined
-          type="date"
+          mask="##/##"
           v-model="dt_nascimento"
-          label="Data de nascimento"
+          label="Aniversário"
           stack-label
           color="primary"
           bg-color="white"
           class="input-rounded"
-          lazy-rules
-          :rules="[
-            (val) => (val !== null && val !== '') || 'Digite a data de nascimento do Freela',
-            (val) => calcularIdade(val) >= 18 || 'O Freela precisa ser maior que 18 anos',
-          ]"
         >
           <template v-slot:prepend>
-            <q-icon name="calendar_today" color="primary" />
+            <q-icon name="celebration" color="primary" />
           </template>
         </q-input>
 
@@ -48,8 +40,6 @@
           color="primary"
           bg-color="white"
           class="input-rounded"
-          lazy-rules
-          :rules="[(val) => (val !== null && val !== '') || 'Digite o Pix do Freela']"
         >
           <template v-slot:prepend>
             <q-icon name="account_balance_wallet" color="primary" />
@@ -66,8 +56,6 @@
           bg-color="white"
           class="input-rounded"
           mask="(##) #####-####"
-          lazy-rules
-          :rules="[(val) => (val !== null && val !== '') || 'Digite o telefone do Freela']"
         >
           <template v-slot:prepend>
             <q-icon name="phone_iphone" color="primary" />
@@ -84,11 +72,6 @@
           bg-color="white"
           class="input-rounded"
           mask="###.###.###-##"
-          lazy-rules
-          :rules="[
-            (val) => (val !== null && val !== '') || 'Digite o CPF do Freela',
-            (val) => validarCPF(val) || 'CPF inválido',
-          ]"
         >
           <template v-slot:prepend>
             <q-icon name="assignment_ind" color="primary" />
@@ -126,8 +109,6 @@
 </template>
 
 <script setup lang="ts">
-import { calcularIdade } from 'src/utils/calcularIdade';
-import { validarCPF } from 'src/utils/validarCPF';
 import { computed, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
@@ -137,7 +118,6 @@ interface Freela {
   pix: string;
   telefone: string;
   cpf: string;
-  funcao: string;
   urlFoto: File | null;
 }
 
@@ -150,7 +130,6 @@ const props = defineProps({
       pix: '',
       telefone: '',
       cpf: '',
-      funcao: '',
       urlFoto: null,
     }),
   },
@@ -167,7 +146,6 @@ const dt_nascimento = ref(props.freela.dt_nascimento);
 const pix = ref(props.freela.pix);
 const telefone = ref(props.freela.telefone);
 const cpf = ref(props.freela.cpf);
-const funcao = ref(props.freela.funcao);
 const urlFoto = ref<File | null>(props.freela.urlFoto ?? null);
 
 watch(
@@ -178,7 +156,6 @@ watch(
     pix.value = value.pix;
     telefone.value = value.telefone;
     cpf.value = value.cpf;
-    funcao.value = value.funcao;
     urlFoto.value = value.urlFoto ?? null;
   },
   { immediate: true, deep: true },
@@ -193,7 +170,6 @@ function enviarFreela() {
     pix: pix.value,
     telefone: telefone.value,
     cpf: cpf.value,
-    funcao: funcao.value,
     urlFoto: urlFoto.value,
   });
 }

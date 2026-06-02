@@ -48,7 +48,7 @@
 
         <div class="q-mt-sm grid-info">
           <div class="info-item">
-            <q-icon name="person" color="grey-6" size="16px" />
+            <q-icon name="mdi-chef-hat" color="grey-6" size="16px" />
             <span class="text-grey-8 text-caption">{{ props.evento.responsavel }}</span>
           </div>
           <div class="info-item">

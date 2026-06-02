@@ -13,6 +13,16 @@
         <div class="col-12 col-md-4">
           <q-card class="card-base shadow-soft full-height">
             <q-card-section class="q-pa-lg">
+              <div class="text-overline text-primary text-weight-bold q-mb-sm">
+                Chef responsável
+              </div>
+              <div class="row items-center q-mb-md">
+                <q-icon name="mdi-chef-hat" color="grey-6" size="20px" class="q-mr-sm" />
+                <div class="text-body1 text-weight-medium">{{ evento.responsavel }}</div>
+              </div>
+
+              <q-separator class="q-my-lg" />
+
               <div class="text-overline text-primary text-weight-bold q-mb-sm">Contratante</div>
               <div class="row items-center q-mb-md">
                 <q-icon name="person" color="grey-6" size="20px" class="q-mr-sm" />
@@ -258,6 +268,7 @@ interface Evento {
   endereco: Endereco;
   data: string;
   hora: string;
+  responsavel: string;
   qtde_pessoas: number | null;
   menu: string;
   bebidas: boolean | null;
@@ -280,6 +291,7 @@ const evento = ref<Evento>({
   },
   data: '',
   hora: '',
+  responsavel: '',
   qtde_pessoas: null,
   observacoes: '',
   sugestao_qtd: '',
@@ -323,7 +335,7 @@ const formatarData = (data: string) => {
 
 const formatarCategoria = (slug: string) => {
   const cats: Record<string, string> = {
-    proteina: 'Carnes',
+    proteina: 'Proteínas',
     limpeza_identidade: 'Limpeza e Identidade',
     servico_mesa: 'Serviço de Mesa',
     molho_finalizacao: 'Molhos e Finalização',

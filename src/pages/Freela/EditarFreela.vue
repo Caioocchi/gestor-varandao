@@ -38,7 +38,6 @@ export default {
       pix: string;
       telefone: string;
       cpf: string;
-      funcao: string;
       urlFoto: File | null;
     }
 
@@ -52,7 +51,6 @@ export default {
       pix: '',
       telefone: '',
       cpf: '',
-      funcao: '',
       urlFoto: null,
     });
 
@@ -79,7 +77,6 @@ export default {
           pix: data.pix,
           telefone: data.telefone,
           cpf: data.cpf,
-          funcao: data.funcao,
           urlFoto: null,
         };
       } catch (error) {
@@ -105,7 +102,6 @@ export default {
         formData.append('pix', freela.pix);
         formData.append('telefone', freela.telefone);
         formData.append('cpf', freela.cpf);
-        formData.append('funcao', freela.funcao);
 
         if (freela.urlFoto) {
           formData.append('urlFoto', freela.urlFoto);

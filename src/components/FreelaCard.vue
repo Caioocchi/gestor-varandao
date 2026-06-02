@@ -1,42 +1,53 @@
 <template>
   <q-card class="card-base shadow-soft" bordered>
-    <q-card-section class="q-pa-lg">
-      <div class="row items-center justify-between q-mb-md">
-        <div class="text-h6 text-weight-bold text-primary">{{ titulo }}</div>
-        <q-badge color="primary" :label="`${selectedCount} selecionado(s)`" />
-      </div>
+    <q-expansion-item
+      expand-separator
+      icon="groups"
+      header-class="text-primary"
+      default-opened
+    >
+      <template v-slot:header>
+        <q-item-section>
+          <q-item-label class="text-h6 text-weight-bold text-primary">{{ titulo }}</q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-badge color="primary" :label="`${selectedCount} selecionado(s)`" />
+        </q-item-section>
+      </template>
 
-      <div class="row q-col-gutter-md">
-        <div v-for="freela in freelas" :key="freela._id" class="col-12 col-sm-6">
-          <div
-            class="selection-item q-pa-sm rounded-borders row items-center no-wrap"
-            :class="freela.selected ? 'bg-accent-light' : 'bg-grey-1'"
-          >
-            <q-checkbox
-              v-model="freela.selected"
-              :label="freela.nome"
-              color="primary"
-              class="checkbox-ellipsis col"
-              dense
-            />
+      <q-card-section class="q-pa-lg q-pt-none">
+        <div class="row q-col-gutter-md">
+          <div v-for="freela in freelas" :key="freela._id" class="col-12 col-sm-6">
+            <div
+              class="selection-item q-pa-sm rounded-borders row items-center no-wrap"
+              :class="freela.selected ? 'bg-accent-light' : 'bg-grey-1'"
+            >
+              <q-checkbox
+                v-model="freela.selected"
+                :label="freela.nome"
+                color="primary"
+                class="checkbox-ellipsis col"
+                dense
+              />
 
-            <transition name="fade">
-              <div v-if="freela.selected" class="q-ml-sm" style="min-width: 120px">
-                <q-select
-                  v-model="freela.funcao"
-                  :options="funcoes"
-                  outlined
-                  dense
-                  class="small-role-select"
-                  bg-color="white"
-                  placeholder="Função"
-                />
-              </div>
-            </transition>
+              <transition name="fade">
+                <div v-if="freela.selected" class="q-ml-sm" style="min-width: 120px">
+                  <q-select
+                    v-model="freela.funcao"
+                    :options="funcoes"
+                    outlined
+                    dense
+                    class="small-role-select"
+                    bg-color="white"
+                    placeholder="Função"
+                  />
+                </div>
+              </transition>
+            </div>
           </div>
         </div>
-      </div>
-    </q-card-section>
+      </q-card-section>
+    </q-expansion-item>
   </q-card>
 </template>
 

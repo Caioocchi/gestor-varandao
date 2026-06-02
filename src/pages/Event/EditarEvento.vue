@@ -183,7 +183,7 @@
                   :rules="[(val) => !!val || 'Selecione um tipo de menu']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-silverware-variant" color="primary" />
                   </template>
                 </q-select>
               </div>
@@ -205,7 +205,7 @@
                   :rules="[(val) => val != null || 'Este campo é obrigatório']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-glass-cocktail" color="primary" />
                   </template>
                 </q-select>
               </div>
@@ -223,7 +223,7 @@
                   :rules="[(val) => !!val || 'Selecione um responsável']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-chef-hat" color="primary" />
                   </template>
                 </q-select>
               </div>
@@ -241,7 +241,7 @@
                   :rules="[(val) => !!val || 'Quantidade de pessoas é obrigatório']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-account-group" color="primary" />
                   </template>
                 </q-input>
               </div>
@@ -414,7 +414,15 @@ const options = ['Menu Premium', 'Menu Exclusivo', 'Menu VIP', 'Menu Mar e Terra
 
 const responsaveis = ['Alexandre', 'Antonio', 'Kayque', 'André', 'Matheus'];
 
-const funcoes = ['Chef', 'Sous Chef', 'Garçom', 'Meitre', 'Pia'];
+const funcoes = [
+  'Chef',
+  'Sous Chef',
+  'Garçom churrasco',
+  'Garçom bebida',
+  'Meitre',
+  'Pia',
+  'Copeiro',
+];
 
 const freelasDisponiveis = ref<Freelas[]>([]);
 
@@ -449,25 +457,45 @@ const sincronizarFreelas = () => {
   });
 };
 
-// Mapeamento de itens por menu
+const menuPremium = [
+  'Ancho',
+  'Picanha',
+  'Linguiça de pernil',
+  'Coxinha da asa',
+  'Tulipa',
+  'Coração de frango',
+  'Queijo coalho',
+  'Copa lombo',
+  'Choripan',
+  'Pão de alho',
+  'Feijão tropeiro',
+  'Arroz',
+  'Farofa',
+  'Vinagrete',
+  'Mix de folhas',
+  'Pratos de mesa',
+  'Cubas de guarnições',
+  'Garfos de mesa',
+  'Facas de mesa',
+  'Colher de servir',
+  'Carvão',
+];
+
+const menuExclusivo = [...menuPremium, 'Costela suína', 'Paleta de cordeiro', 'Ratatouille'];
+
+const menuVIP = [...menuExclusivo, 'Hambúrguer'];
+
+const menuMarETerra = [...menuExclusivo, 'Paella de frutos do mar'];
+
 const menuMapping: Record<string, string[]> = {
-  'Menu Premium': [
-    'Ancho',
-    'Picanha',
-    'Linguiça de pernil',
-    'Pão de alho',
-    'Arroz',
-    'Farofa',
-    'Coxinha da asa',
-    'Coração de frango',
-    'Queijo coalho',
-    'Copa lombo',
-    'Choripan',
-  ],
-  'Menu Exclusivo': ['Filé Mignon', 'Chorizo', 'Frango', 'Maionese'],
-  'Menu VIP': ['Wagyu', 'Prime Rib', 'Cordeiro'],
-  'Menu Mar e Terra': ['Camarão', 'Ancho', 'Peixe'],
+  'Menu Premium': menuPremium,
+  'Menu Exclusivo': menuExclusivo,
+  'Menu VIP': menuVIP,
+  'Menu Mar e Terra': menuMarETerra,
 };
+
+// Conjunto de todos os itens que pertencem a algum menu (para tratar downgrades)
+const todosItensMenu = new Set([...menuPremium, ...menuExclusivo, ...menuVIP, ...menuMarETerra]);
 
 const cepErro = ref('');
 const enderecoValidado = ref(false);
@@ -598,6 +626,12 @@ onMounted(async () => {
 const categoriasProdutos: CategoriaProduto[] = [
   { slug: 'proteina', label: 'Proteínas', color: 'secondary', produtos: ref<Produto[]>([]) },
   {
+    slug: 'acompanhamento',
+    label: 'Acompanhamentos',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  {
     slug: 'limpeza_identidade',
     label: 'Limpeza e Identidade',
     color: 'secondary',
@@ -612,12 +646,6 @@ const categoriasProdutos: CategoriaProduto[] = [
   {
     slug: 'molho_finalizacao',
     label: 'Molhos e Finalização',
-    color: 'secondary',
-    produtos: ref<Produto[]>([]),
-  },
-  {
-    slug: 'acompanhamento',
-    label: 'Acompanhamentos',
     color: 'secondary',
     produtos: ref<Produto[]>([]),
   },
@@ -679,15 +707,16 @@ onMounted(carregarProdutos);
 const sugerirItensPorMenu = (menu: string) => {
   if (!menu) return;
   const itensSugeridos = menuMapping[menu] || [];
-  if (itensSugeridos.length === 0) return;
 
   categoriasProdutos.forEach((categoria) => {
-    if (categoria.produtos.value.length === 0) return;
-
     categoria.produtos.value.forEach((produto) => {
-      if (itensSugeridos.includes(produto.nome)) {
-        produto.selected = true;
-        if (!produto.quantidade) produto.quantidade = null;
+      // Se o produto faz parte do sistema de menus
+      if (todosItensMenu.has(produto.nome)) {
+        // Marca como selecionado se estiver no menu atual, desmarca se não estiver
+        produto.selected = itensSugeridos.includes(produto.nome);
+        if (produto.selected && !produto.quantidade) {
+          produto.quantidade = null;
+        }
       }
     });
   });

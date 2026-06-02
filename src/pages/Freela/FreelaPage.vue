@@ -23,10 +23,9 @@
         :key="freela._id"
         :id="freela._id"
         :nome="freela.nome"
-        :idade="calcularIdade(freela.dt_nascimento)"
+        :aniversario="freela.dt_nascimento"
         :pix="freela.pix"
         :telefone="freela.telefone"
-        :funcao="freela.funcao"
         :url-foto="freela.urlFoto"
         @deleted="loadFreelas"
       />
@@ -43,7 +42,9 @@
 import { api } from 'src/boot/axios';
 import CardFreelaComponent from 'src/components/CardFreelaComponent.vue';
 import { onMounted, ref } from 'vue';
-import { calcularIdade } from 'src/utils/calcularIdade';
+import { useQuasar } from 'quasar';
+
+const $q = useQuasar();
 
 interface Freela {
   _id: string;
@@ -52,15 +53,28 @@ interface Freela {
   pix: string;
   telefone: string;
   cpf: string;
-  funcao: string;
   urlFoto: string;
 }
 
 const freelas = ref<Freela[]>([]);
 
 const loadFreelas = async () => {
-  const { data } = await api.get('/freelas');
-  freelas.value = data;
+  $q.loading.show({
+    message: 'Carregando freelas...',
+  });
+  try {
+    const { data } = await api.get('/freelas');
+    freelas.value = data;
+  } catch (error) {
+    console.error('Erro ao carregar freelas:', error);
+    $q.notify({
+      color: 'negative',
+      message: 'Erro ao carregar freelas',
+      icon: 'warning',
+    });
+  } finally {
+    $q.loading.hide();
+  }
 };
 
 onMounted(loadFreelas);

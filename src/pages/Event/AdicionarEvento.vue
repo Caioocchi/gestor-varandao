@@ -180,7 +180,7 @@
                   :rules="[(val) => !!val || 'Selecione um responsável']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-chef-hat" color="primary" />
                   </template>
                 </q-select>
               </div>
@@ -198,7 +198,7 @@
                   :rules="[(val) => !!val || 'Selecione um tipo de menu']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-silverware-variant" color="primary" />
                   </template>
                 </q-select>
               </div>
@@ -220,7 +220,7 @@
                   :rules="[(val) => val != null || 'Bebidas é obrigatório']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-glass-cocktail" color="primary" />
                   </template>
                 </q-select>
               </div>
@@ -238,7 +238,7 @@
                   :rules="[(val) => !!val || 'Quantidade de pessoas é obrigatório']"
                 >
                   <template v-slot:prepend>
-                    <q-icon name="groups" color="primary" />
+                    <q-icon name="mdi-account-group" color="primary" />
                   </template>
                 </q-input>
               </div>
@@ -282,6 +282,14 @@
 
         <freela-card titulo="Freelas" :freelas="freelasDisponiveis" :funcoes="funcoes" />
 
+        <div v-for="categoria in categoriasProdutos" :key="categoria.slug">
+          <categoria-card
+            :categoria="categoria.label"
+            :produtos="categoria.produtos.value"
+            :color="categoria.color"
+          />
+        </div>
+
         <!-- Submit Button -->
         <div class="q-pt-md">
           <q-btn
@@ -302,11 +310,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRaw, onMounted } from 'vue';
+import { ref, toRaw, onMounted, type Ref, watch, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
 import FreelaCard from 'src/components/FreelaCard.vue';
+import CategoriaCard from 'src/components/CategoriaCard.vue';
 
 const $q = useQuasar();
 const router = useRouter();
@@ -318,6 +327,14 @@ interface Endereco {
   complemento: string;
   bairro: string;
   cidade: string;
+}
+
+interface Item {
+  produtoId: string;
+  nome: string;
+  categoria: string;
+  quantidade: number | null;
+  unidade: string;
 }
 
 interface Freelas {
@@ -340,6 +357,23 @@ interface Evento {
   observacoes: string;
   sugestao_qtd: string;
   freelas: Freelas[];
+  itens: Item[];
+}
+
+interface Produto {
+  produtoId: string;
+  nome: string;
+  selected: boolean;
+  categoria: string;
+  quantidade: number | null;
+  unidade: string;
+}
+
+interface CategoriaProduto {
+  slug: string;
+  label: string;
+  color: string;
+  produtos: Ref<Produto[]>;
 }
 
 const bebidasOptions = [
@@ -367,13 +401,22 @@ const evento = ref<Evento>({
   menu: '',
   bebidas: null,
   freelas: [],
+  itens: [],
 });
 
 const options = ['Menu Premium', 'Menu Exclusivo', 'Menu VIP', 'Menu Mar e Terra'];
 
 const responsaveis = ['Alexandre', 'Antonio', 'Kayque', 'André', 'Matheus'];
 
-const funcoes = ['Chef', 'Sous Chef', 'Garçom', 'Meitre', 'Pia'];
+const funcoes = [
+  'Chef',
+  'Sous Chef',
+  'Garçom churrasco',
+  'Garçom bebida',
+  'Meitre',
+  'Pia',
+  'Copeiro',
+];
 
 const freelasDisponiveis = ref<Freelas[]>([]);
 
@@ -391,7 +434,140 @@ const carregarFreelas = async () => {
   }
 };
 
-onMounted(carregarFreelas);
+const menuPremium = [
+  'Ancho',
+  'Picanha',
+  'Linguiça de pernil',
+  'Coxinha da asa',
+  'Tulipa',
+  'Coração de frango',
+  'Queijo coalho',
+  'Copa lombo',
+  'Choripan',
+  'Pão de alho',
+  'Feijão tropeiro',
+  'Arroz',
+  'Farofa',
+  'Vinagrete',
+  'Mix de folhas',
+  'Pratos de mesa',
+  'Cubas de guarnições',
+  'Garfos de mesa',
+  'Facas de mesa',
+  'Colher de servir',
+  'Carvão',
+];
+
+const menuExclusivo = [...menuPremium, 'Costela suína', 'Paleta de cordeiro', 'Ratatouille'];
+
+const menuVIP = [...menuExclusivo, 'Hambúrguer'];
+
+const menuMarETerra = [...menuExclusivo, 'Paella de frutos do mar'];
+
+const menuMapping: Record<string, string[]> = {
+  'Menu Premium': menuPremium,
+  'Menu Exclusivo': menuExclusivo,
+  'Menu VIP': menuVIP,
+  'Menu Mar e Terra': menuMarETerra,
+};
+
+// Conjunto de todos os itens que pertencem a algum menu (para tratar downgrades)
+const todosItensMenu = new Set([...menuPremium, ...menuExclusivo, ...menuVIP, ...menuMarETerra]);
+
+const categoriasProdutos: CategoriaProduto[] = [
+  { slug: 'proteina', label: 'Proteínas', color: 'secondary', produtos: ref<Produto[]>([]) },
+  {
+    slug: 'acompanhamento',
+    label: 'Acompanhamentos',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  {
+    slug: 'limpeza_identidade',
+    label: 'Limpeza e Identidade',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  {
+    slug: 'servico_mesa',
+    label: 'Serviço de Mesa',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  {
+    slug: 'molho_finalizacao',
+    label: 'Molhos e Finalização',
+    color: 'secondary',
+    produtos: ref<Produto[]>([]),
+  },
+  { slug: 'equipamento', label: 'Equipamentos', color: 'secondary', produtos: ref<Produto[]>([]) },
+];
+
+const mapProdutoParaItem = (produto: Produto, categoria: string): Produto => ({
+  produtoId: produto.produtoId,
+  nome: produto.nome,
+  selected: false,
+  categoria,
+  quantidade: 0,
+  unidade: produto.unidade,
+});
+
+const buscarProdutosPorCategoria = async (categoria: string) => {
+  const { data } = await api.get(`/produto/${categoria}`);
+  if (!Array.isArray(data)) {
+    return [] as Produto[];
+  }
+  return data.map((produto: Produto) => mapProdutoParaItem(produto, categoria));
+};
+
+const carregarProdutos = async () => {
+  try {
+    $q.loading.show({ message: 'Carregando produtos...' });
+    await Promise.all(
+      categoriasProdutos.map(async (categoria) => {
+        categoria.produtos.value = await buscarProdutosPorCategoria(categoria.slug);
+      }),
+    );
+  } catch (error) {
+    console.error('Erro ao buscar produtos:', error);
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+const sugerirItensPorMenu = (menu: string) => {
+  if (!menu) return;
+  const itensSugeridos = menuMapping[menu] || [];
+
+  categoriasProdutos.forEach((categoria) => {
+    categoria.produtos.value.forEach((produto) => {
+      // Se o produto faz parte do sistema de menus
+      if (todosItensMenu.has(produto.nome)) {
+        // Marca como selecionado se estiver no menu atual, desmarca se não estiver
+        produto.selected = itensSugeridos.includes(produto.nome);
+        if (produto.selected && !produto.quantidade) {
+          produto.quantidade = null;
+        }
+      }
+    });
+  });
+};
+
+watch(
+  () => evento.value.menu,
+  (novoMenu) => {
+    sugerirItensPorMenu(novoMenu);
+  },
+);
+
+const itensSelecionados = computed(() =>
+  categoriasProdutos.flatMap((cat) => cat.produtos.value.filter((p) => p.selected)),
+);
+
+onMounted(async () => {
+  await carregarFreelas();
+  await carregarProdutos();
+});
 
 const cepErro = ref('');
 const enderecoValidado = ref(false);
@@ -460,6 +636,13 @@ const onSubmit = async () => {
   const payload = {
     ...rawEvento,
     endereco: { ...(rawEvento.endereco ? toRaw(rawEvento.endereco) : {}) },
+    itens: itensSelecionados.value.map((p) => ({
+      produtoId: p.produtoId,
+      nome: p.nome,
+      categoria: p.categoria,
+      quantidade: p.quantidade,
+      unidade: p.unidade,
+    })),
     freelas: freelasDisponiveis.value
       .filter((f) => f.selected)
       .map((f) => ({

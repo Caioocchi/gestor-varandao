@@ -8,7 +8,11 @@
         >
           <q-avatar size="90px" class="shadow-1" style="border: 2px solid white">
             <q-img
-              :src="props.urlFoto === undefined ? avatar : urlApi + props.urlFoto"
+              :src="
+                props.urlFoto === undefined || props.urlFoto === ''
+                  ? avatar
+                  : urlApi + props.urlFoto
+              "
               spinner-color="primary"
             />
           </q-avatar>
@@ -18,7 +22,6 @@
           <div class="row justify-between items-start no-wrap">
             <div class="column">
               <div class="text-h6 text-weight-bold text-primary">{{ props.nome }}</div>
-              <div class="text-subtitle2 text-secondary text-weight-medium">{{ props.funcao }}</div>
             </div>
             <div class="row q-gutter-x-xs no-wrap">
               <q-btn
@@ -44,8 +47,8 @@
 
           <div class="q-mt-md grid-info">
             <div class="info-item">
-              <q-icon name="person_outline" color="grey-6" size="16px" />
-              <span class="text-grey-8 text-caption">{{ props.idade }} anos</span>
+              <q-icon name="celebration" color="grey-6" size="16px" />
+              <span class="text-grey-8 text-caption">{{ props.aniversario }}</span>
             </div>
             <div class="info-item">
               <q-icon name="phone_iphone" color="grey-6" size="16px" />
@@ -108,18 +111,13 @@ export default {
       type: String,
       required: true,
     },
-    idade: {
-      type: Number,
-      required: true,
+    aniversario: {
+      type: String,
     },
     pix: {
       type: String,
     },
     telefone: {
-      type: String,
-      required: true,
-    },
-    funcao: {
       type: String,
       required: true,
     },
