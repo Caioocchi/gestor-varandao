@@ -2,7 +2,10 @@
   <div class="q-pt-md">
     <q-card class="card-base shadow-soft" bordered>
       <q-card-section horizontal>
-        <div class="q-pa-md flex flex-center bg-grey-1" style="border-right: 1px solid rgba(0,0,0,0.05)">
+        <div
+          class="q-pa-md flex flex-center bg-grey-1"
+          style="border-right: 1px solid rgba(0, 0, 0, 0.05)"
+        >
           <q-avatar size="90px" class="shadow-1" style="border: 2px solid white">
             <q-img
               :src="props.urlFoto === undefined ? avatar : urlApi + props.urlFoto"
@@ -17,7 +20,7 @@
               <div class="text-h6 text-weight-bold text-primary">{{ props.nome }}</div>
               <div class="text-subtitle2 text-secondary text-weight-medium">{{ props.funcao }}</div>
             </div>
-            <div class="row q-gutter-x-xs">
+            <div class="row q-gutter-x-xs no-wrap">
               <q-btn
                 flat
                 round
@@ -27,7 +30,15 @@
                 size="sm"
                 :to="`/freelas/editar/${props.id}`"
               />
-              <q-btn flat round dense color="negative" icon="delete" size="sm" @click="confirm = true" />
+              <q-btn
+                flat
+                round
+                dense
+                color="negative"
+                icon="delete"
+                size="sm"
+                @click="confirm = true"
+              />
             </div>
           </div>
 
@@ -48,7 +59,7 @@
         </q-card-section>
       </q-card-section>
 
-      <q-dialog v-model="confirm">
+      <q-dialog v-model="confirm" backdrop-filter="blur(4px)">
         <q-card class="confirm-card card-base">
           <q-card-section class="row items-center q-pb-none">
             <div class="text-h6 text-weight-bold">Confirmar exclusão</div>

@@ -22,7 +22,7 @@
           </q-card>
         </router-link>
 
-        <router-link to="/eventos/adicionar" class="text-decoration-none">
+        <router-link to="/eventos" class="text-decoration-none">
           <q-card class="feature-card card-base shadow-soft">
             <q-card-section class="row items-center no-wrap q-pa-lg">
               <q-avatar size="56px" color="secondary" text-color="white" icon="event" class="q-mr-lg" />

@@ -111,8 +111,6 @@ export default {
           formData.append('urlFoto', freela.urlFoto);
         }
 
-        console.log('formData', formData);
-
         await api.put(`/freelas/update/${id}`, formData);
 
         await router.push('/freelas');

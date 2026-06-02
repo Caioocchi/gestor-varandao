@@ -14,10 +14,14 @@
 
         <q-toolbar-title class="row justify-between items-center">
           <div class="row items-center">
-            <q-avatar size="38px" class="q-mr-md" style="border: 2px solid rgba(255,255,255,0.2); border-radius: 50%;">
+            <q-avatar
+              size="38px"
+              class="q-mr-md"
+              style="border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 50%"
+            >
               <img :src="varandaoLogo" />
             </q-avatar>
-            <div class="text-weight-bold" style="font-size: 1.1rem; letter-spacing: 0.3px;">
+            <div class="text-weight-bold" style="font-size: 1.1rem; letter-spacing: 0.3px">
               {{ pageName }}
             </div>
           </div>
@@ -81,8 +85,12 @@ const alterarRota = (pageName: string): string => {
     return '/home';
   } else if (pageName === 'Adicionar Freela' || pageName === 'Editar Freela') {
     return '/freelas';
-  } else if (pageName === 'Adicionar Evento') {
-    return '/home';
+  } else if (
+    pageName === 'Adicionar Evento' ||
+    pageName === 'Visualizar Evento' ||
+    pageName === 'Editar Evento'
+  ) {
+    return '/eventos';
   }
   return '/home';
 };
@@ -99,4 +107,3 @@ const sair = () => {
   });
 };
 </script>
-

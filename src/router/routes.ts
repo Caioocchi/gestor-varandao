@@ -58,6 +58,17 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/eventos',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/eventos',
+        component: () => import('pages/Event/ListarEventos.vue'),
+        name: 'Listar Eventos',
+      },
+    ],
+  },
+  {
     path: '/eventos/adicionar',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -65,6 +76,28 @@ const routes: RouteRecordRaw[] = [
         path: '/eventos/adicionar',
         component: () => import('pages/Event/AdicionarEvento.vue'),
         name: 'Adicionar Evento',
+      },
+    ],
+  },
+  {
+    path: '/eventos/editar/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/eventos/editar/:id',
+        component: () => import('pages/Event/EditarEvento.vue'),
+        name: 'Editar Evento',
+      },
+    ],
+  },
+  {
+    path: '/eventos/visualizar/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/eventos/visualizar/:id',
+        component: () => import('pages/Event/VisualizarEvento.vue'),
+        name: 'Visualizar Evento',
       },
     ],
   },

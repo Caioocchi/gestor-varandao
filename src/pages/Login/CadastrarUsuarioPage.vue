@@ -105,11 +105,7 @@ const onSubmit = async () => {
         message: 'Autenticando...',
       });
 
-      console.log('entrou 1');
-
       const usuarioCriado = await api.post('/usuario/create', usuario.value);
-
-      console.log('usuario', usuarioCriado);
 
       if (usuarioCriado.status === 201) {
         const loginResponse = await api.post('/auth/login', {

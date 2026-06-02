@@ -23,8 +23,9 @@
             <transition name="fade">
               <div v-if="produto.selected" class="q-ml-sm">
                 <q-input
-                  v-model.number="produto.quantidade"
+                  v-model="produto.quantidade"
                   type="number"
+                  min="0"
                   outlined
                   dense
                   :suffix="produto.unidade || 'un'"
@@ -44,11 +45,12 @@
 import { computed } from 'vue';
 
 interface Produto {
-  produtoId: number;
+  produtoId: string;
+
   nome: string;
   selected: boolean;
   categoria: string;
-  quantidade: number;
+  quantidade: number | null;
   unidade: string;
 }
 

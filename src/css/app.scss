@@ -9,7 +9,8 @@
   box-sizing: border-box;
 }
 
-body {
+body,
+.q-layout {
   background: linear-gradient(160deg, $dark-page 0%, $primary 100%);
   font-family: 'Inter', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;

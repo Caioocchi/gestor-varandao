@@ -95,22 +95,6 @@
           </template>
         </q-input>
 
-        <q-select
-          outlined
-          v-model="funcao"
-          :options="options"
-          label="Função"
-          stack-label
-          color="primary"
-          bg-color="white"
-          class="input-rounded"
-          :rules="[(val) => (val !== null && val !== '') || 'Escolha uma função']"
-        >
-          <template v-slot:prepend>
-            <q-icon name="work_outline" color="primary" />
-          </template>
-        </q-select>
-
         <q-file
           outlined
           v-model="urlFoto"
@@ -185,8 +169,6 @@ const telefone = ref(props.freela.telefone);
 const cpf = ref(props.freela.cpf);
 const funcao = ref(props.freela.funcao);
 const urlFoto = ref<File | null>(props.freela.urlFoto ?? null);
-
-const options = ['Chef', 'Sous Chef', 'Garçom', 'Meitre', 'Pia'];
 
 watch(
   () => props.freela,

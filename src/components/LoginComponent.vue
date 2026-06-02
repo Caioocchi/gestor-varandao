@@ -1,9 +1,15 @@
 <template>
-  <q-page class="flex flex-center q-pa-lg" style="min-height: 100vh;">
-    <q-card class="card-base shadow-elevated" style="max-width: 420px; width: 100%;">
+  <q-page class="flex flex-center q-pa-lg" style="min-height: 100vh">
+    <q-card class="card-base shadow-elevated" style="max-width: 420px; width: 100%">
       <q-card-section class="text-center q-pt-xl q-pb-md">
         <div class="flex flex-center q-mb-lg">
-          <q-avatar size="110px" style="border: 3px solid rgba(45,62,64,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
+          <q-avatar
+            size="110px"
+            style="
+              border: 3px solid rgba(45, 62, 64, 0.15);
+              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            "
+          >
             <q-img :src="varandaoLogo" spinner-color="primary" />
           </q-avatar>
         </div>
@@ -63,7 +69,7 @@
               dense
               color="secondary"
               class="text-caption"
-              style="text-transform: none;"
+              style="text-transform: none"
             />
           </div>
 
@@ -74,7 +80,7 @@
               outline
               color="secondary"
               class="full-width btn-primary"
-              style="height: 48px;"
+              style="height: 48px"
               to="/cadastrar"
             />
           </div>
@@ -116,11 +122,7 @@ export default {
             message: 'Autenticando...',
           });
 
-          console.log(usuario.value);
-
           const logado = await api.post('/auth/login', usuario.value);
-
-          console.log(logado);
 
           if (logado.status === 201) {
             setTimeout(() => {
@@ -160,4 +162,3 @@ export default {
   },
 };
 </script>
-
