@@ -2,11 +2,9 @@
   <q-page class="q-pa-md">
     <div class="full-width" style="max-width: 800px; margin: 0 auto">
       <!-- Header Section -->
-      <div class="row items-center justify-between q-mb-xl">
-        <div class="column">
-          <div class="text-h4 text-weight-bold text-primary">Editar Evento</div>
-          <div class="text-subtitle1 text-grey-6">Atualize os dados do evento</div>
-        </div>
+      <div class="q-mb-xl">
+        <div class="text-h4 text-weight-bold text-primary">Novo Evento</div>
+        <div class="text-subtitle1 text-grey-6">Preencha os dados da contratante</div>
       </div>
 
       <q-form @submit.once="onSubmit" class="q-gutter-y-lg">
@@ -24,8 +22,6 @@
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'Contratante é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="person" color="primary" />
@@ -43,8 +39,6 @@
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'Telefone é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="person" color="primary" />
@@ -61,8 +55,6 @@
                   bg-color="white"
                   class="input-rounded"
                   mask="#####-###"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'CEP é obrigatório']"
                   :error="cepErro !== ''"
                   :error-message="cepErro"
                 >
@@ -143,8 +135,6 @@
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'Data é obrigatória']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="event" color="primary" />
@@ -153,7 +143,7 @@
               </div>
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model="evento.hora"
+                  v-model="evento.hora_evento"
                   label="Horário do evento"
                   type="time"
                   outlined
@@ -161,13 +151,43 @@
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'Horário é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="schedule" color="primary" />
                   </template>
                 </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input
+                  v-model="evento.hora_saida"
+                  label="Horário de saída"
+                  type="time"
+                  outlined
+                  stack-label
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="schedule" color="primary" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-select
+                  v-model="evento.responsavel"
+                  label="Responsável"
+                  outlined
+                  stack-label
+                  :options="responsaveis"
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="mdi-chef-hat" color="primary" />
+                  </template>
+                </q-select>
               </div>
               <div class="col-12 col-md-6">
                 <q-select
@@ -179,8 +199,6 @@
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'Selecione um tipo de menu']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="mdi-silverware-variant" color="primary" />
@@ -201,8 +219,6 @@
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => val != null || 'Este campo é obrigatório']"
                 >
                   <template v-slot:prepend>
                     <q-icon name="mdi-glass-cocktail" color="primary" />
@@ -210,35 +226,47 @@
                 </q-select>
               </div>
               <div class="col-12 col-md-6">
-                <q-select
-                  v-model="evento.responsavel"
-                  label="Responsável"
-                  outlined
-                  stack-label
-                  :options="responsaveis"
-                  color="primary"
-                  bg-color="white"
-                  class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'Selecione um responsável']"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="mdi-chef-hat" color="primary" />
-                  </template>
-                </q-select>
-              </div>
-              <div class="col-12 col-md-6">
                 <q-input
-                  v-model="evento.qtde_pessoas"
-                  label="Quantidade de pessoas"
+                  v-model="evento.quantidade_pessoas.quantidade_adultos"
+                  label="Quantidade de adultos"
                   type="number"
                   outlined
                   stack-label
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'Quantidade de pessoas é obrigatório']"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="mdi-account-group" color="primary" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input
+                  v-model="evento.quantidade_pessoas.quantidade_criancas"
+                  label="Quantidade de crianças"
+                  type="number"
+                  outlined
+                  stack-label
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="mdi-account-group" color="primary" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input
+                  v-model="evento.quantidade_pessoas.quantidade_staffs"
+                  label="Quantidade de staffs"
+                  type="number"
+                  outlined
+                  stack-label
+                  color="primary"
+                  bg-color="white"
+                  class="input-rounded"
                 >
                   <template v-slot:prepend>
                     <q-icon name="mdi-account-group" color="primary" />
@@ -265,7 +293,7 @@
               <div class="col-12">
                 <q-input
                   v-model="evento.sugestao_qtd"
-                  label="Sugestão de quantidade"
+                  label="Sugestão de quantidade de produção"
                   type="textarea"
                   outlined
                   stack-label
@@ -296,7 +324,7 @@
         <!-- Submit Button -->
         <div class="q-pt-md">
           <q-btn
-            label="Salvar Alterações"
+            label="Criar Evento"
             type="submit"
             color="primary"
             unelevated
@@ -313,18 +341,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, toRaw, type Ref, computed, watch } from 'vue';
+import { ref, toRaw, onMounted, type Ref, watch, computed } from 'vue';
 import { useQuasar } from 'quasar';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
-import CategoriaCard from 'src/components/CategoriaCard.vue';
 import FreelaCard from 'src/components/FreelaCard.vue';
+import CategoriaCard from 'src/components/CategoriaCard.vue';
 
 const $q = useQuasar();
 const router = useRouter();
-const route = useRoute();
-
-const eventId = route.params.id?.toString();
 
 interface Endereco {
   cep: string;
@@ -335,7 +360,7 @@ interface Endereco {
   cidade: string;
 }
 
-interface Itens {
+interface Item {
   produtoId: string;
   nome: string;
   categoria: string;
@@ -350,20 +375,27 @@ interface Freelas {
   funcao: string;
 }
 
+interface QuantidadePessoas {
+  quantidade_adultos: number | null;
+  quantidade_criancas: number | null;
+  quantidade_staffs: number | null;
+}
+
 interface Evento {
   nome_contratante: string;
   telefone: string;
   endereco: Endereco;
   data: string;
-  hora: string;
+  hora_evento: string;
+  hora_saida: string;
+  quantidade_pessoas: QuantidadePessoas;
   responsavel: string;
-  qtde_pessoas: number | null;
   menu: string;
   bebidas: boolean | null;
   observacoes: string;
   sugestao_qtd: string;
-  itens: Itens[];
   freelas: Freelas[];
+  itens: Item[];
 }
 
 interface Produto {
@@ -399,15 +431,20 @@ const evento = ref<Evento>({
     cidade: '',
   },
   data: '',
-  hora: '',
+  hora_evento: '',
+  hora_saida: '',
+  quantidade_pessoas: {
+    quantidade_adultos: null,
+    quantidade_criancas: null,
+    quantidade_staffs: null,
+  },
   responsavel: '',
-  qtde_pessoas: null,
   observacoes: '',
   sugestao_qtd: '',
   menu: '',
   bebidas: null,
-  itens: [],
   freelas: [],
+  itens: [],
 });
 
 const options = ['Menu Premium', 'Menu Exclusivo', 'Menu VIP', 'Menu Mar e Terra'];
@@ -435,26 +472,9 @@ const carregarFreelas = async () => {
       selected: false,
       funcao: '',
     }));
-
-    // Sincronizar após carregar freelas disponiveis
-    sincronizarFreelas();
   } catch (error) {
     console.error('Erro ao carregar freelas:', error);
   }
-};
-
-const sincronizarFreelas = () => {
-  if (!evento.value.freelas || evento.value.freelas.length === 0) return;
-
-  freelasDisponiveis.value.forEach((freela) => {
-    const salvo = evento.value.freelas.find(
-      (f: Freelas) => f._id === freela._id || f.nome === freela.nome,
-    );
-    if (salvo) {
-      freela.selected = true;
-      freela.funcao = salvo.funcao;
-    }
-  });
 };
 
 const menuPremium = [
@@ -496,132 +516,6 @@ const menuMapping: Record<string, string[]> = {
 
 // Conjunto de todos os itens que pertencem a algum menu (para tratar downgrades)
 const todosItensMenu = new Set([...menuPremium, ...menuExclusivo, ...menuVIP, ...menuMarETerra]);
-
-const cepErro = ref('');
-const enderecoValidado = ref(false);
-const verificado = ref(false);
-
-const limparEndereco = () => {
-  evento.value.endereco.cep = '';
-  evento.value.endereco.logradouro = '';
-  evento.value.endereco.numero = '';
-  evento.value.endereco.bairro = '';
-  evento.value.endereco.cidade = '';
-  evento.value.endereco.complemento = '';
-  enderecoValidado.value = false;
-  verificado.value = false;
-};
-
-const validarCep = async () => {
-  cepErro.value = '';
-  enderecoValidado.value = false;
-  verificado.value = false;
-
-  const cep = evento.value.endereco.cep.replace(/\D/g, '');
-
-  if (cep.length !== 8) {
-    cepErro.value = 'CEP inválido';
-    limparEndereco();
-    return;
-  }
-
-  $q.loading.show({
-    message: 'Verificando endereço...',
-  });
-
-  try {
-    const { data } = await api.get(`https://viacep.com.br/ws/${cep}/json/`);
-
-    if (data.erro) {
-      cepErro.value = 'CEP não encontrado';
-      limparEndereco();
-      return;
-    }
-
-    evento.value.endereco.logradouro = data.logradouro ?? '';
-    evento.value.endereco.bairro = data.bairro ?? '';
-    evento.value.endereco.cidade = data.localidade ?? '';
-
-    enderecoValidado.value = true;
-    verificado.value = true;
-  } catch (error) {
-    console.log(error);
-    cepErro.value = 'Erro ao buscar CEP';
-    limparEndereco();
-  } finally {
-    $q.loading.hide();
-  }
-};
-
-const carregarEvento = async () => {
-  try {
-    $q.loading.show({ message: 'Carregando dados do evento...' });
-    const { data } = await api.get(`/eventos/${eventId}`);
-
-    // Preencher o objeto evento com os dados recebidos
-    evento.value = {
-      nome_contratante: data.nome_contratante,
-      telefone: data.telefone,
-      endereco: {
-        cep: data.endereco?.cep || '',
-        logradouro: data.endereco?.logradouro || '',
-        numero: data.endereco?.numero || '',
-        complemento: data.endereco?.complemento || '',
-        bairro: data.endereco?.bairro || '',
-        cidade: data.endereco?.cidade || '',
-      },
-      data: data.data,
-      hora: data.hora,
-      responsavel: data.responsavel,
-      qtde_pessoas: data.qtde_pessoas,
-      observacoes: data.observacoes || '',
-      sugestao_qtd: data.sugestao_qtd || '',
-      menu: data.menu,
-      bebidas: data.bebidas,
-      itens: data.itens || [],
-      freelas: data.freelas || [],
-    };
-
-    if (evento.value.endereco.cep) {
-      enderecoValidado.value = true;
-      verificado.value = true;
-    }
-
-    // Sincronizar itens se os produtos já estiverem carregados
-    sincronizarItens();
-    sincronizarFreelas();
-  } catch (error) {
-    console.error('Erro ao buscar evento:', error);
-    $q.notify({
-      color: 'negative',
-      textColor: 'white',
-      icon: 'warning',
-      message: 'Erro ao carregar o evento.',
-    });
-    void router.push('/eventos');
-  } finally {
-    $q.loading.hide();
-  }
-};
-
-const sincronizarItens = () => {
-  if (!evento.value.itens || evento.value.itens.length === 0) return;
-
-  categoriasProdutos.forEach((categoria) => {
-    categoria.produtos.value.forEach((produto) => {
-      const itemSalvo = evento.value.itens.find((i: Itens) => i.nome === produto.nome);
-      if (itemSalvo) {
-        produto.selected = true;
-        produto.quantidade = itemSalvo.quantidade || 0;
-      }
-    });
-  });
-};
-
-onMounted(async () => {
-  await carregarEvento();
-  await carregarFreelas();
-});
 
 const categoriasProdutos: CategoriaProduto[] = [
   { slug: 'proteina', label: 'Proteínas', color: 'secondary', produtos: ref<Produto[]>([]) },
@@ -666,43 +560,23 @@ const buscarProdutosPorCategoria = async (categoria: string) => {
   if (!Array.isArray(data)) {
     return [] as Produto[];
   }
-
   return data.map((produto: Produto) => mapProdutoParaItem(produto, categoria));
 };
 
 const carregarProdutos = async () => {
   try {
     $q.loading.show({ message: 'Carregando produtos...' });
-
     await Promise.all(
       categoriasProdutos.map(async (categoria) => {
         categoria.produtos.value = await buscarProdutosPorCategoria(categoria.slug);
       }),
     );
-
-    // Sincronizar itens após carregar produtos
-    sincronizarItens();
-
-    // Se já tiver um menu selecionado (do carregamento do evento), sugerir itens se necessário
-    if (evento.value.menu) {
-      sugerirItensPorMenu(evento.value.menu);
-    }
   } catch (error) {
     console.error('Erro ao buscar produtos:', error);
-    $q.notify({
-      color: 'negative',
-      textColor: 'white',
-      icon: 'warning',
-      message: 'Não foi possível carregar os produtos. Atualize a página e tente novamente.',
-    });
   } finally {
     $q.loading.hide();
   }
 };
-
-// carregarProdutos is already called in its own onMounted or combined.
-// I'll leave carregarProdutos as is if it's already there, but let's be safe.
-onMounted(carregarProdutos);
 
 const sugerirItensPorMenu = (menu: string) => {
   if (!menu) return;
@@ -733,9 +607,74 @@ const itensSelecionados = computed(() =>
   categoriasProdutos.flatMap((cat) => cat.produtos.value.filter((p) => p.selected)),
 );
 
-const onSubmit = async () => {
-  $q.loading.show({ message: 'Salvando alterações...' });
+onMounted(async () => {
+  await carregarFreelas();
+  await carregarProdutos();
+});
 
+const cepErro = ref('');
+const enderecoValidado = ref(false);
+const verificado = ref(false);
+
+const limparEndereco = () => {
+  evento.value.endereco.cep = '';
+  evento.value.endereco.logradouro = '';
+  evento.value.endereco.numero = '';
+  evento.value.endereco.bairro = '';
+  evento.value.endereco.cidade = '';
+  enderecoValidado.value = false;
+  verificado.value = false;
+};
+
+const validarCep = async () => {
+  cepErro.value = '';
+  enderecoValidado.value = false;
+  verificado.value = false;
+
+  const cep = evento.value.endereco.cep.replace(/\D/g, '');
+
+  if (cep.length !== 8) {
+    cepErro.value = 'CEP inválido';
+    limparEndereco();
+    return;
+  }
+
+  $q.loading.show({
+    message: 'Verificando endereço...',
+  });
+
+  try {
+    const { data } = await api.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+    if (data.erro) {
+      cepErro.value = 'CEP não encontrado';
+      limparEndereco();
+      return;
+    }
+
+    evento.value.endereco.logradouro = data.logradouro ?? '';
+
+    evento.value.endereco.bairro = data.bairro ?? '';
+
+    evento.value.endereco.cidade = data.localidade ?? '';
+
+    enderecoValidado.value = true;
+    verificado.value = true;
+  } catch (error) {
+    console.log(error);
+
+    cepErro.value = 'Erro ao buscar CEP';
+
+    limparEndereco();
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+const onSubmit = async () => {
+  $q.loading.show({ message: 'Salvando evento...' });
+
+  // Garantir que o payload não contenha Proxies reativos
   const rawEvento = toRaw(evento.value);
   const payload = {
     ...rawEvento,
@@ -754,36 +693,24 @@ const onSubmit = async () => {
         nome: f.nome,
         funcao: f.funcao,
       })),
+    quantidade_pessoas: {
+      quantidade_adultos: rawEvento.quantidade_pessoas.quantidade_adultos ?? null,
+      quantidade_criancas: rawEvento.quantidade_pessoas.quantidade_criancas ?? null,
+      quantidade_staffs: rawEvento.quantidade_pessoas.quantidade_staffs ?? null,
+    },
   };
 
-  try {
-    await api.put(`/eventos/${eventId}`, payload);
+  await api.post('/eventos', payload);
 
+  setTimeout(() => {
+    $q.loading.hide();
     $q.notify({
       color: 'positive',
       textColor: 'white',
       icon: 'check',
-      message: 'Evento atualizado com sucesso!',
+      message: 'Evento criado com sucesso!',
     });
     void router.push('/eventos');
-  } catch (error) {
-    console.error('Erro ao atualizar evento:', error);
-    $q.notify({
-      color: 'negative',
-      textColor: 'white',
-      icon: 'error',
-      message: 'Erro ao atualizar o evento.',
-    });
-  } finally {
-    $q.loading.hide();
-  }
+  }, 1200);
 };
 </script>
-
-<style lang="scss" scoped>
-.btn-primary {
-  border-radius: 12px;
-  font-weight: 600;
-  height: 56px;
-}
-</style>

@@ -63,7 +63,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '/eventos',
-        component: () => import('pages/Event/ListarEventos.vue'),
+        component: () => import('pages/Evento/ListarEventos.vue'),
         name: 'Listar Eventos',
       },
     ],
@@ -74,7 +74,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '/eventos/adicionar',
-        component: () => import('pages/Event/AdicionarEvento.vue'),
+        component: () => import('pages/Evento/AdicionarEvento.vue'),
         name: 'Adicionar Evento',
       },
     ],
@@ -85,7 +85,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '/eventos/editar/:id',
-        component: () => import('pages/Event/EditarEvento.vue'),
+        component: () => import('pages/Evento/EditarEvento.vue'),
         name: 'Editar Evento',
       },
     ],
@@ -96,11 +96,44 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '/eventos/visualizar/:id',
-        component: () => import('pages/Event/VisualizarEvento.vue'),
+        component: () => import('pages/Evento/VisualizarEvento.vue'),
         name: 'Visualizar Evento',
       },
     ],
   },
+  {
+    path: '/produtos',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/produtos',
+        component: () => import('pages/Produtos/ListarProdutos.vue'),
+        name: 'Listar Produtos',
+      },
+    ],
+  },
+  {
+    path: '/produtos/adicionar',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/produtos/adicionar',
+        component: () => import('pages/Produtos/AdicionarProduto.vue'),
+        name: 'Adicionar Produto',
+      },
+    ],
+  },
+  // {
+  //   path: '/produtos/editar/:id',
+  //   component: () => import('layouts/MainLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '/produtos/editar/:id',
+  //       component: () => import('pages/Produtos/EditarProduto.vue'),
+  //       name: 'Editar Produto',
+  //     },
+  //   ],
+  // },
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),

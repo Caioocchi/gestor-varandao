@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="row items-center justify-between q-mb-lg">
-      <div class="column">
+    <div class="row items-center no-wrap">
+      <div class="column q-pr-lg">
         <div class="text-h4 text-weight-bold text-primary">Eventos</div>
         <div class="text-subtitle1 text-grey-7">Organize e acompanhe seus eventos</div>
       </div>
@@ -12,9 +12,7 @@
         size="lg"
         class="shadow-robust"
         to="/eventos/adicionar"
-      >
-        <q-tooltip>Criar Novo Evento</q-tooltip>
-      </q-btn>
+      />
     </div>
 
     <div v-if="eventos.length > 0" class="column q-gutter-y-md">
@@ -41,9 +39,6 @@
         />
       </div>
     </div>
-
-    <!-- Hidden padding to avoid footer/fab overlap -->
-    <div style="height: 60px"></div>
   </q-page>
 </template>
 
@@ -70,10 +65,16 @@ interface Evento {
   telefone: string;
   endereco: Endereco;
   data: string;
-  hora: string;
+  hora_evento: string;
+  hora_saida: string;
   responsavel: string;
-  qtde_pessoas: number;
+  quantidade_pessoas: {
+    quantidade_adultos: number | null;
+    quantidade_criancas: number | null;
+    quantidade_staffs: number | null;
+  };
   menu: string;
+  bebidas: boolean;
 }
 
 const eventos = ref<Evento[]>([]);
@@ -81,6 +82,7 @@ const eventos = ref<Evento[]>([]);
 const loadEventos = async () => {
   $q.loading.show({
     message: 'Carregando eventos...',
+    customClass: 'loading-varandao',
   });
   try {
     const { data } = await api.get('/eventos');
@@ -93,7 +95,9 @@ const loadEventos = async () => {
       icon: 'warning',
     });
   } finally {
-    $q.loading.hide();
+    setTimeout(() => {
+      $q.loading.hide();
+    }, 500);
   }
 };
 

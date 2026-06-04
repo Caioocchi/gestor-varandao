@@ -202,6 +202,7 @@ export default {
 .confirm-card {
   width: 100%;
   max-width: 380px;
+  border-radius: 20px;
 }
 
 .btn-rounded {

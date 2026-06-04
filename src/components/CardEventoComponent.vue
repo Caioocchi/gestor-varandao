@@ -3,25 +3,17 @@
     <q-card class="card-base shadow-soft" bordered>
       <q-card-section class="q-pa-lg">
         <div class="row justify-between items-start no-wrap">
-          <div class="column">
-            <div class="text-h6 text-weight-bold text-primary">
-              {{ props.evento.nome_contratante }}
-            </div>
-            <div
-              class="row items-center q-gutter-x-sm text-subtitle2 text-secondary text-weight-medium"
-            >
-              <q-icon name="menu_book" size="18px" />
-              <span>{{ props.evento.menu }}</span>
-            </div>
+          <div class="text-h6 text-weight-bold text-primary">
+            {{ props.evento.nome_contratante }}
           </div>
-          <div class="row q-gutter-x-xs no-wrap">
+          <div class="row q-gutter-x-md no-wrap">
             <q-btn
               flat
               round
               dense
               color="secondary"
               icon="visibility"
-              size="md"
+              size="14px"
               :to="`/eventos/visualizar/${props.evento._id}`"
             />
             <q-btn
@@ -30,7 +22,7 @@
               dense
               color="primary"
               icon="edit"
-              size="md"
+              size="14px"
               :to="`/eventos/editar/${props.evento._id}`"
             />
 
@@ -40,26 +32,73 @@
               dense
               color="negative"
               icon="delete"
-              size="md"
+              size="14px"
               @click="confirm = true"
             />
           </div>
         </div>
-
-        <div class="q-mt-sm grid-info">
-          <div class="info-item">
-            <q-icon name="mdi-chef-hat" color="grey-6" size="16px" />
-            <span class="text-grey-8 text-caption">{{ props.evento.responsavel }}</span>
+        <!-- Principais Informações do Evento -->
+        <div class="row items-center q-gutter-x-md q-gutter-y-xs">
+          <div class="row items-center text-caption text-grey-8 no-wrap">
+            <div class="row items-center q-gutter-x-xs">
+              <q-icon name="event" color="primary" size="14px" />
+              <span>{{ formatarData(props.evento.data) }}</span>
+            </div>
+            <q-separator vertical class="q-mx-xs" />
+            <div class="row items-center q-gutter-x-xs">
+              <q-icon name="schedule" color="primary" size="14px" />
+              <span>{{ props.evento.hora_evento }}</span>
+            </div>
           </div>
+
+          <div class="info-item text-caption text-secondary text-weight-bold no-wrap">
+            <q-icon name="groups" size="16px" />
+            <span>
+              {{ props.evento.quantidade_pessoas.quantidade_adultos || 0 }} Adultos,
+              {{ props.evento.quantidade_pessoas.quantidade_criancas || 0 }} Crianças,
+              {{ props.evento.quantidade_pessoas.quantidade_staffs || 0 }} Staffs
+            </span>
+          </div>
+        </div>
+
+        <div class="info-item text-grey-9 text-weight-bold text-caption no-wrap q-my-xs">
+          <q-icon name="mdi-chef-hat" color="primary" size="16px" />
+          <span>{{ props.evento.responsavel }}</span>
+        </div>
+
+        <!-- Informações Secundárias -->
+        <div class="grid-info">
+          <div class="row items-center q-col-gutter-sm">
+            <div class="col-12 col-md-auto">
+              <div
+                class="row items-center q-gutter-x-xs text-subtitle2 text-secondary text-weight-bold"
+              >
+                <q-icon name="menu_book" size="16px" />
+                <span>{{ props.evento.menu }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <q-icon name="local_bar" color="grey-6" size="16px" />
+            <span class="text-grey-8 text-caption"
+              >Terá bebidas?
+              <span class="text-weight-bold text-secondary">{{
+                props.evento.bebidas ? 'Sim' : 'Não'
+              }}</span></span
+            >
+          </div>
+
           <div class="info-item">
             <q-icon name="phone" color="grey-6" size="16px" />
             <span class="text-grey-8 text-caption">{{ props.evento.telefone }}</span>
           </div>
+
           <div
             v-show="
               props.evento.endereco && !Object.values(props.evento.endereco).every((v) => v === '')
             "
-            class="info-item cursor-pointer"
+            class="info-item"
             @click="abrirMapa"
           >
             <q-icon name="place" color="grey-6" size="16px" />
@@ -69,28 +108,6 @@
                 (abrir mapa)
               </span>
             </span>
-          </div>
-          <div class="row q-col-gutter-sm">
-            <div class="col-auto">
-              <div class="info-item">
-                <q-icon name="event" color="primary" size="16px" />
-                <span class="text-grey-8 text-caption">{{ formatarData(props.evento.data) }}</span>
-              </div>
-            </div>
-            <div class="col-auto">
-              <div class="info-item">
-                <q-icon name="schedule" color="primary" size="16px" />
-                <span class="text-grey-8 text-caption">{{ props.evento.hora }}</span>
-              </div>
-            </div>
-            <div class="col-auto">
-              <div class="info-item">
-                <q-icon name="groups" color="secondary" size="16px" />
-                <span class="text-secondary text-caption text-weight-bold">
-                  {{ props.evento.qtde_pessoas }} pessoas
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       </q-card-section>
@@ -148,10 +165,16 @@ interface Evento {
   telefone: string;
   endereco: Endereco;
   data: string;
-  hora: string;
+  hora_evento: string;
+  hora_saida: string;
   responsavel: string;
-  qtde_pessoas: number;
+  quantidade_pessoas: {
+    quantidade_adultos: number | null;
+    quantidade_criancas: number | null;
+    quantidade_staffs: number | null;
+  };
   menu: string;
+  bebidas: boolean;
 }
 
 export default {
@@ -191,6 +214,7 @@ export default {
       window.open(
         `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`,
         '_blank',
+        'rel="noopener noreferrer"',
       );
     };
 
@@ -241,16 +265,13 @@ export default {
 .info-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.cursor-pointer {
-  cursor: pointer;
+  gap: 4px;
 }
 
 .confirm-card {
   width: 100%;
   max-width: 380px;
+  border-radius: 20px;
 }
 
 .btn-rounded {

@@ -39,14 +39,28 @@
 
               <q-separator class="q-my-lg" />
 
-              <div class="text-overline text-primary text-weight-bold q-mb-sm">Data e Hora</div>
+              <div class="text-overline text-primary text-weight-bold q-mb-sm">
+                Data e hora do evento
+              </div>
               <div class="row items-center q-mb-xs">
                 <q-icon name="event" color="primary" size="20px" class="q-mr-sm" />
                 <div class="text-body1">{{ formatarData(evento.data) }}</div>
               </div>
               <div class="row items-center q-mb-md">
                 <q-icon name="schedule" color="primary" size="20px" class="q-mr-sm" />
-                <div class="text-body1">{{ evento.hora }}</div>
+                <div class="text-body1">{{ evento.hora_evento }}</div>
+              </div>
+
+              <div v-if="evento.hora_saida && evento.hora_saida != '' && evento.hora_saida != null">
+                <q-separator class="q-my-lg" />
+
+                <div class="text-overline text-primary text-weight-bold q-mb-sm">
+                  Horário de saída para o evento
+                </div>
+                <div class="row items-center q-mb-md">
+                  <q-icon name="schedule" color="primary" size="20px" class="q-mr-sm" />
+                  <div class="text-body1">{{ evento.hora_saida }}</div>
+                </div>
               </div>
 
               <q-separator class="q-my-lg" />
@@ -54,11 +68,24 @@
               <div class="text-overline text-primary text-weight-bold q-mb-sm">Resumo</div>
               <div class="row items-center q-mb-xs">
                 <q-icon name="groups" color="secondary" size="20px" class="q-mr-sm" />
-                <div class="text-body1">{{ evento.qtde_pessoas }} pessoas</div>
+                <div class="text-body1">
+                  {{ evento.quantidade_pessoas.quantidade_adultos }} adultos,
+                  {{ evento.quantidade_pessoas.quantidade_criancas }} crianças e
+                  {{ evento.quantidade_pessoas.quantidade_staffs }} staffs
+                </div>
               </div>
-              <div class="row items-center">
+              <div class="row items-center q-mb-xs">
                 <q-icon name="restaurant_menu" color="secondary" size="20px" class="q-mr-sm" />
                 <div class="text-body1">{{ evento.menu }}</div>
+              </div>
+              <div class="row items-center q-mb-xs">
+                <q-icon name="local_bar" color="secondary" size="20px" class="q-mr-sm" />
+                <div class="text-body1">
+                  Terá bebidas?
+                  <span class="text-weight-bold text-secondary">{{
+                    evento.bebidas ? 'Sim' : 'Não'
+                  }}</span>
+                </div>
               </div>
             </q-card-section>
           </q-card>
@@ -129,13 +156,15 @@
             <q-card class="card-base shadow-soft">
               <q-card-section class="q-pa-lg">
                 <div class="row items-center justify-between q-mb-lg">
-                  <div class="row items-center">
+                  <div class="row items-center no-wrap">
                     <q-icon name="shopping_basket" color="primary" size="24px" class="q-mr-sm" />
-                    <div class="text-h6 text-weight-bold text-primary">Itens Selecionados</div>
+                    <div class="text-h6 text-weight-bold text-primary">Lista de compras</div>
                   </div>
-                  <q-chip outline color="secondary" text-color="white" icon="list" :ripple="false">
-                    {{ evento.itens?.length || 0 }} item(s)
-                  </q-chip>
+                  <div class="row items-center q-gutter-x-md">
+                    <q-chip outline color="secondary" text-color="white" :ripple="false">
+                      {{ evento.itens?.length || 0 }} item(s)
+                    </q-chip>
+                  </div>
                 </div>
 
                 <div v-if="groupedItems.length > 0" class="column q-gutter-y-md">
@@ -144,14 +173,38 @@
                       {{ formatarCategoria(group.categoria) }}
                     </div>
                     <q-list bordered separator class="rounded-borders overflow-hidden">
-                      <q-item v-for="item in group.itens" :key="item.produtoId" class="q-py-md">
+                      <q-item
+                        v-for="item in group.itens"
+                        :key="item.produtoId || item.nome"
+                        class="q-py-md"
+                        clickable
+                        @click="toggleItem(item)"
+                      >
+                        <q-item-section side>
+                          <q-checkbox
+                            v-model="checkedItems[item.produtoId || item.nome]"
+                            color="secondary"
+                            @click.stop
+                          />
+                        </q-item-section>
                         <q-item-section>
-                          <q-item-label class="text-weight-medium">{{ item.nome }}</q-item-label>
+                          <q-item-label
+                            class="text-weight-medium"
+                            :class="{
+                              'text-strike text-grey-5': checkedItems[item.produtoId || item.nome],
+                            }"
+                          >
+                            {{ item.nome }}
+                          </q-item-label>
                         </q-item-section>
                         <q-item-section side>
                           <q-badge
-                            color="accent-light"
-                            text-color="primary"
+                            :color="
+                              checkedItems[item.produtoId || item.nome] ? 'grey-3' : 'accent-light'
+                            "
+                            :text-color="
+                              checkedItems[item.produtoId || item.nome] ? 'grey-6' : 'primary'
+                            "
                             class="q-pa-sm text-body2"
                           >
                             {{ item.quantidade }} {{ item.unidade }}
@@ -184,10 +237,12 @@
             <!-- Sugestão de Quantidade -->
             <q-card v-if="evento.sugestao_qtd" class="card-base shadow-soft">
               <q-card-section class="q-pa-lg">
-                <div class="row items-center justify-between q-mb-md">
-                  <div class="text-h6 text-weight-bold text-primary">
-                    <q-icon name="notes" color="primary" size="24px" />
-                    Sugestão de Quantidade
+                <div class="row items-center justify-between q-mb-md no-wrap">
+                  <div class="row items-center no-wrap">
+                    <q-icon name="notes" color="primary" size="24px" class="q-mr-sm" />
+                    <div style="text-align: center" class="text-h6 text-weight-bold text-primary">
+                      Sugestão de quantidade de produção
+                    </div>
                   </div>
                   <div>
                     <q-btn
@@ -201,8 +256,25 @@
                     />
                   </div>
                 </div>
-                <div class="text-body1 text-grey-8 preserve-whitespace">
+                <div
+                  class="text-body1 text-grey-8 preserve-whitespace"
+                  :class="{ 'collapsed-text': !expandidoSugestao }"
+                >
                   {{ evento.sugestao_qtd }}
+                </div>
+                <div
+                  class="row justify-center q-mt-sm"
+                  v-if="evento.sugestao_qtd?.split('\n').length > 5"
+                >
+                  <q-btn
+                    flat
+                    no-caps
+                    color="primary"
+                    :label="expandidoSugestao ? 'Ver menos' : 'Ver mais'"
+                    :icon="expandidoSugestao ? 'expand_less' : 'expand_more'"
+                    @click="expandidoSugestao = !expandidoSugestao"
+                    dense
+                  />
                 </div>
               </q-card-section>
             </q-card>
@@ -213,15 +285,33 @@
 
     <!-- Actions Footer -->
     <div class="fixed-bottom-right q-ma-xl">
-      <q-btn
-        fab
+      <q-fab
+        v-model="fabRight"
+        vertical-actions-align="center"
         color="primary"
-        icon="edit"
-        :to="`/eventos/editar/${eventId}`"
-        class="shadow-robust"
+        glossy
+        icon="keyboard_arrow_up"
+        direction="up"
       >
-        <q-tooltip>Editar Evento</q-tooltip>
-      </q-btn>
+        <q-btn
+          fab
+          color="primary"
+          icon="edit"
+          no-caps
+          :to="`/eventos/editar/${eventId}`"
+          class="shadow-robust"
+        />
+        <q-btn
+          fab
+          color="positive"
+          icon="mdi-whatsapp"
+          @click="compartilharWhatsApp"
+          no-caps
+          rounded
+          unelevated
+          class="shadow-soft"
+        />
+      </q-fab>
     </div>
 
     <div style="height: 100px"></div>
@@ -229,7 +319,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
@@ -238,6 +328,25 @@ const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
 const eventId = route.params.id?.toString();
+const STORAGE_KEY = `shopping_list_${eventId}`;
+const fabRight = ref(false);
+
+const checkedItems = ref<Record<string, boolean>>({});
+const expandidoSugestao = ref(false);
+
+// Salvar no localStorage sempre que houver mudança
+watch(
+  checkedItems,
+  (newState: Record<string, boolean>) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+  },
+  { deep: true },
+);
+
+const toggleItem = (item: Item) => {
+  const key = item.produtoId || item.nome;
+  checkedItems.value[key] = !checkedItems.value[key];
+};
 
 interface Endereco {
   cep: string;
@@ -262,14 +371,21 @@ interface Freela {
   funcao: string;
 }
 
+interface QuantidadePessoas {
+  quantidade_adultos: number;
+  quantidade_criancas: number;
+  quantidade_staffs: number;
+}
+
 interface Evento {
   nome_contratante: string;
   telefone: string;
   endereco: Endereco;
   data: string;
-  hora: string;
+  hora_evento: string;
+  hora_saida: string;
   responsavel: string;
-  qtde_pessoas: number | null;
+  quantidade_pessoas: QuantidadePessoas;
   menu: string;
   bebidas: boolean | null;
   observacoes: string;
@@ -290,9 +406,14 @@ const evento = ref<Evento>({
     cidade: '',
   },
   data: '',
-  hora: '',
+  hora_evento: '',
+  hora_saida: '',
   responsavel: '',
-  qtde_pessoas: null,
+  quantidade_pessoas: {
+    quantidade_adultos: 0,
+    quantidade_criancas: 0,
+    quantidade_staffs: 0,
+  },
   observacoes: '',
   sugestao_qtd: '',
   menu: '',
@@ -351,7 +472,44 @@ const abrirMapa = () => {
   window.open(
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`,
     '_blank',
+    'rel="noopener noreferrer"',
   );
+};
+
+const compartilharWhatsApp = () => {
+  const e = evento.value;
+  const dataFormatada = formatarData(e.data);
+  const enderecoFormatado = formatarEndereco(e.endereco);
+
+  let mensagem = `*Detalhes do Evento*\n\n`;
+  mensagem += `*Contratante:* ${e.nome_contratante}\n`;
+  mensagem += `*Contato:* ${e.telefone}\n`;
+  mensagem += `*Data:* ${dataFormatada}\n`;
+  mensagem += `*Horário do Evento:* ${e.hora_evento}\n`;
+  if (e.hora_saida) mensagem += `*Horário de Saída:* ${e.hora_saida}\n`;
+  mensagem += `*Chef Responsável:* ${e.responsavel}\n\n`;
+
+  mensagem += `*Localização:* ${enderecoFormatado}\n`;
+  if (e.endereco.cep) mensagem += `*CEP:* ${e.endereco.cep}\n\n`;
+
+  mensagem += `*Resumo:*\n`;
+  mensagem += `- ${e.menu}\n`;
+  mensagem += `- ${e.quantidade_pessoas.quantidade_adultos} adultos, ${e.quantidade_pessoas.quantidade_criancas} crianças, ${e.quantidade_pessoas.quantidade_staffs} staffs\n`;
+  mensagem += `- Bebidas: ${e.bebidas ? 'Sim' : 'Não'}\n\n`;
+
+  if (e.observacoes) {
+    mensagem += `*Observações:*\n${e.observacoes}\n\n`;
+  }
+
+  if (e.freelas && e.freelas.length > 0) {
+    mensagem += `*Freelas:*\n`;
+    e.freelas.forEach((f) => {
+      mensagem += `- ${f.nome} (${f.funcao})\n`;
+    });
+  }
+
+  const url = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
+  window.open(url, '_blank');
 };
 
 const groupedItems = computed(() => {
@@ -372,9 +530,33 @@ const groupedItems = computed(() => {
 
 const carregarEvento = async () => {
   try {
-    $q.loading.show({ message: 'Carregando dados do evento...' });
+    $q.loading.show({ message: 'Carregando dados do evento...', customClass: 'loading-varandao' });
     const { data } = await api.get(`/eventos/${eventId}`);
     evento.value = data;
+
+    // Tentar carregar estado salvo do localStorage
+    const savedStateStr = localStorage.getItem(STORAGE_KEY);
+    const newState: Record<string, boolean> = {};
+
+    if (data.itens) {
+      let savedState: Record<string, boolean> = {};
+      if (savedStateStr) {
+        try {
+          savedState = JSON.parse(savedStateStr);
+        } catch (e) {
+          console.error('Erro ao carregar estado do localStorage:', e);
+        }
+      }
+
+      // Constrói o novo estado apenas com os itens atuais do evento
+      data.itens.forEach((item: Item) => {
+        const key = item.produtoId || item.nome;
+        // Mantém o valor salvo se existir, senão inicializa com false
+        newState[key] = savedState[key] !== undefined ? savedState[key] : false;
+      });
+    }
+
+    checkedItems.value = newState;
   } catch (error) {
     console.error('Erro ao buscar evento:', error);
     $q.notify({
@@ -385,7 +567,9 @@ const carregarEvento = async () => {
     });
     void router.push('/eventos');
   } finally {
-    $q.loading.hide();
+    setTimeout(() => {
+      $q.loading.hide();
+    }, 800);
   }
 };
 
@@ -408,5 +592,17 @@ onMounted(carregarEvento);
 
 .shadow-robust {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.text-strike {
+  text-decoration: line-through;
+}
+
+.collapsed-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
