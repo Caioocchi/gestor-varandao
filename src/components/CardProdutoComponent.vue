@@ -1,33 +1,36 @@
 <template>
-  <q-card class="card-base shadow-soft cursor-pointer">
+  <q-card class="card-base shadow-soft card-produto" style="width: 100%; max-width: 600px">
     <q-card-section class="row items-center no-wrap">
-      <q-avatar
-        size="56px"
-        color="primary"
-        text-color="white"
-        icon="shopping_basket"
-        class="q-mr-lg"
-      >
-      </q-avatar>
+      <q-avatar size="46px" color="primary" text-color="white" icon="shopping_basket" />
 
-      <div class="col">
+      <div class="col q-ml-md">
         <div class="text-h6 text-weight-bold text-primary">{{ nome }}</div>
         <div class="text-body2 text-grey-7">
           {{ categorias.find((c) => c.slug === props.categoria)?.label }}
         </div>
       </div>
 
-      <!-- <q-btn
-        flat
-        round
-        dense
-        color="primary"
-        icon="edit"
-        size="14px"
-        :to="`/eventos/editar/${props.id}`"
-      /> -->
+      <div class="row q-gutter-x-xs no-wrap">
+        <q-btn
+          flat
+          round
+          dense
+          color="primary"
+          icon="edit"
+          size="14px"
+          :to="`/produtos/editar/${props.id}`"
+        />
 
-      <q-btn flat round dense color="negative" icon="delete" size="14px" @click="confirm = true" />
+        <q-btn
+          flat
+          round
+          dense
+          color="negative"
+          icon="delete"
+          size="14px"
+          @click="confirm = true"
+        />
+      </div>
     </q-card-section>
   </q-card>
 
@@ -130,3 +133,24 @@ const deleteProduto = async (id: string) => {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.card-produto {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.confirm-card {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 20px;
+}
+
+.btn-rounded {
+  border-radius: 8px;
+}
+</style>
+

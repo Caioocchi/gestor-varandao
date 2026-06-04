@@ -123,17 +123,17 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-  // {
-  //   path: '/produtos/editar/:id',
-  //   component: () => import('layouts/MainLayout.vue'),
-  //   children: [
-  //     {
-  //       path: '/produtos/editar/:id',
-  //       component: () => import('pages/Produtos/EditarProduto.vue'),
-  //       name: 'Editar Produto',
-  //     },
-  //   ],
-  // },
+  {
+    path: '/produtos/editar/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/produtos/editar/:id',
+        component: () => import('pages/Produtos/AdicionarProduto.vue'),
+        name: 'Editar Produto',
+      },
+    ],
+  },
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),

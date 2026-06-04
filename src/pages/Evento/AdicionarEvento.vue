@@ -556,7 +556,7 @@ const mapProdutoParaItem = (produto: Produto, categoria: string): Produto => ({
 });
 
 const buscarProdutosPorCategoria = async (categoria: string) => {
-  const { data } = await api.get(`/produto/${categoria}`);
+  const { data } = await api.get(`/produto/categoria/${categoria}`);
   if (!Array.isArray(data)) {
     return [] as Produto[];
   }

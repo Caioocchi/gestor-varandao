@@ -3,71 +3,24 @@
     <div class="full-width" style="max-width: 800px; margin: 0 auto">
       <!-- Header Section -->
       <div class="q-mb-xl">
-        <div class="text-h4 text-weight-bold text-primary">Novo Produto</div>
-        <div class="text-subtitle1 text-grey-6">Preencha os dados do produto</div>
+        <div class="text-h4 text-weight-bold text-primary">
+          {{ isEdit ? 'Editar Produto' : 'Novo Produto' }}
+        </div>
+        <div class="text-subtitle1 text-grey-6">
+          {{ isEdit ? 'Atualize os dados do produto' : 'Preencha os dados do produto' }}
+        </div>
       </div>
 
-      <q-form @submit.once="onSubmit" class="q-gutter-y-lg">
-        <q-card class="card-base" style="width: 100%; max-width: 600px">
-          <q-card-section>
-            <div class="text-h6 text-weight-bold text-primary q-mb-md">Dados Gerais</div>
-            <div class="row q-col-gutter-md">
-              <div class="col-12 col-md-6">
-                <q-input
-                  v-model="produto.nome"
-                  label="Nome"
-                  outlined
-                  stack-label
-                  color="primary"
-                  bg-color="white"
-                  class="input-rounded"
-                />
-              </div>
-              <div class="col-12 col-md-6">
-                <q-select
-                  v-model="produto.categoria"
-                  label="Categoria"
-                  outlined
-                  stack-label
-                  color="primary"
-                  bg-color="white"
-                  class="input-rounded"
-                  :options="categorias"
-                  option-label="nome"
-                  option-value="value"
-                  emit-value
-                  map-options
-                />
-              </div>
-              <div class="col-12 col-md-6">
-                <q-select
-                  v-model="produto.unidade"
-                  label="Unidade"
-                  outlined
-                  stack-label
-                  color="primary"
-                  bg-color="white"
-                  class="input-rounded"
-                  :options="['kg', 'unidade', 'pacote']"
-                />
-              </div>
-              <div class="col-12 col-md-6">
-                <q-toggle v-model="produto.ativo" label="Ativo" color="primary" class="q-mb-md" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-        <div class="q-pt-md">
-          <q-btn
-            label="Adicionar produto"
-            type="submit"
-            color="primary"
-            unelevated
-            class="full-width btn-primary shadow-elevated"
-            size="lg"
-          />
-        </div>
-      </q-form>
+      <FormProduto
+        :initialData="produto"
+        :submitLabel="isEdit ? 'Salvar Alterações' : 'Adicionar produto'"
+        @submit="onSubmit"
+        v-if="!loading"
+      />
+
+      <div v-else class="row justify-center q-pa-xl">
+        <q-spinner-dots color="primary" size="40px" />
+      </div>
     </div>
   </q-page>
 </template>
@@ -75,11 +28,13 @@
 <script setup lang="ts">
 import { api } from 'src/boot/axios';
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import FormProduto from 'src/components/FormProduto.vue';
 
 const $q = useQuasar();
 const $router = useRouter();
+const $route = useRoute();
 
 interface Produto {
   nome: string;
@@ -88,6 +43,10 @@ interface Produto {
   ativo: boolean;
 }
 
+const id = computed(() => $route.params.id as string);
+const isEdit = computed(() => !!id.value);
+const loading = ref(isEdit.value);
+
 const produto = ref<Produto>({
   nome: '',
   categoria: '',
@@ -95,31 +54,39 @@ const produto = ref<Produto>({
   ativo: true,
 });
 
-const categorias = [
-  { nome: 'Proteínas', value: 'proteina' },
-  { nome: 'Acompanhamentos', value: 'acompanhamento' },
-  { nome: 'Limpeza e Identidade', value: 'limpeza_identidade' },
-  { nome: 'Serviço de Mesa', value: 'servico_mesa' },
-  { nome: 'Molhos e Finalização', value: 'molho_finalizacao' },
-  { nome: 'Equipamentos', value: 'equipamento' },
-];
+onMounted(async () => {
+  if (isEdit.value) {
+    try {
+      const { data } = await api.get(`/produto/${id.value}`);
+      produto.value = data.produto || data.data || data;
+    } catch (error) {
+      console.error('Erro ao carregar produto:', error);
+      $q.notify({
+        color: 'negative',
+        message: 'Erro ao carregar dados do produto.',
+        icon: 'error',
+      });
+      void $router.push('/produtos');
+    } finally {
+      loading.value = false;
+    }
+  }
+});
 
-const onSubmit = async () => {
+const onSubmit = async (formData: Produto) => {
   try {
-    $q.loading.show({ message: 'Adicionando produto...' });
+    $q.loading.show({ message: isEdit.value ? 'Salvando alterações...' : 'Adicionando produto...' });
 
-    const payload = {
-      nome: produto.value.nome,
-      categoria: produto.value.categoria,
-      unidade: produto.value.unidade,
-      ativo: produto.value.ativo,
-    };
-    console.log(payload);
-    await api.post('/produto', payload);
+    if (isEdit.value) {
+      await api.put(`/produto/${id.value}`, formData);
+    } else {
+      await api.post('/produto', formData);
+    }
+
     $q.notify({
       color: 'positive',
       textColor: 'white',
-      message: 'Produto adicionado com sucesso.',
+      message: isEdit.value ? 'Produto atualizado com sucesso.' : 'Produto adicionado com sucesso.',
       icon: 'check',
     });
     void $router.push('/produtos');
@@ -128,7 +95,7 @@ const onSubmit = async () => {
     $q.notify({
       color: 'negative',
       textColor: 'white',
-      message: 'Erro ao adicionar produto.',
+      message: 'Erro ao salvar produto.',
       icon: 'error',
     });
   } finally {

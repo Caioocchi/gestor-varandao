@@ -91,6 +91,8 @@ const alterarRota = (pageName: string): string => {
     pageName === 'Editar Evento'
   ) {
     return '/eventos';
+  } else if (pageName === 'Adicionar Produto' || pageName === 'Editar Produto') {
+    return '/produtos';
   }
   return '/home';
 };

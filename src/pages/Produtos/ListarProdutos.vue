@@ -76,7 +76,7 @@ const buscarDados = async () => {
     const { data } = await api.get('/produto', {
       params: { pagina: pagina.value },
     });
-    produtos.value = data;
+    produtos.value = data.produtos || data.data || data;
     pagina.value++;
   } catch (error) {
     console.error('Erro ao buscar dados:', error);
@@ -93,9 +93,11 @@ const onLoad = async (index: number, done: (stop?: boolean) => void) => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const { data } = await api.get('/produto', {
+    const { data: response } = await api.get('/produto', {
       params: { pagina: pagina.value },
     });
+
+    const data = response.produtos || response.data || response;
 
     if (data.length < 10) {
       done(true);
