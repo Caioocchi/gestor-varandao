@@ -20,7 +20,8 @@
           <div v-for="freela in freelas" :key="freela._id" class="col-12 col-sm-6">
             <div
               class="selection-item q-pa-sm rounded-borders row items-center no-wrap"
-              :class="freela.selected ? 'bg-accent-light' : 'bg-grey-1'"
+              :class="[freela.selected ? 'bg-accent-light' : 'bg-grey-1', freela.disabled ? 'text-grey-5' : '']"
+              :style="freela.disabled ? 'opacity: 0.6;' : ''"
             >
               <q-checkbox
                 v-model="freela.selected"
@@ -28,10 +29,15 @@
                 color="primary"
                 class="checkbox-ellipsis col"
                 dense
+                :disable="freela.disabled"
               />
 
+              <span v-if="freela.disabled" class="text-caption text-negative text-weight-bold q-mr-sm">
+                Ocupado
+              </span>
+
               <transition name="fade">
-                <div v-if="freela.selected" class="q-ml-sm" style="min-width: 120px">
+                <div v-if="freela.selected && !freela.disabled" class="q-ml-sm" style="min-width: 120px">
                   <q-select
                     v-model="freela.funcao"
                     :options="funcoes"
@@ -59,6 +65,7 @@ interface Freela {
   nome: string;
   selected: boolean;
   funcao: string;
+  disabled?: boolean;
 }
 
 const props = defineProps<{

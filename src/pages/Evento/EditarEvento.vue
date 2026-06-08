@@ -217,7 +217,7 @@
                   label="Responsável"
                   outlined
                   stack-label
-                  :options="responsaveis"
+                  :options="responsaveisDisponiveis"
                   color="primary"
                   bg-color="white"
                   class="input-rounded"
@@ -378,6 +378,7 @@ interface Freelas {
   nome: string;
   selected: boolean;
   funcao: string;
+  disabled?: boolean;
 }
 
 interface QuantidadePessoas {
@@ -467,6 +468,102 @@ const funcoes = [
 ];
 
 const freelasDisponiveis = ref<Freelas[]>([]);
+interface EventoCompleto extends Evento {
+  _id: string;
+}
+
+const todosEventos = ref<EventoCompleto[]>([]);
+
+const carregarTodosEventos = async () => {
+  try {
+    const { data } = await api.get('/eventos');
+    todosEventos.value = data;
+  } catch (error) {
+    console.error('Erro ao carregar todos os eventos:', error);
+  }
+};
+
+const responsaveisDisponiveis = computed(() => {
+  if (!evento.value.data) return responsaveis;
+
+  const outrosEventosNoMesmoDia = todosEventos.value.filter((evt: EventoCompleto) => {
+    return evt.data === evento.value.data && evt._id !== eventId;
+  });
+
+  const ocupados = new Set(
+    outrosEventosNoMesmoDia.map((evt: EventoCompleto) => evt.responsavel).filter(Boolean),
+  );
+
+  return responsaveis.filter((resp) => !ocupados.has(resp));
+});
+
+const atualizarDisponibilidade = () => {
+  if (!evento.value.data) {
+    freelasDisponiveis.value.forEach((freela) => {
+      freela.disabled = false;
+    });
+    return;
+  }
+
+  const outrosEventosNoMesmoDia = todosEventos.value.filter((evt: EventoCompleto) => {
+    return evt.data === evento.value.data && evt._id !== eventId;
+  });
+
+  const freelasOcupados = new Set<string>();
+  outrosEventosNoMesmoDia.forEach((evt: EventoCompleto) => {
+    if (evt.freelas) {
+      evt.freelas.forEach((f: Freelas) => {
+        if (f._id) freelasOcupados.add(f._id);
+        if (f.nome) freelasOcupados.add(f.nome);
+      });
+    }
+  });
+
+  let freelasRemovidos = 0;
+  freelasDisponiveis.value.forEach((freela) => {
+    const ocupado = freelasOcupados.has(freela._id) || freelasOcupados.has(freela.nome);
+    if (ocupado && freela.selected) {
+      freela.selected = false;
+      freela.funcao = '';
+      freelasRemovidos++;
+    }
+    freela.disabled = ocupado;
+  });
+
+  if (freelasRemovidos > 0 && !isCarregando.value) {
+    $q.notify({
+      color: 'warning',
+      textColor: 'white',
+      message: `${freelasRemovidos} freela(s) foram desmarcados pois estão ocupados em outro evento nesta data.`,
+      icon: 'warning',
+    });
+  }
+};
+
+// Monitor availability when the date changes
+watch(
+  () => evento.value.data,
+  () => {
+    atualizarDisponibilidade();
+  },
+);
+
+// Monitor responsibles options list to deselect if chosen responsible becomes occupied
+watch(responsaveisDisponiveis, (disponiveis) => {
+  if (
+    !isCarregando.value &&
+    evento.value.responsavel &&
+    !disponiveis.includes(evento.value.responsavel)
+  ) {
+    evento.value.responsavel = '';
+    $q.notify({
+      color: 'warning',
+      textColor: 'white',
+      message: 'O responsável anterior está ocupado em outro evento nesta data e foi removido.',
+      icon: 'warning',
+    });
+  }
+});
 
 const carregarFreelas = async () => {
   try {
@@ -664,7 +761,7 @@ const sincronizarItens = () => {
       const itemSalvo = evento.value.itens.find((i: Itens) => i.nome === produto.nome);
       if (itemSalvo) {
         produto.selected = true;
-        produto.quantidade = itemSalvo.quantidade || 0;
+        produto.quantidade = itemSalvo.quantidade || null;
       }
     });
   });
@@ -672,9 +769,11 @@ const sincronizarItens = () => {
 
 onMounted(async () => {
   isCarregando.value = true;
+  await carregarTodosEventos();
   await carregarEvento();
   await carregarFreelas();
   await carregarProdutos();
+  atualizarDisponibilidade();
   setTimeout(() => {
     isCarregando.value = false;
   }, 500);
@@ -714,7 +813,7 @@ const mapProdutoParaItem = (produto: Produto, categoria: string): Produto => ({
   nome: produto.nome,
   selected: false,
   categoria,
-  quantidade: 0,
+  quantidade: null,
   unidade: produto.unidade,
 });
 
@@ -822,7 +921,7 @@ const onSubmit = async () => {
       icon: 'check',
       message: 'Evento atualizado com sucesso!',
     });
-    void router.push('/eventos');
+    void router.push(`/eventos/visualizar/${eventId}`);
   } catch (error) {
     console.error('Erro ao atualizar evento:', error);
     $q.notify({
