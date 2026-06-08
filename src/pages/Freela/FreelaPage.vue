@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="row items-center justify-between q-mb-lg no-wrap">
+    <div class="row items-center justify-between q-mb-lg no-wrap" style="width: 100%; max-width: 600px">
       <div class="column q-pr-lg">
         <div class="text-h4 text-weight-bold text-primary">Freelas</div>
         <div class="text-subtitle1 text-grey-7">Gerencie seus prestadores de serviço</div>
@@ -15,7 +15,32 @@
       />
     </div>
 
-    <q-infinite-scroll @load="onLoad" :offset="0">
+    <!-- Search Input Section -->
+    <div style="width: 100%; max-width: 600px" class="q-mb-md">
+      <q-input
+        v-model="pesquisa"
+        label="Pesquisar freelas..."
+        outlined
+        rounded
+        dense
+        bg-color="white"
+        class="input-rounded"
+        clearable
+        @update:model-value="onSearchInput"
+        @clear="limparPesquisa"
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" color="primary" />
+        </template>
+      </q-input>
+    </div>
+
+    <q-infinite-scroll
+      ref="infiniteScrollRef"
+      @load="onLoad"
+      :offset="0"
+      style="width: 100%; max-width: 600px"
+    >
       <div class="column q-gutter-y-md">
         <CardFreelaComponent
           v-for="freela in freelas"
@@ -38,8 +63,10 @@
     </q-infinite-scroll>
 
     <div v-if="freelas.length === 0" class="text-center q-pa-xl">
-      <q-icon name="group_off" size="80px" color="grey-4" />
-      <div class="text-h6 text-grey-5 q-mt-md">Nenhum freela cadastrado</div>
+      <q-icon :name="ultimaPesquisaEnviada ? 'search_off' : 'group_off'" size="80px" color="grey-4" />
+      <div class="text-h6 text-grey-5 q-mt-md">
+        {{ ultimaPesquisaEnviada ? 'Nenhum freela encontrado' : 'Nenhum freela cadastrado' }}
+      </div>
     </div>
   </q-page>
 </template>
@@ -48,7 +75,7 @@
 import { api } from 'src/boot/axios';
 import CardFreelaComponent from 'src/components/CardFreelaComponent.vue';
 import { onBeforeMount, ref } from 'vue';
-import { useQuasar } from 'quasar';
+import { useQuasar, QInfiniteScroll } from 'quasar';
 
 const $q = useQuasar();
 
@@ -64,11 +91,36 @@ interface Freela {
 
 const freelas = ref<Freela[]>([]);
 const pagina = ref(1);
+const pesquisa = ref('');
+const infiniteScrollRef = ref<QInfiniteScroll | null>(null);
+
+let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
+const ultimaPesquisaEnviada = ref('');
 
 const recarregar = async () => {
   pagina.value = 1;
   freelas.value = [];
+  infiniteScrollRef.value?.resume(); // Reset infinite scroll to load again
   await buscarDados();
+};
+
+const onSearchInput = () => {
+  if (debounceTimeout) {
+    clearTimeout(debounceTimeout);
+  }
+  debounceTimeout = setTimeout(() => {
+    const valor = pesquisa.value.trim();
+    // Only search if the effective query changes (i.e. >= 3 chars, or resetting to '')
+    const proximaPesquisa = valor.length >= 3 ? valor : '';
+    if (proximaPesquisa !== ultimaPesquisaEnviada.value) {
+      void recarregar();
+    }
+  }, 400);
+};
+
+const limparPesquisa = () => {
+  pesquisa.value = '';
+  void recarregar();
 };
 
 const buscarDados = async () => {
@@ -77,8 +129,14 @@ const buscarDados = async () => {
     customClass: 'loading-varandao',
   });
   try {
+    const valorPesquisa = pesquisa.value.trim().length >= 3 ? pesquisa.value.trim() : '';
+    ultimaPesquisaEnviada.value = valorPesquisa;
+
     const { data } = await api.get('/freelas', {
-      params: { pagina: pagina.value },
+      params: {
+        pagina: pagina.value,
+        pesquisa: valorPesquisa || undefined,
+      },
     });
     freelas.value = data;
     pagina.value++;
@@ -97,8 +155,12 @@ const onLoad = async (index: number, done: (stop?: boolean) => void) => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    const valorPesquisa = pesquisa.value.trim().length >= 3 ? pesquisa.value.trim() : '';
     const { data } = await api.get('/freelas', {
-      params: { pagina: pagina.value },
+      params: {
+        pagina: pagina.value,
+        pesquisa: valorPesquisa || undefined,
+      },
     });
 
     if (data.length < 10) {

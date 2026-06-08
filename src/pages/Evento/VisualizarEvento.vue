@@ -69,9 +69,11 @@
               <div class="row items-center q-mb-xs">
                 <q-icon name="groups" color="secondary" size="20px" class="q-mr-sm" />
                 <div class="text-body1">
-                  {{ evento.quantidade_pessoas.quantidade_adultos }} adultos,
-                  {{ evento.quantidade_pessoas.quantidade_criancas }} crianças e
-                  {{ evento.quantidade_pessoas.quantidade_staffs }} staffs
+                  <span>
+                    {{ evento.quantidade_pessoas.quantidade_adultos || 0 }} Adultos,
+                    {{ evento.quantidade_pessoas.quantidade_criancas || 0 }} Crianças,
+                    {{ evento.quantidade_pessoas.quantidade_staffs || 0 }} Staffs
+                  </span>
                 </div>
               </div>
               <div class="row items-center q-mb-xs">
@@ -134,12 +136,12 @@
                 <div v-if="evento.freelas?.length > 0" class="column q-gutter-y-md">
                   <div v-for="freela in evento.freelas" :key="freela.nome" class="item-group">
                     <div
-                      class="text-subtitle2 text-weight-bold text-secondary q-mb-sm row justify-between"
+                      class="text-subtitle2 text-weight-bold text-secondary q-mb-sm row justify-between checkbox-ellipsis"
                     >
-                      <div>
+                      <div class="ellipsis col">
                         {{ freela.nome }}
                       </div>
-                      <div>
+                      <div class="text-no-wrap">
                         {{ freela.funcao }}
                       </div>
                     </div>
