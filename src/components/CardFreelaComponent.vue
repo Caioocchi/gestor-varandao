@@ -130,7 +130,7 @@ export default {
   setup(props, { emit }) {
     const $q = useQuasar();
     const confirm = ref(false);
-    const urlApi = 'https://gestor-varandao-api.onrender.com/freelas/';
+    const urlApi = 'https://gestor-varandao-api-production-01ef.up.railway.app/freelas/';
 
     const copyToClipboard = async (text: string) => {
       try {
