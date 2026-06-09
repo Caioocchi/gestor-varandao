@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-lg flex flex-center">
     <div class="full-width" style="max-width: 600px">
-      <div v-if="loading">Carregando freela...</div>
+      <div v-if="loading" style="min-height: 200px"></div>
       <div v-else>
         <div class="q-mb-lg row items-center justify-between">
           <div class="column">
@@ -68,6 +68,10 @@ export default {
         return;
       }
 
+      $q.loading.show({
+        message: 'Carregando dados do freela...',
+        customClass: 'loading-varandao',
+      });
       try {
         const { data } = await api.get(`/freelas/${id}`);
 
@@ -90,10 +94,17 @@ export default {
         await router.replace('/freelas');
       } finally {
         loading.value = false;
+        setTimeout(() => {
+          $q.loading.hide();
+        }, 500);
       }
     };
 
     const onSubmit = async (freela: Freela) => {
+      $q.loading.show({
+        message: 'Salvando alterações...',
+        customClass: 'loading-varandao',
+      });
       try {
         const formData = new FormData();
 
@@ -115,7 +126,7 @@ export default {
           color: 'green-4',
           textColor: 'white',
           icon: 'cloud_done',
-          message: 'Freela criado com sucesso',
+          message: 'Alterações salvas com sucesso',
         });
       } catch (error) {
         console.log(error);
@@ -124,8 +135,10 @@ export default {
           color: 'red',
           textColor: 'white',
           icon: 'error',
-          message: 'Erro ao criar freela',
+          message: 'Erro ao salvar freela',
         });
+      } finally {
+        $q.loading.hide();
       }
     };
 

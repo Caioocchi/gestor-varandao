@@ -208,14 +208,18 @@ export default {
       return `${dia}/${mes}/${ano}`;
     };
 
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
     const abrirMapa = () => {
       const fullAddress = `${formatarEndereco(props.evento.endereco)}, CEP: ${props.evento.endereco?.cep}`;
 
-      window.open(
-        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`,
-        '_blank',
-        'rel="noopener noreferrer"',
-      );
+      const endereco = encodeURIComponent(fullAddress);
+
+      if (isIOS) {
+        window.location.href = `http://maps.apple.com/?q=${endereco}`;
+      } else {
+        window.open(`https://www.google.com/maps/search/?api=1&query=${endereco}`, '_blank');
+      }
     };
 
     const deleteEvento = async (id: string) => {

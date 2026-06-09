@@ -244,6 +244,10 @@ const showDeleteDialog = ref(false);
 
 const carregarMensagens = async () => {
   loading.value = true;
+  $q.loading.show({
+    message: 'Carregando mensagens...',
+    customClass: 'loading-varandao',
+  });
   try {
     const { data } = await api.get('/arquivos');
     mensagens.value = data.whatsapp || [];
@@ -256,6 +260,9 @@ const carregarMensagens = async () => {
     });
   } finally {
     loading.value = false;
+    setTimeout(() => {
+      $q.loading.hide();
+    }, 500);
   }
 };
 

@@ -141,7 +141,7 @@
               dense
               class="input-rounded"
               placeholder="Digite o nome do arquivo (ex: Cardápio)"
-              :rules="[val => !!val || 'Nome do arquivo é obrigatório']"
+              :rules="[(val) => !!val || 'Nome do arquivo é obrigatório']"
             />
 
             <q-file
@@ -173,8 +173,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-
-
 
       <!-- Dialog de Confirmação de Exclusão -->
       <q-dialog v-model="showDeleteDialog" persistent>
@@ -246,14 +244,16 @@ const preencherNomePadrao = (file: File | null) => {
   }
 };
 
-
-
 const showDeleteDialog = ref(false);
 const arquivoFoco = ref<Arquivo | null>(null);
 
 // Carregar arquivos da API
 const carregarArquivos = async () => {
   loading.value = true;
+  $q.loading.show({
+    message: 'Carregando arquivos...',
+    customClass: 'loading-varandao',
+  });
   try {
     const { data } = await api.get('/arquivos');
     arquivos.value = data.arquivos || [];
@@ -266,6 +266,9 @@ const carregarArquivos = async () => {
     });
   } finally {
     loading.value = false;
+    setTimeout(() => {
+      $q.loading.hide();
+    }, 500);
   }
 };
 
@@ -315,13 +318,21 @@ const enviarArquivo = async () => {
   }
 };
 
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
 const enviarPorWhatsapp = (arquivo: Arquivo) => {
   const baseUrl = api.defaults.baseURL || '';
   const urlCompleta = arquivo.urlArquivo.startsWith('http')
     ? arquivo.urlArquivo
     : `${baseUrl}/${arquivo.urlArquivo}`;
-  const texto = encodeURIComponent(`Olá! Segue o link para o arquivo *${arquivo.nomeArquivo}*: ${urlCompleta}`);
-  window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
+  const texto = encodeURIComponent(
+    `Olá! Segue o link para o arquivo *${arquivo.nomeArquivo}*: ${urlCompleta}`,
+  );
+  if (isIOS) {
+    window.location.href = `https://wa.me/?text=${texto}`;
+  } else {
+    window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
+  }
 };
 
 const confirmarExclusao = (arquivo: Arquivo) => {

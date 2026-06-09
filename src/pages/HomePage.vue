@@ -127,6 +127,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
+import { useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 import HomeCard from 'src/components/HomeCard.vue';
 
@@ -157,11 +158,17 @@ interface Evento {
   bebidas: boolean;
 }
 
+const $q = useQuasar();
+
 const eventos = ref<Evento[]>([]);
 const loading = ref(true);
 
 const loadEventos = async () => {
   loading.value = true;
+  $q.loading.show({
+    message: 'Carregando painel gestor...',
+    customClass: 'loading-varandao',
+  });
   try {
     const { data } = await api.get('/eventos');
     eventos.value = data;
@@ -169,6 +176,9 @@ const loadEventos = async () => {
     console.error('Erro ao carregar eventos:', error);
   } finally {
     loading.value = false;
+    setTimeout(() => {
+      $q.loading.hide();
+    }, 500);
   }
 };
 

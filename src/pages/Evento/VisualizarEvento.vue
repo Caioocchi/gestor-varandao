@@ -668,14 +668,18 @@ const formatarCategoria = (slug: string) => {
   return cats[slug] || slug;
 };
 
-const abrirMapa = () => {
-  const fullAddress = `${formatarEndereco(evento.value.endereco)}`;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-  window.open(
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`,
-    '_blank',
-    'rel="noopener noreferrer"',
-  );
+const abrirMapa = () => {
+  const fullAddress = `${formatarEndereco(evento.value.endereco)}, CEP: ${evento.value.endereco?.cep}`;
+
+  const endereco = encodeURIComponent(fullAddress);
+
+  if (isIOS) {
+    window.location.href = `http://maps.apple.com/?q=${endereco}`;
+  } else {
+    window.open(`https://www.google.com/maps/search/?api=1&query=${endereco}`, '_blank');
+  }
 };
 
 const compartilharWhatsApp = () => {
@@ -710,8 +714,11 @@ const compartilharWhatsApp = () => {
     });
   }
 
-  const url = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
-  window.open(url, '_blank');
+  if (isIOS) {
+    window.location.href = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
+  } else {
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, '_blank');
+  }
 };
 
 const groupedItems = computed(() => {
