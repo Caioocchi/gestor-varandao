@@ -135,6 +135,39 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/arquivos',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/arquivos',
+        component: () => import('pages/Arquivos/MenuArquivos.vue'),
+        name: 'Arquivos e Mensagens',
+      },
+    ],
+  },
+  {
+    path: '/arquivos/gerenciar',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/arquivos/gerenciar',
+        component: () => import('pages/Arquivos/GerenciarArquivos.vue'),
+        name: 'Arquivos Salvos',
+      },
+    ],
+  },
+  {
+    path: '/arquivos/mensagens',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/arquivos/mensagens',
+        component: () => import('pages/Arquivos/GerenciarMensagens.vue'),
+        name: 'Mensagens WhatsApp',
+      },
+    ],
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },

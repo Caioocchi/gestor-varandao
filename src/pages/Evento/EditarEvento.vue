@@ -371,6 +371,7 @@ interface Itens {
   categoria: string;
   quantidade: number | null;
   unidade: string;
+  quantidade_retornada?: number | null;
 }
 
 interface Freelas {
@@ -411,6 +412,7 @@ interface Produto {
   categoria: string;
   quantidade: number | null;
   unidade: string;
+  quantidade_retornada?: number | null;
 }
 
 interface CategoriaProduto {
@@ -762,6 +764,7 @@ const sincronizarItens = () => {
       if (itemSalvo) {
         produto.selected = true;
         produto.quantidade = itemSalvo.quantidade || null;
+        produto.quantidade_retornada = itemSalvo.quantidade_retornada !== undefined ? itemSalvo.quantidade_retornada : null;
       }
     });
   });
@@ -902,6 +905,7 @@ const onSubmit = async () => {
       categoria: p.categoria,
       quantidade: p.quantidade,
       unidade: p.unidade,
+      quantidade_retornada: p.quantidade_retornada !== undefined ? p.quantidade_retornada : null,
     })),
     freelas: freelasDisponiveis.value
       .filter((f) => f.selected)

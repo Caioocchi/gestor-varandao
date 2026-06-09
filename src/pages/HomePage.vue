@@ -1,134 +1,125 @@
 <template>
   <q-page class="q-pa-lg">
     <div class="full-width" style="max-width: 600px; margin: 0 auto">
-      <div class="text-center q-mb-xl q-pt-lg">
+      <div class="text-center q-mb-lg q-pt-md">
         <div class="text-h4 text-weight-bold" style="color: rgba(255, 255, 255, 0.9)">
           Painel Gestor
         </div>
-        <div class="text-body1" style="color: rgba(255, 255, 255, 0.45)">
+        <div class="text-body2" style="color: rgba(255, 255, 255, 0.45)">
           Selecione uma categoria para gerenciar
         </div>
       </div>
 
-      <div class="column q-gutter-y-md">
-        <router-link to="/freelas" class="text-decoration-none">
-          <q-card class="feature-card card-base shadow-soft">
-            <q-card-section class="row items-center no-wrap q-pa-lg">
-              <q-avatar
-                size="56px"
-                color="primary"
-                text-color="white"
-                icon="groups"
-                class="q-mr-lg"
-              />
-              <div class="col">
-                <div class="text-h6 text-weight-bold text-primary">Freelas</div>
-                <div class="text-body2 text-grey-7">Gerencie prestadores de serviço</div>
-              </div>
-              <q-icon name="chevron_right" size="28px" color="grey-5" />
-            </q-card-section>
-          </q-card>
-        </router-link>
-
-        <router-link to="/eventos" class="text-decoration-none">
-          <q-card class="feature-card card-base shadow-soft">
-            <q-card-section class="row items-center no-wrap q-pa-lg">
-              <q-avatar
-                size="56px"
-                color="secondary"
-                text-color="white"
-                icon="event"
-                class="q-mr-lg"
-              />
-              <div class="col">
-                <div class="text-h6 text-weight-bold text-primary">Eventos</div>
-                <div class="text-body2 text-grey-7">Organize e acompanhe eventos</div>
-              </div>
-              <q-icon name="chevron_right" size="28px" color="grey-5" />
-            </q-card-section>
-          </q-card>
-        </router-link>
-
-        <router-link to="/produtos" class="text-decoration-none">
-          <q-card class="feature-card card-base shadow-soft">
-            <q-card-section class="row items-center no-wrap q-pa-lg">
-              <q-avatar
-                size="56px"
-                color="accent"
-                text-color="primary"
-                icon="shopping_basket"
-                class="q-mr-lg"
-              />
-              <div class="col">
-                <div class="text-h6 text-weight-bold text-primary">Produtos</div>
-                <div class="text-body2 text-grey-7">Gerencie produtos</div>
-              </div>
-              <q-icon name="chevron_right" size="28px" color="grey-5" />
-            </q-card-section>
-          </q-card>
-        </router-link>
-      </div>
-
       <!-- Upcoming Events of the Month Section -->
-      <div class="text-h6 text-weight-bold q-mt-xl q-mb-md" style="color: rgba(255, 255, 255, 0.9)">
+      <div class="text-subtitle1 text-weight-bold q-mb-sm text-white" style="opacity: 0.9">
         Próximos Eventos de {{ nomeMesAtual }}
       </div>
 
-      <div v-if="loading" class="column q-gutter-y-sm">
-        <q-card v-for="i in 2" :key="i" class="card-base shadow-soft">
-          <q-card-section class="row items-center no-wrap q-pa-md">
-            <q-skeleton type="QAvatar" size="48px" class="q-mr-md" />
-            <div class="col">
-              <q-skeleton type="text" width="60%" class="q-mb-xs" />
+      <!-- Horizontal Scroll of Skeletons -->
+      <div v-if="loading" class="row no-wrap scroll q-gutter-x-md q-pb-md hide-scrollbar q-mb-lg">
+        <q-card
+          v-for="i in 2"
+          :key="i"
+          class="card-base shadow-soft"
+          style="min-width: 170px; width: 100%"
+        >
+          <q-card-section class="q-pa-md column justify-between" style="min-height: 110px">
+            <div class="row justify-between">
               <q-skeleton type="text" width="40%" />
+              <q-skeleton type="text" width="30%" />
             </div>
+            <q-skeleton type="text" width="85%" class="q-my-xs" />
+            <q-skeleton type="text" width="50%" />
           </q-card-section>
         </q-card>
       </div>
 
-      <div v-else-if="proximosEventos.length === 0" class="text-center q-pa-lg glass-card text-white-section">
-        <q-icon name="event_busy" size="40px" class="q-mb-sm text-grey-4" />
-        <div class="text-subtitle2 text-grey-4">Nenhum evento agendado para o restante do mês.</div>
+      <!-- Horizontal Scroll Empty State -->
+      <div
+        v-else-if="proximosEventos.length === 0"
+        class="text-center q-pa-md glass-card text-white-section q-mb-lg"
+      >
+        <q-icon name="event_busy" size="32px" class="q-mb-xs text-grey-4" />
+        <div class="text-caption text-grey-4">Nenhum evento agendado para este mês.</div>
       </div>
 
-      <div v-else class="column q-gutter-y-sm">
+      <!-- Horizontal Scroll of Event Mini-Cards -->
+      <div v-else class="row no-wrap scroll q-gutter-x-md q-pb-md hide-scrollbar q-mb-lg">
         <router-link
           v-for="evento in proximosEventos"
           :key="evento._id"
           :to="`/eventos/visualizar/${evento._id}`"
           class="text-decoration-none"
+          style="min-width: 170px; width: 100%"
         >
-          <q-card class="feature-card card-base shadow-soft">
-            <q-card-section class="row items-center no-wrap q-pa-md">
-              <!-- Calendário/Data Badge -->
-              <div class="date-badge column items-center justify-center q-mr-md">
-                <div class="date-day text-weight-bold text-primary">{{ obterDia(evento.data) }}</div>
-                <div class="date-weekday text-uppercase text-weight-medium text-grey-7">{{ obterDiaSemana(evento.data) }}</div>
-              </div>
-
-              <!-- Informações do Evento -->
-              <div class="col">
-                <div class="text-subtitle1 text-weight-bold text-primary ellipsis">
-                  {{ evento.nome_contratante }}
-                </div>
-                <div class="row items-center text-caption text-grey-7 q-gutter-x-sm q-mt-xs">
-                  <span class="row items-center">
-                    <q-icon name="schedule" size="14px" class="q-mr-xs text-secondary" />
-                    {{ evento.hora_evento }}
-                  </span>
-                  <q-separator vertical class="q-my-xs" />
-                  <span class="row items-center">
-                    <q-icon name="person" size="14px" class="q-mr-xs text-secondary" />
-                    Chef: {{ evento.responsavel || 'Não definido' }}
-                  </span>
+          <q-card class="feature-card card-base shadow-soft full-height">
+            <q-card-section
+              class="q-pa-md column justify-between full-height"
+              style="min-height: 110px"
+            >
+              <!-- Data & Hora -->
+              <div class="row items-center justify-between no-wrap q-mb-xs">
+                <q-badge
+                  color="accent-light"
+                  text-color="primary"
+                  class="text-weight-bold text-caption q-py-xs"
+                >
+                  {{ obterDia(evento.data) }} {{ obterDiaSemana(evento.data) }}
+                </q-badge>
+                <div class="text-caption text-grey-6 text-weight-medium">
+                  <q-icon name="access_time" size="14px" style="vertical-align: sub" />
+                  {{ evento.hora_evento }}
                 </div>
               </div>
 
-              <!-- Chevron -->
-              <q-icon name="chevron_right" size="24px" color="grey-5" />
+              <!-- Contratante -->
+              <div class="text-subtitle2 text-weight-bold text-primary q-my-xs">
+                {{ evento.nome_contratante }}
+              </div>
+
+              <!-- Chef -->
+              <div class="row items-center text-caption text-grey-6">
+                <q-icon name="person" size="14px" class="q-mr-xs text-secondary" />
+                <span class="ellipsis col">{{ evento.responsavel || 'Não definido' }}</span>
+              </div>
             </q-card-section>
           </q-card>
         </router-link>
+      </div>
+
+      <!-- Categories Section Title -->
+      <div class="text-subtitle1 text-weight-bold q-mb-sm text-white" style="opacity: 0.9">
+        Categorias
+      </div>
+
+      <div class="row q-gutter-x-md q-pb-md q-mb-lg categories-grid">
+        <div class="col-6">
+          <HomeCard route="/freelas" icon="groups" icon-color="primary" title="Freelas" />
+        </div>
+
+        <div class="col-6">
+          <HomeCard route="/eventos" icon="event" icon-color="secondary" title="Eventos" />
+        </div>
+
+        <div class="col-6">
+          <HomeCard
+            route="/produtos"
+            icon="shopping_basket"
+            icon-color="accent"
+            text-color="primary"
+            title="Produtos"
+          />
+        </div>
+
+        <div class="col-6">
+          <HomeCard
+            route="/arquivos"
+            icon="archive"
+            icon-color="green-11"
+            text-color="primary"
+            title="Arquivos e mensagens"
+          />
+        </div>
       </div>
     </div>
   </q-page>
@@ -137,6 +128,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { api } from 'src/boot/axios';
+import HomeCard from 'src/components/HomeCard.vue';
 
 interface Endereco {
   cep: string;
@@ -182,8 +174,18 @@ const loadEventos = async () => {
 
 const nomeMesAtual = computed(() => {
   const meses = [
-    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
   ];
   return meses[new Date().getMonth()];
 });
@@ -231,53 +233,24 @@ const proximosEventos = computed(() => {
 onMounted(loadEventos);
 </script>
 
-<style lang="scss" scoped>
-.feature-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-  }
+<style scoped>
+.categories-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 16px;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
-
-.text-decoration-none {
-  text-decoration: none;
+.categories-grid :deep(.col-6) {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
 }
-
-.text-white-section {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-}
-
-.date-badge {
-  width: 52px;
-  height: 52px;
-  background-color: rgba(#8b7355, 0.12); // Using secondary color $secondary
-  border: 1px solid rgba(#8b7355, 0.25);
-  border-radius: 12px;
-  text-align: center;
-  flex-shrink: 0;
-
-  .date-day {
-    font-size: 1.2rem;
-    line-height: 1.2;
-  }
-
-  .date-weekday {
-    font-size: 0.7rem;
-    line-height: 1;
-  }
+.categories-grid :deep(.col-6 > a) {
+  flex-grow: 1;
 }
 </style>
-

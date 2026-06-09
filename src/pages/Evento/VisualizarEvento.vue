@@ -160,9 +160,19 @@
                 <div class="row items-center justify-between q-mb-lg">
                   <div class="row items-center no-wrap">
                     <q-icon name="shopping_basket" color="primary" size="24px" class="q-mr-sm" />
-                    <div class="text-h6 text-weight-bold text-primary">Lista de compras</div>
+                    <div v-if="!modoPosEvento" class="text-h6 text-weight-bold text-primary">
+                      Lista de compras
+                    </div>
+                    <div v-else class="text-h6 text-weight-bold text-primary">Itens retornados</div>
                   </div>
                   <div class="row items-center q-gutter-x-md">
+                    <q-toggle
+                      v-model="modoPosEvento"
+                      label="Modo Pós-Evento"
+                      color="secondary"
+                      left-label
+                      class="text-weight-medium text-caption"
+                    />
                     <q-chip outline color="secondary" text-color="white" :ripple="false">
                       {{ evento.itens?.length || 0 }} item(s)
                     </q-chip>
@@ -178,40 +188,101 @@
                       <q-item
                         v-for="item in group.itens"
                         :key="item.produtoId || item.nome"
-                        class="q-py-md"
-                        clickable
-                        @click="toggleItem(item)"
+                        class="q-py-md column items-stretch"
+                        :clickable="!modoPosEvento"
+                        @click="!modoPosEvento && toggleItem(item)"
                       >
-                        <q-item-section side>
-                          <q-checkbox
-                            v-model="checkedItems[item.produtoId || item.nome]"
-                            color="secondary"
-                            @click.stop
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label
-                            class="text-weight-medium"
+                        <!-- Linha Superior: Checkbox/Icone + Nome + Badge de Status/Consumo -->
+                        <div class="row items-center no-wrap full-width">
+                          <!-- Nome do Item -->
+                          <div
+                            class="text-weight-medium text-grey-9 ellipsis col"
                             :class="{
-                              'text-strike text-grey-5': checkedItems[item.produtoId || item.nome],
+                              'text-strike text-grey-5':
+                                !modoPosEvento && checkedItems[item.produtoId || item.nome],
                             }"
                           >
                             {{ item.nome }}
-                          </q-item-label>
-                        </q-item-section>
-                        <q-item-section side>
-                          <q-badge
-                            :color="
-                              checkedItems[item.produtoId || item.nome] ? 'grey-3' : 'accent-light'
-                            "
-                            :text-color="
-                              checkedItems[item.produtoId || item.nome] ? 'grey-6' : 'primary'
-                            "
-                            class="q-pa-sm text-body2"
-                          >
-                            {{ item.quantidade }} {{ item.unidade }}
-                          </q-badge>
-                        </q-item-section>
+                          </div>
+
+                          <!-- Badge de Status Geral/Quantidade original ou cálculo de consumo -->
+                          <div class="q-ml-sm">
+                            <template v-if="modoPosEvento">
+                              <q-badge
+                                v-if="
+                                  item.categoria === 'proteina' ||
+                                  item.categoria === 'acompanhamento' ||
+                                  item.nome === 'Carvão'
+                                "
+                                :color="calcularConsumo(item) > 0 ? 'accent-light' : 'grey-3'"
+                                :text-color="calcularConsumo(item) > 0 ? 'primary' : 'grey-6'"
+                                class="q-pa-xs text-caption text-weight-bold"
+                              >
+                                Usado: {{ calcularConsumo(item) }} {{ item.unidade }}
+                              </q-badge>
+                              <q-badge
+                                v-else
+                                :color="calcularFalta(item) > 0 ? 'red-1' : 'green-1'"
+                                :text-color="calcularFalta(item) > 0 ? 'negative' : 'positive'"
+                                class="q-pa-xs text-caption text-weight-bold"
+                              >
+                                {{
+                                  calcularFalta(item) > 0
+                                    ? `Falta: ${calcularFalta(item)} ${item.unidade}`
+                                    : 'Completo'
+                                }}
+                              </q-badge>
+                            </template>
+                            <q-badge
+                              v-else
+                              :color="
+                                checkedItems[item.produtoId || item.nome]
+                                  ? 'grey-3'
+                                  : 'accent-light'
+                              "
+                              :text-color="
+                                checkedItems[item.produtoId || item.nome] ? 'grey-6' : 'primary'
+                              "
+                              class="q-pa-sm text-body2"
+                            >
+                              {{ item.quantidade }} {{ item.unidade }}
+                            </q-badge>
+                          </div>
+                        </div>
+
+                        <!-- Linha Inferior (Controles pós-evento): Quantidade Levada e Controles de Retorno -->
+                        <div
+                          v-if="modoPosEvento"
+                          class="row items-center justify-between full-width q-mt-sm"
+                        >
+                          <div class="text-caption text-grey-6">
+                            Levado:
+                            <span class="text-weight-bold text-grey-8"
+                              >{{ item.quantidade }} {{ item.unidade }}</span
+                            >
+                          </div>
+
+                          <div class="row no-wrap items-center q-gutter-x-sm">
+                            <!-- Botão de preenchimento completo -->
+                            <div class="text-caption text-grey-6">Retornou:</div>
+                            <q-input
+                              v-model.number="item.quantidade_retornada"
+                              type="number"
+                              borderless
+                              dense
+                              class="text-center bg-grey-2 rounded-borders q-mx-xs"
+                              style="width: 30px; height: 35px"
+                              input-class="text-center text-weight-bold text-grey-9 text-caption"
+                              @change="validaRetorno(item)"
+                              @click.stop
+                            />
+                            <span
+                              class="text-caption text-grey-7 q-ml-xs text-weight-bold"
+                              style="min-width: 20px"
+                              >{{ item.unidade }}</span
+                            >
+                          </div>
+                        </div>
                       </q-item>
                     </q-list>
                   </div>
@@ -219,6 +290,133 @@
                 <div v-else class="text-center q-pa-xl text-grey-5">
                   <q-icon name="info" size="48px" class="q-mb-md" />
                   <div>Nenhum item selecionado para este evento.</div>
+                </div>
+              </q-card-section>
+            </q-card>
+
+            <!-- Resumo de Fechamento Card (Post-Event only) -->
+            <q-card v-if="modoPosEvento" class="card-base shadow-soft">
+              <q-card-section class="q-pa-lg">
+                <div class="row items-center justify-between q-col-gutter-sm q-mb-md">
+                  <div class="col-12 col-sm-auto row items-center no-wrap">
+                    <q-icon name="assessment" color="primary" size="24px" class="q-mr-sm" />
+                    <div class="text-h6 text-weight-bold text-primary">Fechamento do Evento</div>
+                  </div>
+                  <div class="col-12 col-sm-auto">
+                    <q-btn
+                      color="primary"
+                      icon="save"
+                      label="Salvar Conferência"
+                      no-caps
+                      unelevated
+                      class="full-width shadow-soft rounded-borders"
+                      @click="salvarConferencia"
+                    />
+                  </div>
+                </div>
+
+                <q-separator class="q-my-md" />
+
+                <div class="row q-col-gutter-lg">
+                  <!-- Coluna de Proteínas -->
+                  <div class="col-12 col-md-6">
+                    <div
+                      class="text-subtitle2 text-weight-bold text-secondary q-mb-sm row items-center"
+                    >
+                      <q-icon name="restaurant" class="q-mr-xs" size="18px" />
+                      Consumo de Proteínas
+                    </div>
+                    <q-list bordered separator class="rounded-borders bg-grey-1">
+                      <template v-if="proteinasConsumidas.length > 0">
+                        <q-item
+                          v-for="item in proteinasConsumidas"
+                          :key="item.produtoId || item.nome"
+                          class="q-py-sm"
+                        >
+                          <q-item-section>
+                            <q-item-label class="text-weight-medium text-grey-8">{{
+                              item.nome
+                            }}</q-item-label>
+                            <q-item-label caption
+                              >Levou: {{ item.quantidade }} {{ item.unidade }} | Retornou:
+                              {{ item.quantidade_retornada ?? 0 }} {{ item.unidade }}</q-item-label
+                            >
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-badge color="primary" class="q-pa-sm text-body2">
+                              {{ calcularConsumo(item) }} {{ item.unidade }}
+                            </q-badge>
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                      <q-item v-else>
+                        <q-item-section class="text-center text-grey-5 q-pa-md">
+                          Nenhuma proteína conferida ou consumida.
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
+
+                  <!-- Coluna de Divergências -->
+                  <div class="col-12 col-md-6">
+                    <div
+                      class="text-subtitle2 text-weight-bold text-secondary q-mb-sm row items-center"
+                    >
+                      <q-icon name="warning" class="q-mr-xs text-negative" size="18px" />
+                      Divergências de Retorno
+                    </div>
+                    <q-list bordered separator class="rounded-borders bg-grey-1">
+                      <template v-if="itensDivergentes.length > 0">
+                        <q-item
+                          v-for="item in itensDivergentes"
+                          :key="item.produtoId || item.nome"
+                          class="q-py-sm"
+                        >
+                          <q-item-section>
+                            <q-item-label class="text-weight-medium text-negative">{{
+                              item.nome
+                            }}</q-item-label>
+                            <q-item-label caption
+                              >Levou: {{ item.quantidade }} | Retornou:
+                              {{ item.quantidade_retornada ?? 0 }}</q-item-label
+                            >
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-badge
+                              color="red-1"
+                              text-color="negative"
+                              class="q-pa-sm text-body2 text-weight-bold"
+                            >
+                              Faltando: {{ calcularFalta(item) }} {{ item.unidade }}
+                            </q-badge>
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                      <q-item v-else>
+                        <q-item-section class="text-center text-positive text-weight-bold q-pa-md">
+                          <q-icon
+                            name="check_circle"
+                            color="positive"
+                            size="24px"
+                            class="q-mb-xs self-center"
+                          />
+                          Tudo completo! Sem divergências.
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
+                </div>
+
+                <div class="row justify-end q-mt-lg">
+                  <q-btn
+                    color="positive"
+                    icon="mdi-whatsapp"
+                    label="Compartilhar Fechamento"
+                    no-caps
+                    unelevated
+                    class="full-width col-xs-12 col-sm-auto shadow-soft"
+                    @click="compartilharWhatsAppFechamento"
+                  />
                 </div>
               </q-card-section>
             </q-card>
@@ -321,7 +519,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch, toRaw } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
@@ -335,6 +533,7 @@ const fabRight = ref(false);
 
 const checkedItems = ref<Record<string, boolean>>({});
 const expandidoSugestao = ref(false);
+const modoPosEvento = ref(false);
 
 // Salvar no localStorage sempre que houver mudança
 watch(
@@ -365,6 +564,7 @@ interface Item {
   categoria: string;
   quantidade: number;
   unidade: string;
+  quantidade_retornada?: number;
 }
 
 interface Freela {
@@ -534,7 +734,37 @@ const carregarEvento = async () => {
   try {
     $q.loading.show({ message: 'Carregando dados do evento...', customClass: 'loading-varandao' });
     const { data } = await api.get(`/eventos/${eventId}`);
+
+    if (data && data.itens) {
+      data.itens = data.itens.map((item: Item) => ({
+        ...item,
+        quantidade_retornada:
+          item.quantidade_retornada !== undefined && item.quantidade_retornada !== null
+            ? item.quantidade_retornada
+            : 0,
+      }));
+    }
     evento.value = data;
+
+    // Verificar se o evento já passou para ativar o modo pós-evento
+    if (evento.value && evento.value.data) {
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const dataAtualStr = `${ano}-${mes}-${dia}`;
+
+      if (dataAtualStr > evento.value.data) {
+        modoPosEvento.value = true;
+      } else if (dataAtualStr === evento.value.data && evento.value.hora_evento) {
+        const horasAtuais = String(hoje.getHours()).padStart(2, '0');
+        const minutosAtuais = String(hoje.getMinutes()).padStart(2, '0');
+        const horaAtualStr = `${horasAtuais}:${minutosAtuais}`;
+        if (horaAtualStr > evento.value.hora_evento) {
+          modoPosEvento.value = true;
+        }
+      }
+    }
 
     // Tentar carregar estado salvo do localStorage
     const savedStateStr = localStorage.getItem(STORAGE_KEY);
@@ -573,6 +803,126 @@ const carregarEvento = async () => {
       $q.loading.hide();
     }, 800);
   }
+};
+
+const validaRetorno = (item: Item) => {
+  if (item.quantidade_retornada === undefined || item.quantidade_retornada === null) {
+    item.quantidade_retornada = 0;
+    return;
+  }
+  if (item.quantidade_retornada < 0) {
+    item.quantidade_retornada = 0;
+  }
+};
+
+const calcularConsumo = (item: Item) => {
+  if (item.quantidade_retornada === null || item.quantidade_retornada === undefined) {
+    return 0;
+  }
+  const consumo = item.quantidade - item.quantidade_retornada;
+  return Number(consumo.toFixed(2));
+};
+
+const calcularFalta = (item: Item) => {
+  if (item.quantidade_retornada === null || item.quantidade_retornada === undefined) {
+    return item.quantidade;
+  }
+  const falta = item.quantidade - item.quantidade_retornada;
+  return falta > 0 ? Number(falta.toFixed(2)) : 0;
+};
+
+const proteinasConsumidas = computed(() => {
+  if (!evento.value.itens) return [];
+  return evento.value.itens.filter((item) => item.categoria === 'proteina');
+});
+
+const itensDivergentes = computed(() => {
+  if (!evento.value.itens) return [];
+  return evento.value.itens.filter(
+    (item) =>
+      item.categoria !== 'proteina' &&
+      item.categoria !== 'acompanhamento' &&
+      item.nome !== 'Carvão' &&
+      calcularFalta(item) > 0,
+  );
+});
+
+const salvarConferencia = async () => {
+  $q.loading.show({ message: 'Salvando conferência de retorno...' });
+
+  const rawEvento = toRaw(evento.value);
+  const payload = {
+    ...rawEvento,
+    endereco: { ...(rawEvento.endereco ? toRaw(rawEvento.endereco) : {}) },
+    itens: rawEvento.itens.map((item: Item) => ({
+      produtoId: item.produtoId,
+      nome: item.nome,
+      categoria: item.categoria,
+      quantidade: item.quantidade,
+      unidade: item.unidade,
+      quantidade_retornada: item.quantidade_retornada,
+    })),
+    freelas: rawEvento.freelas.map((f: Freela) => ({
+      _id: f._id,
+      nome: f.nome,
+      funcao: f.funcao,
+    })),
+  };
+
+  try {
+    await api.put(`/eventos/${eventId}`, payload);
+
+    $q.notify({
+      color: 'positive',
+      textColor: 'white',
+      icon: 'check',
+      message: 'Conferência de retorno salva com sucesso!',
+    });
+  } catch (error) {
+    console.error('Erro ao salvar conferência:', error);
+    $q.notify({
+      color: 'negative',
+      textColor: 'white',
+      icon: 'error',
+      message: 'Erro ao salvar a conferência no servidor.',
+    });
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+const compartilharWhatsAppFechamento = () => {
+  const e = evento.value;
+  const dataFormatada = formatarData(e.data);
+
+  let mensagem = `*Resumo de Fechamento do Evento*\n`;
+  mensagem += `*Contratante:* ${e.nome_contratante}\n`;
+  mensagem += `*Data:* ${dataFormatada}\n`;
+  mensagem += `*Responsável:* ${e.responsavel}\n\n`;
+
+  mensagem += `*🥩 Consumo de Proteínas:*\n`;
+  if (proteinasConsumidas.value.length > 0) {
+    proteinasConsumidas.value.forEach((p) => {
+      const consumido = calcularConsumo(p);
+      mensagem += `- *${p.nome}:* Levou ${p.quantidade} ${p.unidade} | Retornou ${p.quantidade_retornada ?? 0} ${p.unidade} -> *Consumiu ${consumido} ${p.unidade}*\n`;
+    });
+  } else {
+    mensagem += `_Nenhuma proteína registrada._\n`;
+  }
+  mensagem += `\n`;
+
+  mensagem += `*⚠️ Divergências de Retorno (Faltantes):*\n`;
+  if (itensDivergentes.value.length > 0) {
+    itensDivergentes.value.forEach((d) => {
+      const falta = calcularFalta(d);
+      mensagem += `- *${d.nome}:* Levou ${d.quantidade} ${d.unidade} | Retornou ${d.quantidade_retornada ?? 0} ${d.unidade} -> *Falta ${falta} ${d.unidade}*\n`;
+    });
+  } else {
+    mensagem += `_Tudo completo! Nenhuma divergência de retorno._\n`;
+  }
+
+  const url = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
+  window.open(url, '_blank');
 };
 
 onMounted(carregarEvento);

@@ -93,6 +93,10 @@ const alterarRota = (pageName: string): string => {
     return '/eventos';
   } else if (pageName === 'Adicionar Produto' || pageName === 'Editar Produto') {
     return '/produtos';
+  } else if (pageName === 'Arquivos e Mensagens') {
+    return '/home';
+  } else if (pageName === 'Arquivos Salvos' || pageName === 'Mensagens WhatsApp') {
+    return '/arquivos';
   }
   return '/home';
 };
