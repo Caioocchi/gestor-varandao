@@ -129,9 +129,9 @@ export default {
               $q.loading.hide();
               $q.notify({
                 color: 'positive',
-                textColor: 'white',
                 icon: 'check',
                 message: 'Usuário logado com sucesso!',
+                textColor: 'white',
               });
 
               localStorage.setItem('token', logado.data.access_token);
@@ -145,11 +145,15 @@ export default {
         console.log(error);
 
         $q.notify({
-          color: 'red',
+          color: 'negative',
           textColor: 'white',
           icon: 'error',
           message: 'Não foi possível logar',
         });
+
+        setTimeout(() => {
+          $q.loading.hide();
+        }, 1500);
       }
     };
 
