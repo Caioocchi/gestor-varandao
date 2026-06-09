@@ -125,7 +125,7 @@
 
       <!-- Dialog de Upload -->
       <q-dialog v-model="showUploadDialog" persistent>
-        <q-card style="min-width: 350px; border-radius: 16px">
+        <q-card style="width: 100%; max-width: 350px; border-radius: 16px">
           <q-card-section class="row items-center q-pb-none">
             <div class="text-h6 text-weight-bold text-primary">Enviar Novo Arquivo</div>
             <q-space />

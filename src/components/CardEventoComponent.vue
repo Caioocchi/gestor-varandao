@@ -2,11 +2,11 @@
   <div class="q-pt-md">
     <q-card class="card-base shadow-soft" bordered>
       <q-card-section class="q-pa-lg">
-        <div class="row justify-between items-start no-wrap">
-          <div class="text-h6 text-weight-bold text-primary">
+        <div class="row justify-between items-center q-gutter-sm">
+          <div class="text-h6 text-weight-bold text-primary col" style="word-break: break-word; min-width: 120px;">
             {{ props.evento.nome_contratante }}
           </div>
-          <div class="row q-gutter-x-md no-wrap">
+          <div class="row q-gutter-x-sm no-wrap col-auto">
             <q-btn
               flat
               round
@@ -51,9 +51,9 @@
             </div>
           </div>
 
-          <div class="info-item text-caption text-secondary text-weight-bold no-wrap">
-            <q-icon name="groups" size="16px" />
-            <span>
+          <div class="info-item text-caption text-secondary text-weight-bold">
+            <q-icon name="groups" size="16px" class="q-mr-xs" />
+            <span style="word-break: break-word;">
               {{ props.evento.quantidade_pessoas.quantidade_adultos || 0 }} Adultos,
               {{ props.evento.quantidade_pessoas.quantidade_criancas || 0 }} Crianças,
               {{ props.evento.quantidade_pessoas.quantidade_staffs || 0 }} Staffs
@@ -61,9 +61,9 @@
           </div>
         </div>
 
-        <div class="info-item text-grey-9 text-weight-bold text-caption no-wrap q-my-xs">
-          <q-icon name="mdi-chef-hat" color="primary" size="16px" />
-          <span>{{ props.evento.responsavel }}</span>
+        <div class="info-item text-grey-9 text-weight-bold text-caption q-my-xs">
+          <q-icon name="mdi-chef-hat" color="primary" size="16px" class="q-mr-xs" />
+          <span style="word-break: break-word;">{{ props.evento.responsavel }}</span>
         </div>
 
         <!-- Informações Secundárias -->

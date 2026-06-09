@@ -19,11 +19,14 @@
         </div>
 
         <q-card-section class="col q-pa-lg">
-          <div class="row justify-between items-start no-wrap">
-            <div class="column">
-              <div class="text-h6 text-weight-bold text-primary">{{ props.nome }}</div>
+          <div class="row justify-between items-center q-gutter-sm">
+            <div
+              class="col text-h6 text-weight-bold text-primary"
+              style="word-break: break-word; min-width: 120px"
+            >
+              {{ props.nome }}
             </div>
-            <div class="row q-gutter-x-xs no-wrap">
+            <div class="row q-gutter-x-xs no-wrap col-auto">
               <q-btn
                 flat
                 round

@@ -53,20 +53,21 @@
         >
           <q-card-section class="q-pa-md column">
             <!-- Top Row -->
-            <div class="row items-center justify-between">
-              <div class="row items-center q-gutter-x-sm">
+            <div class="row items-center justify-between q-gutter-x-xs no-wrap">
+              <div class="row items-center q-gutter-x-sm col">
                 <q-avatar
                   size="36px"
                   color="green-1"
                   text-color="green-8"
                   icon="chat"
+                  class="col-auto"
                 />
-                <div class="text-subtitle1 text-weight-bold text-grey-9">{{ msg.titulo }}</div>
+                <div class="text-subtitle1 text-weight-bold text-grey-9 col ellipsis">{{ msg.titulo }}</div>
               </div>
               <q-badge
                 :color="msg.ativo ? 'green-11' : 'grey-3'"
                 :text-color="msg.ativo ? 'green-10' : 'grey-7'"
-                class="text-weight-bold q-px-sm q-py-xs text-caption"
+                class="text-weight-bold q-px-sm q-py-xs text-caption col-auto"
                 style="border-radius: 8px"
               >
                 {{ msg.ativo ? 'Ativa' : 'Inativa' }}
@@ -123,7 +124,7 @@
 
       <!-- Dialog Criar/Editar -->
       <q-dialog v-model="showFormDialog" persistent>
-        <q-card style="min-width: 400px; max-width: 600px; border-radius: 16px">
+        <q-card style="width: 100%; max-width: 600px; border-radius: 16px">
           <q-card-section class="row items-center q-pb-none">
             <div class="text-h6 text-weight-bold text-primary">
               {{ isEdit ? 'Editar Mensagem' : 'Nova Mensagem Padrão' }}

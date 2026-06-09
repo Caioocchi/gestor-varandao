@@ -195,3 +195,60 @@ main {
     display: none; /* Chrome, Safari, Opera */
   }
 }
+
+// ---- Responsive Adjustments for Small Screens ----
+
+@media (max-width: 599px) {
+  // Page paddings
+  .q-page.q-pa-lg {
+    padding: 16px !important;
+  }
+  .q-page.q-pa-md {
+    padding: 12px !important;
+  }
+
+  // Card section paddings
+  .q-card-section.q-pa-lg {
+    padding: 16px !important;
+  }
+  .q-card-section.q-pa-md {
+    padding: 12px !important;
+  }
+
+  // Custom dialog bounds
+  .q-dialog .q-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 92vw !important;
+  }
+}
+
+@media (max-width: 480px) {
+  // Overriding horizontal layouts inside cards
+  .q-card__section--horizontal {
+    flex-direction: column !important;
+
+    > div:first-child {
+      border-right: none !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 16px !important;
+      width: 100% !important;
+    }
+  }
+}
+
+@media (max-width: 350px) {
+  .q-page.q-pa-lg,
+  .q-page.q-pa-md {
+    padding: 8px !important;
+  }
+
+  .q-card-section.q-pa-lg {
+    padding: 12px !important;
+  }
+
+  .categories-grid {
+    gap: 8px !important;
+  }
+}
+

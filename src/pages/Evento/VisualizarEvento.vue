@@ -157,15 +157,15 @@
             <!-- Items Card -->
             <q-card class="card-base shadow-soft">
               <q-card-section class="q-pa-lg">
-                <div class="row items-center justify-between q-mb-lg">
-                  <div class="row items-center no-wrap">
-                    <q-icon name="shopping_basket" color="primary" size="24px" class="q-mr-sm" />
-                    <div v-if="!modoPosEvento" class="text-h6 text-weight-bold text-primary">
+                <div class="row items-center justify-between q-col-gutter-sm q-mb-lg">
+                  <div class="row items-center col-12 col-sm-auto">
+                    <q-icon name="shopping_basket" color="primary" size="24px" class="q-mr-sm col-auto" />
+                    <div v-if="!modoPosEvento" class="text-h6 text-weight-bold text-primary col" style="word-break: break-word;">
                       Lista de compras
                     </div>
-                    <div v-else class="text-h6 text-weight-bold text-primary">Itens retornados</div>
+                    <div v-else class="text-h6 text-weight-bold text-primary col" style="word-break: break-word;">Itens retornados</div>
                   </div>
-                  <div class="row items-center q-gutter-x-md">
+                  <div class="row items-center q-gutter-x-md col-12 col-sm-auto justify-between justify-sm-end">
                     <q-toggle
                       v-model="modoPosEvento"
                       label="Modo Pós-Evento"
@@ -437,14 +437,14 @@
             <!-- Sugestão de Quantidade -->
             <q-card v-if="evento.sugestao_qtd" class="card-base shadow-soft">
               <q-card-section class="q-pa-lg">
-                <div class="row items-center justify-between q-mb-md no-wrap">
-                  <div class="row items-center no-wrap">
-                    <q-icon name="notes" color="primary" size="24px" class="q-mr-sm" />
-                    <div style="text-align: center" class="text-h6 text-weight-bold text-primary">
+                <div class="row items-center justify-between q-col-gutter-sm q-mb-md">
+                  <div class="row items-center col">
+                    <q-icon name="notes" color="primary" size="24px" class="q-mr-sm col-auto" />
+                    <div class="text-h6 text-weight-bold text-primary col" style="word-break: break-word;">
                       Sugestão de quantidade de produção
                     </div>
                   </div>
-                  <div>
+                  <div class="col-auto">
                     <q-btn
                       color="secondary"
                       icon="content_copy"

@@ -168,6 +168,22 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/perfil',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/perfil',
+        component: () => import('pages/Perfil/PerfilPage.vue'),
+        name: 'Perfil',
+      },
+      {
+        path: '/perfil/senha',
+        component: () => import('pages/Perfil/AlterarSenhaPage.vue'),
+        name: 'Alterar Senha',
+      },
+    ],
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },
