@@ -158,18 +158,6 @@ main {
   background-color: rgba(0, 0, 0, 0.9);
 }
 
-.feature-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-  }
-}
-
 .text-decoration-none {
   text-decoration: none;
 }
