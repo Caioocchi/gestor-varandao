@@ -3,7 +3,7 @@
     <div class="full-width" style="max-width: 600px; margin: 0 auto">
       <div class="text-center q-mb-lg q-pt-md">
         <div class="text-h4 text-weight-bold" style="color: rgba(255, 255, 255, 0.9)">
-          Painel Gestor
+          Olá, {{ nomeUsuario.split(' ')[0] }}
         </div>
         <div class="text-body2" style="color: rgba(255, 255, 255, 0.45)">
           Selecione uma categoria para gerenciar
@@ -162,6 +162,14 @@ const $q = useQuasar();
 
 const eventos = ref<Evento[]>([]);
 const loading = ref(true);
+const token = ref(localStorage.getItem('token'));
+const nomeUsuario = ref('');
+
+if (token.value) {
+  const payload = JSON.parse(atob(token.value.split('.')[1]!));
+
+  nomeUsuario.value = payload.nome;
+}
 
 const loadEventos = async () => {
   loading.value = true;

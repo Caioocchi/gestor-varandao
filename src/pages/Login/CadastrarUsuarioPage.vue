@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-lg" style="max-width: 600px">
-    <q-form ref="formRef" class="q-gutter-y-md">
+    <q-form ref="formRef" @submit="onSubmit" class="q-gutter-y-md">
       <q-card class="form-card shadow-light" bordered>
         <q-card-section class="q-gutter-y-md q-pa-lg">
           <q-input
@@ -27,13 +27,13 @@
             class="custom-input"
           >
             <template v-slot:prepend>
-              <q-icon name="event" color="primary" />
+              <q-icon name="email" color="primary" />
             </template>
           </q-input>
 
           <q-input
             outlined
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             v-model="senha"
             label="Senha"
             stack-label
@@ -42,7 +42,14 @@
             class="custom-input"
           >
             <template v-slot:prepend>
-              <q-icon name="event" color="primary" />
+              <q-icon name="key" color="primary" />
+            </template>
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility' : 'visibility_off'"
+                class="cursor-pointer"
+                @click="showPassword = !showPassword"
+              />
             </template>
           </q-input>
         </q-card-section>
@@ -55,7 +62,6 @@
           label="Cadastrar"
           unelevated
           type="submit"
-          @click="onSubmit"
           no-caps
         />
       </div>
@@ -75,6 +81,7 @@ const router = useRouter();
 const nome = ref('');
 const email = ref('');
 const senha = ref('');
+const showPassword = ref(false);
 
 const usuario = ref({
   nome: '',
@@ -92,33 +99,35 @@ const onSubmit = async () => {
 
     if (email.value && senha.value) {
       $q.loading.show({
-        message: 'Autenticando...',
+        message: 'Criando conta...',
       });
 
       const usuarioCriado = await api.post('/usuario/create', usuario.value);
 
-      if (usuarioCriado.status === 201) {
+      if (usuarioCriado.status === 201 || usuarioCriado.status === 200) {
         const loginResponse = await api.post('/auth/login', {
           email: email.value,
           senha: senha.value,
         });
 
-        if (loginResponse.status === 201) {
-          setTimeout(() => {
-            $q.loading.hide();
-            $q.notify({
-              color: 'positive',
-              textColor: 'white',
-              icon: 'check',
-              message: 'Usuário criado e logado com sucesso!',
-            });
+        if (loginResponse.status === 201 || loginResponse.status === 200) {
+          localStorage.setItem('token', loginResponse.data.access_token);
+          localStorage.setItem('tokenExpiry', String(Date.now() + 7 * 24 * 60 * 60 * 1000));
 
-            localStorage.setItem('token', loginResponse.data.access_token);
-            localStorage.setItem('tokenExpiry', String(Date.now() + 7 * 24 * 60 * 60 * 1000));
+          $q.loading.hide();
+          $q.notify({
+            color: 'positive',
+            textColor: 'white',
+            icon: 'check',
+            message: 'Usuário criado e logado com sucesso!',
+          });
 
-            void router.push('/home');
-          }, 1500);
+          await router.push('/home');
+        } else {
+          $q.loading.hide();
         }
+      } else {
+        $q.loading.hide();
       }
     }
   } catch (error) {
