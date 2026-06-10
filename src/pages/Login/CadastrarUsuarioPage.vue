@@ -7,13 +7,10 @@
             outlined
             v-model="nome"
             label="Nome completo"
-            placeholder="Ex: João Silva"
             stack-label
             color="primary"
             bg-color="white"
             class="custom-input"
-            lazy-rules
-            :rules="[(val) => (val && val.length > 0) || 'Digite seu nome completo']"
           >
             <template v-slot:prepend>
               <q-icon name="person" color="primary" />
@@ -28,8 +25,6 @@
             color="primary"
             bg-color="white"
             class="custom-input"
-            lazy-rules
-            :rules="[(val) => (val !== null && val !== '') || 'Digite seu e-mail']"
           >
             <template v-slot:prepend>
               <q-icon name="event" color="primary" />
@@ -45,11 +40,6 @@
             color="primary"
             bg-color="white"
             class="custom-input"
-            lazy-rules
-            :rules="[
-              (val) => val.length > 8 || 'Digite uma senha com mais de 8 dígitos',
-              (val) => val.length > 8 || 'Digite uma senha com mais de 8 dígitos',
-            ]"
           >
             <template v-slot:prepend>
               <q-icon name="event" color="primary" />
