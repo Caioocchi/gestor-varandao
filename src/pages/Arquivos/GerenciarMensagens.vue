@@ -39,10 +39,17 @@
         <q-spinner-dots color="primary" size="40px" />
       </div>
 
-      <div v-else-if="mensagensFiltradas.length === 0" class="text-center q-pa-xl text-grey-5 glass-card-dark bg-white">
+      <div
+        v-else-if="mensagensFiltradas.length === 0"
+        class="text-center q-pa-xl text-grey-5 glass-card-dark bg-white"
+      >
         <q-icon name="chat" size="64px" class="q-mb-md text-grey-4" />
-        <div class="text-subtitle1 text-grey-6 text-weight-medium">Nenhum modelo de mensagem encontrado</div>
-        <div class="text-caption text-grey-5">Crie modelos de mensagens para envio rápido de WhatsApp.</div>
+        <div class="text-subtitle1 text-grey-6 text-weight-medium">
+          Nenhum modelo de mensagem encontrado
+        </div>
+        <div class="text-caption text-grey-5">
+          Crie modelos de mensagens para envio rápido de WhatsApp.
+        </div>
       </div>
 
       <div v-else class="column q-gutter-y-sm">
@@ -62,7 +69,9 @@
                   icon="chat"
                   class="col-auto"
                 />
-                <div class="text-subtitle1 text-weight-bold text-grey-9 col ellipsis">{{ msg.titulo }}</div>
+                <div class="text-subtitle1 text-weight-bold text-grey-9 col ellipsis">
+                  {{ msg.titulo }}
+                </div>
               </div>
               <q-badge
                 :color="msg.ativo ? 'green-11' : 'grey-3'"
@@ -81,7 +90,9 @@
 
             <!-- Bottom Row -->
             <div class="row justify-between items-center">
-              <span class="text-caption text-grey-5">Criado em: {{ formatarData(msg.createdAt) }}</span>
+              <span class="text-caption text-grey-5"
+                >Criado em: {{ formatarData(msg.createdAt) }}</span
+              >
               <div class="row q-gutter-x-xs">
                 <q-btn
                   flat
@@ -141,7 +152,7 @@
               outlined
               dense
               class="input-rounded"
-              :rules="[val => !!val || 'Título é obrigatório']"
+              :rules="[(val) => !!val || 'Título é obrigatório']"
             />
 
             <!-- Conteúdo da Mensagem -->
@@ -153,15 +164,11 @@
               rows="6"
               class="input-rounded"
               placeholder="Digite o texto do modelo..."
-              :rules="[val => !!val || 'Texto da mensagem é obrigatório']"
+              :rules="[(val) => !!val || 'Texto da mensagem é obrigatório']"
             />
 
             <!-- Toggle Ativo -->
-            <q-toggle
-              v-model="formulario.ativo"
-              label="Modelo Ativo"
-              color="primary"
-            />
+            <q-toggle v-model="formulario.ativo" label="Modelo Ativo" color="primary" />
           </q-card-section>
 
           <q-card-actions align="right" class="q-pa-md">
@@ -189,7 +196,9 @@
           </q-card-section>
 
           <q-card-section class="q-pt-md text-body1 text-grey-8">
-            Tem certeza que deseja excluir permanentemente o modelo <strong>{{ mensagemFoco?.titulo }}</strong>? Essa ação não pode ser desfeita.
+            Tem certeza que deseja excluir permanentemente o modelo
+            <strong>{{ mensagemFoco?.titulo }}</strong
+            >? Essa ação não pode ser desfeita.
           </q-card-section>
 
           <q-card-actions align="right" class="q-pa-md">
@@ -424,7 +433,9 @@ onMounted(carregarMensagens);
   line-height: 1.5;
 }
 .message-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   border: 1px solid rgba(0, 0, 0, 0.03);
   background: rgba(250, 249, 246, 0.95);
   backdrop-filter: blur(8px);
@@ -436,7 +447,9 @@ onMounted(carregarMensagens);
 }
 .action-btn {
   opacity: 0.8;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
   &:hover {
     opacity: 1;
     transform: scale(1.1);

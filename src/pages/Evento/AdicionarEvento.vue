@@ -7,7 +7,7 @@
         <div class="text-subtitle1 text-grey-6">Preencha os dados da contratante</div>
       </div>
 
-      <q-form @submit.once="onSubmit" class="q-gutter-y-lg">
+      <q-form @submit.prevent="onSubmit" class="q-gutter-y-lg">
         <!-- Event Details Card -->
         <q-card class="card-base shadow-soft" bordered>
           <q-card-section class="q-pa-lg">
@@ -330,6 +330,8 @@
             unelevated
             class="full-width btn-primary shadow-elevated"
             size="lg"
+            :loading="submitting"
+            :disable="submitting"
           />
         </div>
       </q-form>
@@ -486,9 +488,7 @@ const responsaveisDisponiveis = computed(() => {
   });
 
   const ocupados = new Set(
-    outrosEventosNoMesmoDia
-      .map((evt: EventoCompleto) => evt.responsavel)
-      .filter(Boolean)
+    outrosEventosNoMesmoDia.map((evt: EventoCompleto) => evt.responsavel).filter(Boolean),
   );
 
   return responsaveis.filter((resp) => !ocupados.has(resp));
@@ -538,9 +538,12 @@ const atualizarDisponibilidade = () => {
 };
 
 // Monitor availability when the date changes
-watch(() => evento.value.data, () => {
-  atualizarDisponibilidade();
-});
+watch(
+  () => evento.value.data,
+  () => {
+    atualizarDisponibilidade();
+  },
+);
 
 // Monitor responsibles options list to deselect if chosen responsible becomes occupied
 watch(responsaveisDisponiveis, (disponiveis) => {
@@ -709,6 +712,7 @@ onMounted(async () => {
 const cepErro = ref('');
 const enderecoValidado = ref(false);
 const verificado = ref(false);
+const submitting = ref(false);
 
 const limparEndereco = () => {
   evento.value.endereco.cep = '';
@@ -766,6 +770,8 @@ const validarCep = async () => {
 };
 
 const onSubmit = async () => {
+  if (submitting.value) return;
+  submitting.value = true;
   $q.loading.show({ message: 'Salvando evento...' });
 
   // Garantir que o payload não contenha Proxies reativos
@@ -794,17 +800,30 @@ const onSubmit = async () => {
     },
   };
 
-  await api.post('/eventos', payload);
+  try {
+    await api.post('/eventos', payload);
 
-  setTimeout(() => {
+    setTimeout(() => {
+      $q.loading.hide();
+      $q.notify({
+        color: 'positive',
+        textColor: 'white',
+        icon: 'check',
+        message: 'Evento criado com sucesso!',
+      });
+      void router.push('/eventos');
+    }, 1200);
+  } catch (error) {
+    console.error('Erro ao criar evento:', error);
     $q.loading.hide();
     $q.notify({
-      color: 'positive',
+      color: 'negative',
       textColor: 'white',
-      icon: 'check',
-      message: 'Evento criado com sucesso!',
+      icon: 'error',
+      message: 'Erro ao criar o evento.',
     });
-    void router.push('/eventos');
-  }, 1200);
+  } finally {
+    submitting.value = false;
+  }
 };
 </script>

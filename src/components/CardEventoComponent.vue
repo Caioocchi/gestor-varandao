@@ -3,7 +3,10 @@
     <q-card class="card-base shadow-soft" bordered>
       <q-card-section class="q-pa-lg">
         <div class="row justify-between items-center q-gutter-sm">
-          <div class="text-h6 text-weight-bold text-primary col" style="word-break: break-word; min-width: 120px;">
+          <div
+            class="text-h6 text-weight-bold text-primary col"
+            style="word-break: break-word; min-width: 120px"
+          >
             {{ props.evento.nome_contratante }}
           </div>
           <div class="row q-gutter-x-sm no-wrap col-auto">
@@ -53,7 +56,7 @@
 
           <div class="info-item text-caption text-secondary text-weight-bold">
             <q-icon name="groups" size="16px" class="q-mr-xs" />
-            <span style="word-break: break-word;">
+            <span style="word-break: break-word">
               {{ props.evento.quantidade_pessoas.quantidade_adultos || 0 }} Adultos,
               {{ props.evento.quantidade_pessoas.quantidade_criancas || 0 }} Crianças,
               {{ props.evento.quantidade_pessoas.quantidade_staffs || 0 }} Staffs
@@ -63,7 +66,7 @@
 
         <div class="info-item text-grey-9 text-weight-bold text-caption q-my-xs">
           <q-icon name="mdi-chef-hat" color="primary" size="16px" class="q-mr-xs" />
-          <span style="word-break: break-word;">{{ props.evento.responsavel }}</span>
+          <span style="word-break: break-word">{{ props.evento.responsavel }}</span>
         </div>
 
         <!-- Informações Secundárias -->
@@ -208,18 +211,12 @@ export default {
       return `${dia}/${mes}/${ano}`;
     };
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
     const abrirMapa = () => {
       const fullAddress = `${formatarEndereco(props.evento.endereco)}, CEP: ${props.evento.endereco?.cep}`;
 
       const endereco = encodeURIComponent(fullAddress);
 
-      if (isIOS) {
-        window.location.href = `http://maps.apple.com/?q=${endereco}`;
-      } else {
-        window.open(`https://www.google.com/maps/search/?api=1&query=${endereco}`, '_blank');
-      }
+      window.open(`https://www.google.com/maps/search/?api=1&query=${endereco}`, '_blank');
     };
 
     const deleteEvento = async (id: string) => {

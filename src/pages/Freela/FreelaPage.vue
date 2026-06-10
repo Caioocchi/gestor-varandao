@@ -1,6 +1,9 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="row items-center justify-between q-mb-lg no-wrap" style="width: 100%; max-width: 600px">
+    <div
+      class="row items-center justify-between q-mb-lg no-wrap"
+      style="width: 100%; max-width: 600px"
+    >
       <div class="column q-pr-lg">
         <div class="text-h4 text-weight-bold text-primary">Freelas</div>
         <div class="text-subtitle1 text-grey-7">Gerencie seus prestadores de serviço</div>
@@ -63,7 +66,11 @@
     </q-infinite-scroll>
 
     <div v-if="freelas.length === 0" class="text-center q-pa-xl">
-      <q-icon :name="ultimaPesquisaEnviada ? 'search_off' : 'group_off'" size="80px" color="grey-4" />
+      <q-icon
+        :name="ultimaPesquisaEnviada ? 'search_off' : 'group_off'"
+        size="80px"
+        color="grey-4"
+      />
       <div class="text-h6 text-grey-5 q-mt-md">
         {{ ultimaPesquisaEnviada ? 'Nenhum freela encontrado' : 'Nenhum freela cadastrado' }}
       </div>

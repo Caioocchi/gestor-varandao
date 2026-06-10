@@ -107,7 +107,7 @@ watch(
       form.value = { ...newData };
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const handleSubmit = () => {

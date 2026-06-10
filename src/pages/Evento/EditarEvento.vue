@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <q-form @submit.once="onSubmit" class="q-gutter-y-lg">
+      <q-form @submit.prevent="onSubmit" class="q-gutter-y-lg">
         <!-- Event Details Card -->
         <q-card class="card-base shadow-soft" bordered>
           <q-card-section class="q-pa-lg">
@@ -332,6 +332,8 @@
             unelevated
             class="full-width btn-primary shadow-elevated"
             size="lg"
+            :loading="submitting"
+            :disable="submitting"
           />
         </div>
       </q-form>
@@ -641,6 +643,7 @@ const todosItensMenu = new Set([...menuPremium, ...menuExclusivo, ...menuVIP, ..
 const cepErro = ref('');
 const enderecoValidado = ref(false);
 const verificado = ref(false);
+const submitting = ref(false);
 
 const limparEndereco = () => {
   evento.value.endereco.cep = '';
@@ -764,7 +767,8 @@ const sincronizarItens = () => {
       if (itemSalvo) {
         produto.selected = true;
         produto.quantidade = itemSalvo.quantidade || null;
-        produto.quantidade_retornada = itemSalvo.quantidade_retornada !== undefined ? itemSalvo.quantidade_retornada : null;
+        produto.quantidade_retornada =
+          itemSalvo.quantidade_retornada !== undefined ? itemSalvo.quantidade_retornada : null;
       }
     });
   });
@@ -893,6 +897,8 @@ const itensSelecionados = computed(() =>
 );
 
 const onSubmit = async () => {
+  if (submitting.value) return;
+  submitting.value = true;
   $q.loading.show({ message: 'Salvando alterações...' });
 
   const rawEvento = toRaw(evento.value);
@@ -925,7 +931,12 @@ const onSubmit = async () => {
       icon: 'check',
       message: 'Evento atualizado com sucesso!',
     });
-    void router.push(`/eventos/visualizar/${eventId}`);
+    const backPath = window.history.state?.back;
+    if (backPath) {
+      void router.push(backPath);
+    } else {
+      void router.push(`/eventos/visualizar/${eventId}`);
+    }
   } catch (error) {
     console.error('Erro ao atualizar evento:', error);
     $q.notify({
@@ -936,6 +947,7 @@ const onSubmit = async () => {
     });
   } finally {
     $q.loading.hide();
+    submitting.value = false;
   }
 };
 </script>

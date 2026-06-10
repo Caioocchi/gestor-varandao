@@ -75,7 +75,9 @@ onMounted(async () => {
 
 const onSubmit = async (formData: Produto) => {
   try {
-    $q.loading.show({ message: isEdit.value ? 'Salvando alterações...' : 'Adicionando produto...' });
+    $q.loading.show({
+      message: isEdit.value ? 'Salvando alterações...' : 'Adicionando produto...',
+    });
 
     if (isEdit.value) {
       await api.put(`/produto/${id.value}`, formData);

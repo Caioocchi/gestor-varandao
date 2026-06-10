@@ -159,13 +159,30 @@
               <q-card-section class="q-pa-lg">
                 <div class="row items-center justify-between q-col-gutter-sm q-mb-lg">
                   <div class="row items-center col-12 col-sm-auto">
-                    <q-icon name="shopping_basket" color="primary" size="24px" class="q-mr-sm col-auto" />
-                    <div v-if="!modoPosEvento" class="text-h6 text-weight-bold text-primary col" style="word-break: break-word;">
+                    <q-icon
+                      name="shopping_basket"
+                      color="primary"
+                      size="24px"
+                      class="q-mr-sm col-auto"
+                    />
+                    <div
+                      v-if="!modoPosEvento"
+                      class="text-h6 text-weight-bold text-primary col"
+                      style="word-break: break-word"
+                    >
                       Lista de compras
                     </div>
-                    <div v-else class="text-h6 text-weight-bold text-primary col" style="word-break: break-word;">Itens retornados</div>
+                    <div
+                      v-else
+                      class="text-h6 text-weight-bold text-primary col"
+                      style="word-break: break-word"
+                    >
+                      Itens retornados
+                    </div>
                   </div>
-                  <div class="row items-center q-gutter-x-md col-12 col-sm-auto justify-between justify-sm-end">
+                  <div
+                    class="row items-center q-gutter-x-md col-12 col-sm-auto justify-between justify-sm-end"
+                  >
                     <q-toggle
                       v-model="modoPosEvento"
                       label="Modo Pós-Evento"
@@ -194,6 +211,15 @@
                       >
                         <!-- Linha Superior: Checkbox/Icone + Nome + Badge de Status/Consumo -->
                         <div class="row items-center no-wrap full-width">
+                          <div v-if="!modoPosEvento" @click.stop class="col-auto">
+                            <q-checkbox
+                              v-model="checkedItems[item.produtoId || item.nome]"
+                              dense
+                              class="q-mr-sm"
+                              color="secondary"
+                            />
+                          </div>
+
                           <!-- Nome do Item -->
                           <div
                             class="text-weight-medium text-grey-9 ellipsis col"
@@ -440,7 +466,10 @@
                 <div class="row items-center justify-between q-col-gutter-sm q-mb-md">
                   <div class="row items-center col">
                     <q-icon name="notes" color="primary" size="24px" class="q-mr-sm col-auto" />
-                    <div class="text-h6 text-weight-bold text-primary col" style="word-break: break-word;">
+                    <div
+                      class="text-h6 text-weight-bold text-primary col"
+                      style="word-break: break-word"
+                    >
                       Sugestão de quantidade de produção
                     </div>
                   </div>
@@ -484,7 +513,7 @@
     </div>
 
     <!-- Actions Footer -->
-    <div class="fixed-bottom-right q-ma-xl">
+    <div class="fixed-bottom-right q-ma-xl q-pb-xl">
       <q-fab
         v-model="fabRight"
         vertical-actions-align="center"
@@ -675,11 +704,7 @@ const abrirMapa = () => {
 
   const endereco = encodeURIComponent(fullAddress);
 
-  if (isIOS) {
-    window.location.href = `http://maps.apple.com/?q=${endereco}`;
-  } else {
-    window.open(`https://www.google.com/maps/search/?api=1&query=${endereco}`, '_blank');
-  }
+  window.open(`https://www.google.com/maps/search/?api=1&query=${endereco}`, '_blank');
 };
 
 const compartilharWhatsApp = () => {
@@ -703,8 +728,15 @@ const compartilharWhatsApp = () => {
   mensagem += `- ${e.quantidade_pessoas.quantidade_adultos} adultos, ${e.quantidade_pessoas.quantidade_criancas} crianças, ${e.quantidade_pessoas.quantidade_staffs} staffs\n`;
   mensagem += `- Bebidas: ${e.bebidas ? 'Sim' : 'Não'}\n\n`;
 
+  mensagem += `*Lista de itens para levar:*\n`;
+  e.itens?.forEach((item) => {
+    if (item.quantidade) {
+      mensagem += `- ${item.nome}: ${item.quantidade} ${item.unidade}\n`;
+    }
+  });
+
   if (e.observacoes) {
-    mensagem += `*Observações:*\n${e.observacoes}\n\n`;
+    mensagem += `\n*Observações:*\n${e.observacoes}\n\n`;
   }
 
   if (e.freelas && e.freelas.length > 0) {
