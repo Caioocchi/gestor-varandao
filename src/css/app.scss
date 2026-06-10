@@ -9,6 +9,7 @@
   box-sizing: border-box;
 }
 
+html,
 body,
 .q-layout {
   background: linear-gradient(160deg, $dark-page 0%, $primary 100%);
@@ -16,6 +17,7 @@ body,
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  overscroll-behavior-y: none;
 }
 
 // ---- Page background ----
