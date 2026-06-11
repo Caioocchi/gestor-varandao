@@ -191,6 +191,7 @@ const onLoad = async (index: number, done: (stop?: boolean) => void) => {
     }
   } catch (error) {
     console.error('Erro ao carregar freelas:', error);
+    alert(localStorage.getItem('token'));
     $q.notify({
       color: 'negative',
       message: 'Erro ao carregar freelas',
