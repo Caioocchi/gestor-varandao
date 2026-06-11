@@ -3,12 +3,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCytMtL1AnjKk-QIfX04nuC4At7xaJ4p20',
-  authDomain: 'gestor-varandao.firebaseapp.com',
-  projectId: 'gestor-varandao',
-  storageBucket: 'gestor-varandao.firebasestorage.app',
-  messagingSenderId: '308057602519',
-  appId: '1:308057602519:web:44df0896c36beeda4ff392',
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
 };
 
 firebase.initializeApp(firebaseConfig);
