@@ -259,7 +259,12 @@ const carregarMensagens = async () => {
     customClass: 'loading-varandao',
   });
   try {
-    const { data } = await api.get('/arquivos');
+    const { data } = await api.get('/arquivos', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     mensagens.value = data.whatsapp || [];
   } catch (error) {
     console.error('Erro ao carregar mensagens:', error);

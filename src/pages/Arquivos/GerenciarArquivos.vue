@@ -255,7 +255,12 @@ const carregarArquivos = async () => {
     customClass: 'loading-varandao',
   });
   try {
-    const { data } = await api.get('/arquivos');
+    const { data } = await api.get('/arquivos', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     arquivos.value = data.arquivos || [];
   } catch (error) {
     console.error('Erro ao carregar arquivos:', error);

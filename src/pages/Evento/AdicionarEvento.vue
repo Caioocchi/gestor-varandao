@@ -473,7 +473,12 @@ const todosEventos = ref<EventoCompleto[]>([]);
 
 const carregarTodosEventos = async () => {
   try {
-    const { data } = await api.get('/eventos');
+    const { data } = await api.get('/eventos', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     todosEventos.value = data;
   } catch (error) {
     console.error('Erro ao carregar todos os eventos:', error);
@@ -560,7 +565,12 @@ watch(responsaveisDisponiveis, (disponiveis) => {
 
 const carregarFreelas = async () => {
   try {
-    const { data } = await api.get('/freelas');
+    const { data } = await api.get('/freelas', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     freelasDisponiveis.value = data.map((f: Freelas) => ({
       _id: f._id,
       nome: f.nome,
@@ -651,7 +661,12 @@ const mapProdutoParaItem = (produto: Produto, categoria: string): Produto => ({
 });
 
 const buscarProdutosPorCategoria = async (categoria: string) => {
-  const { data } = await api.get(`/produto/categoria/${categoria}`);
+  const { data } = await api.get(`/produto/categoria/${categoria}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
   if (!Array.isArray(data)) {
     return [] as Produto[];
   }

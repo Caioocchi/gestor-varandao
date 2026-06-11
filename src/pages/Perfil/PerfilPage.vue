@@ -62,6 +62,7 @@
   </q-page>
 </template>
 
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
@@ -82,6 +83,7 @@ const user = ref<UserProfile>({
 });
 const loading = ref(true);
 
+
 const loadProfile = async () => {
   loading.value = true;
   try {
@@ -91,6 +93,7 @@ const loadProfile = async () => {
     }
     const { data } = await api.get<UserProfile>('/auth/profile', {
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });

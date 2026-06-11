@@ -523,6 +523,7 @@
         direction="up"
       >
         <q-btn
+          v-if="isAdmin"
           fab
           color="primary"
           icon="edit"
@@ -548,7 +549,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, toRaw } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
@@ -559,6 +560,22 @@ const router = useRouter();
 const eventId = route.params.id?.toString();
 const STORAGE_KEY = `shopping_list_${eventId}`;
 const fabRight = ref(false);
+
+const isAdmin = computed(() => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]!));
+        return payload.role !== 'padrao';
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return true;
+});
 
 const checkedItems = ref<Record<string, boolean>>({});
 const expandidoSugestao = ref(false);
@@ -772,7 +789,12 @@ const groupedItems = computed(() => {
 const carregarEvento = async () => {
   try {
     $q.loading.show({ message: 'Carregando dados do evento...', customClass: 'loading-varandao' });
-    const { data } = await api.get(`/eventos/${eventId}`);
+    const { data } = await api.get(`/eventos/${eventId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
 
     if (data && data.itens) {
       data.itens = data.itens.map((item: Item) => ({
@@ -889,27 +911,20 @@ const itensDivergentes = computed(() => {
 const salvarConferencia = async () => {
   $q.loading.show({ message: 'Salvando conferência de retorno...' });
 
-  const rawEvento = toRaw(evento.value);
   const payload = {
-    ...rawEvento,
-    endereco: { ...(rawEvento.endereco ? toRaw(rawEvento.endereco) : {}) },
-    itens: rawEvento.itens.map((item: Item) => ({
-      produtoId: item.produtoId,
+    itens: evento.value.itens.map((item: Item) => ({
       nome: item.nome,
-      categoria: item.categoria,
-      quantidade: item.quantidade,
-      unidade: item.unidade,
       quantidade_retornada: item.quantidade_retornada,
-    })),
-    freelas: rawEvento.freelas.map((f: Freela) => ({
-      _id: f._id,
-      nome: f.nome,
-      funcao: f.funcao,
     })),
   };
 
   try {
-    await api.put(`/eventos/${eventId}`, payload);
+    await api.patch(`/eventos/${eventId}/conferencia`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
 
     $q.notify({
       color: 'positive',

@@ -55,7 +55,7 @@
         </router-link>
 
         <div
-          @click="sair"
+          @click="confirmSair = true"
           class="nav-item column items-center justify-center col cursor-pointer text-decoration-none text-negative-light"
         >
           <q-icon name="logout" size="24px" />
@@ -63,20 +63,79 @@
         </div>
       </div>
     </q-footer>
+
+    <q-dialog v-model="confirmSair" backdrop-filter="blur(4px)">
+      <q-card class="confirm-card card-base">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6 text-weight-bold text-primary">Confirmar saída</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section class="q-pt-md text-grey-8">
+          Você tem certeza que deseja sair de sua conta?
+        </q-card-section>
+
+        <q-card-actions align="right" class="q-pb-md q-pr-md">
+          <q-btn flat label="Cancelar" color="primary" no-caps v-close-popup />
+          <q-btn
+            unelevated
+            label="Sair"
+            color="negative"
+            class="btn-rounded"
+            style="padding: 4px 20px; border-radius: 8px"
+            @click="sair"
+            v-close-popup
+            no-caps
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import varandaoLogo from 'src/assets/varandao-logo.png';
+import { registrarPush, inicializarMensagensForeground } from 'src/services/push-notification';
+import { api } from 'src/boot/axios';
+
+const confirmSair = ref(false);
 
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 const paginaAtual = computed(() => route.path?.toString() || '');
 const pageName = computed(() => route.name?.toString() || 'Home');
+
+onMounted(async () => {
+  inicializarMensagensForeground();
+  try {
+    const pushToken = await registrarPush();
+
+    if (pushToken) {
+      console.log('FCM Token obtido:', pushToken);
+      localStorage.setItem('fcm_token', pushToken);
+
+      // Enviar token de push para o backend
+      await api.post(
+        '/auth/push-token',
+        { token: pushToken },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      );
+      console.log('FCM Token registrado no backend com sucesso!');
+    }
+  } catch (error) {
+    console.error('Erro ao inicializar notificações push:', error);
+  }
+});
 
 // Altera a rota de acordo com a página atual
 const alterarRota = (pageName: string): string => {
@@ -156,5 +215,11 @@ const sair = () => {
   &:hover {
     color: rgba(239, 83, 80, 1) !important;
   }
+}
+
+.confirm-card {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 20px;
 }
 </style>

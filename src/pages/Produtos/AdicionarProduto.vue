@@ -57,7 +57,12 @@ const produto = ref<Produto>({
 onMounted(async () => {
   if (isEdit.value) {
     try {
-      const { data } = await api.get(`/produto/${id.value}`);
+      const { data } = await api.get(`/produto/${id.value}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
       produto.value = data.produto || data.data || data;
     } catch (error) {
       console.error('Erro ao carregar produto:', error);

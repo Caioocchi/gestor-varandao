@@ -73,7 +73,12 @@ export default {
         customClass: 'loading-varandao',
       });
       try {
-        const { data } = await api.get(`/freelas/${id}`);
+        const { data } = await api.get(`/freelas/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
 
         freela.value = {
           nome: data.nome,

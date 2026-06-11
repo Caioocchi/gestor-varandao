@@ -133,6 +133,10 @@ const buscarDados = async () => {
     ultimaPesquisaEnviada.value = valorPesquisa;
 
     const { data } = await api.get('/produto', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
       params: {
         pagina: pagina.value,
         pesquisa: valorPesquisa || undefined,
@@ -157,6 +161,10 @@ const onLoad = async (index: number, done: (stop?: boolean) => void) => {
 
     const valorPesquisa = pesquisa.value.trim().length >= 3 ? pesquisa.value.trim() : '';
     const { data: response } = await api.get('/produto', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
       params: {
         pagina: pagina.value,
         pesquisa: valorPesquisa || undefined,

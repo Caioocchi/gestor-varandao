@@ -94,7 +94,13 @@
 
       <div class="row q-gutter-x-md q-pb-md q-mb-lg categories-grid">
         <div class="col-6">
-          <HomeCard route="/freelas" icon="groups" icon-color="primary" title="Freelas" />
+          <HomeCard
+            :disabled="!isAdmin"
+            route="/freelas"
+            icon="groups"
+            icon-color="primary"
+            title="Freelas"
+          />
         </div>
 
         <div class="col-6">
@@ -103,6 +109,7 @@
 
         <div class="col-6">
           <HomeCard
+            :disabled="!isAdmin"
             route="/produtos"
             icon="shopping_basket"
             icon-color="accent"
@@ -113,6 +120,7 @@
 
         <div class="col-6">
           <HomeCard
+            :disabled="!isAdmin"
             route="/arquivos"
             icon="archive"
             icon-color="green-11"
@@ -165,6 +173,18 @@ const loading = ref(true);
 const token = ref(localStorage.getItem('token'));
 const nomeUsuario = ref('');
 
+const isAdmin = computed(() => {
+  if (token.value) {
+    try {
+      const payload = JSON.parse(atob(token.value.split('.')[1]!));
+      return payload.role !== 'padrao';
+    } catch (e) {
+      console.error('Error checking admin role on home page', e);
+    }
+  }
+  return true;
+});
+
 if (token.value) {
   const payload = JSON.parse(atob(token.value.split('.')[1]!));
 
@@ -178,7 +198,12 @@ const loadEventos = async () => {
     customClass: 'loading-varandao',
   });
   try {
-    const { data } = await api.get('/eventos');
+    const { data } = await api.get('/eventos', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     eventos.value = data;
   } catch (error) {
     console.error('Erro ao carregar eventos:', error);

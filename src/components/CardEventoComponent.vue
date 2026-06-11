@@ -20,6 +20,7 @@
               :to="`/eventos/visualizar/${props.evento._id}`"
             />
             <q-btn
+              v-if="isAdmin"
               flat
               round
               dense
@@ -30,6 +31,7 @@
             />
 
             <q-btn
+              v-if="isAdmin"
               flat
               round
               dense
@@ -149,7 +151,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 
@@ -244,9 +246,26 @@ export default {
       }
     };
 
+    const isAdmin = computed(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const parts = token.split('.');
+          if (parts.length === 3) {
+            const payload = JSON.parse(atob(parts[1]!));
+            return payload.role !== 'padrao';
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return true;
+    });
+
     return {
       props,
       confirm,
+      isAdmin,
       formatarEndereco,
       formatarData,
       abrirMapa,

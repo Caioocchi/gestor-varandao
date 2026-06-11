@@ -1,5 +1,21 @@
 <template>
-  <router-link :to="route" class="text-decoration-none block full-height">
+  <div v-if="disabled" class="block full-height cursor-not-allowed disabled-wrapper">
+    <q-card class="feature-card card-base shadow-soft full-height disabled-card">
+      <q-card-section class="column items-center justify-center text-center q-pa-md full-height">
+        <q-avatar
+          size="44px"
+          color="grey-4"
+          text-color="grey-7"
+          :icon="icon"
+          class="q-mb-sm"
+        />
+        <div class="text-subtitle2 text-weight-bold text-grey-5 title-line-clamp">
+          {{ title }}
+        </div>
+      </q-card-section>
+    </q-card>
+  </div>
+  <router-link v-else :to="route" class="text-decoration-none block full-height">
     <q-card class="feature-card card-base shadow-soft full-height">
       <q-card-section class="column items-center justify-center text-center q-pa-md full-height">
         <q-avatar
@@ -38,6 +54,10 @@ defineProps({
     type: String,
     default: 'white',
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 
@@ -56,5 +76,12 @@ defineProps({
   overflow: hidden;
   line-height: 1.2;
   font-size: 0.9rem;
+}
+.disabled-wrapper {
+  opacity: 0.55;
+}
+.disabled-card {
+  pointer-events: none;
+  filter: grayscale(1);
 }
 </style>

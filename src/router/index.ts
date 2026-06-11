@@ -70,6 +70,29 @@ export default defineRouter((/* { store, ssrContext } */) => {
       return { path: '/' };
     }
 
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1]!));
+          if (payload && payload.role === 'padrao') {
+            const allowedNames = ['Listar Eventos', 'Visualizar Evento', 'Home', 'Perfil', 'Alterar Senha'];
+            if (!allowedNames.includes(String(to.name))) {
+              return { path: '/eventos' };
+            }
+          }
+        } else {
+          clearAuth();
+          return { path: '/' };
+        }
+      } catch (e) {
+        console.error('Error parsing token payload', e);
+        clearAuth();
+        return { path: '/' };
+      }
+    }
+
     return true;
   });
 
