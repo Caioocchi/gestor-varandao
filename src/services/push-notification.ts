@@ -20,17 +20,21 @@ export async function registrarPush() {
 
     const messaging = getMessaging(firebaseApp);
 
-    // Registra o Service Worker explicitamente para evitar erros de resolução em desenvolvimento (Vite/Quasar)
-    const swUrl =
-      `/firebase-messaging-sw.js` +
-      `?apiKey=${encodeURIComponent(import.meta.env.VITE_FIREBASE_API_KEY || '')}` +
-      `&authDomain=${encodeURIComponent(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '')}` +
-      `&projectId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_PROJECT_ID || '')}` +
-      `&storageBucket=${encodeURIComponent(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '')}` +
-      `&messagingSenderId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '')}` +
-      `&appId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_APP_ID || '')}`;
+    const registrations = await navigator.serviceWorker.getRegistrations();
 
-    const registration = await navigator.serviceWorker.register(swUrl);
+    alert(`SWs: ${registrations.length}`);
+
+    // Registra o Service Worker explicitamente para evitar erros de resolução em desenvolvimento (Vite/Quasar)
+    // const swUrl =
+    //   `/firebase-messaging-sw.js` +
+    //   `?apiKey=${encodeURIComponent(import.meta.env.VITE_FIREBASE_API_KEY || '')}` +
+    //   `&authDomain=${encodeURIComponent(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '')}` +
+    //   `&projectId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_PROJECT_ID || '')}` +
+    //   `&storageBucket=${encodeURIComponent(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '')}` +
+    //   `&messagingSenderId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '')}` +
+    //   `&appId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_APP_ID || '')}`;
+
+    const registration = await navigator.serviceWorker.ready;
 
     const token = await getToken(messaging, {
       serviceWorkerRegistration: registration,
