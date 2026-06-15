@@ -523,7 +523,6 @@
         direction="up"
       >
         <q-btn
-          v-if="isAdmin"
           fab
           color="primary"
           icon="edit"
@@ -560,22 +559,6 @@ const router = useRouter();
 const eventId = route.params.id?.toString();
 const STORAGE_KEY = `shopping_list_${eventId}`;
 const fabRight = ref(false);
-
-const isAdmin = computed(() => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    try {
-      const parts = token.split('.');
-      if (parts.length === 3) {
-        const payload = JSON.parse(atob(parts[1]!));
-        return payload.role !== 'padrao';
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  return true;
-});
 
 const checkedItems = ref<Record<string, boolean>>({});
 const expandidoSugestao = ref(false);
