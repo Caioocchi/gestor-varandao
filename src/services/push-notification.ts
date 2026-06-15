@@ -7,9 +7,13 @@ export async function registrarPush() {
     !('Notification' in window) ||
     !('serviceWorker' in navigator)
   ) {
-    console.warn('Push notifications are not supported in this environment.');
+    alert('Push notifications are not supported in this environment.');
     return null;
   }
+
+  alert(`Permission: ${Notification.permission}`);
+
+  alert(`Standalone: ${window.matchMedia('(display-mode: standalone)').matches}`);
 
   try {
     const permission = await Notification.requestPermission();

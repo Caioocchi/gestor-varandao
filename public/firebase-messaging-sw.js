@@ -14,8 +14,6 @@ const firebaseConfig = {
   appId: params.get('appId'),
 };
 
-console.log('Firebase Config SW', firebaseConfig);
-
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
