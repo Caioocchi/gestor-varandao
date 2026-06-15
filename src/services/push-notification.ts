@@ -21,20 +21,29 @@ export async function registrarPush() {
     const messaging = getMessaging(firebaseApp);
 
     // Registra o Service Worker explicitamente para evitar erros de resolução em desenvolvimento (Vite/Quasar)
-    // const swUrl =
-    //   `/firebase-messaging-sw.js` +
-    //   `?apiKey=${encodeURIComponent(import.meta.env.VITE_FIREBASE_API_KEY || '')}` +
-    //   `&authDomain=${encodeURIComponent(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '')}` +
-    //   `&projectId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_PROJECT_ID || '')}` +
-    //   `&storageBucket=${encodeURIComponent(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '')}` +
-    //   `&messagingSenderId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '')}` +
-    //   `&appId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_APP_ID || '')}`;
+    const swUrl =
+      `/firebase-messaging-sw.js` +
+      `?apiKey=${encodeURIComponent(import.meta.env.VITE_FIREBASE_API_KEY || '')}` +
+      `&authDomain=${encodeURIComponent(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '')}` +
+      `&projectId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_PROJECT_ID || '')}` +
+      `&storageBucket=${encodeURIComponent(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '')}` +
+      `&messagingSenderId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '')}` +
+      `&appId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_APP_ID || '')}`;
 
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.register(swUrl);
 
     const token = await getToken(messaging, {
       serviceWorkerRegistration: registration,
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      vapidKey:
+        'BDGWDuVF5I1B6NlvpQhLBFkO4bqqL09SqO9vmPbyFqAzu9lN7_sdcXalb3UpZfjNbDNfvZpcQ8YVnVZjz_tagTE',
+    });
+
+    console.log('TOKEN GERADO:', token);
+
+    console.log('CONFIG:', {
+      projectId: firebaseApp.options.projectId,
+      messagingSenderId: firebaseApp.options.messagingSenderId,
+      appId: firebaseApp.options.appId,
     });
 
     return token;
