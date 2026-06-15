@@ -13,10 +13,5 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-console.log({
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-});
-
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
