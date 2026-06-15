@@ -20,7 +20,6 @@
               :to="`/eventos/visualizar/${props.evento._id}`"
             />
             <q-btn
-              v-if="isAdmin"
               flat
               round
               dense

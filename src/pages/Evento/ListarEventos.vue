@@ -17,8 +17,8 @@
       />
     </div>
 
-    <!-- Filtros de Evento (Visíveis apenas se existirem eventos cadastrados) -->
-    <div v-if="eventos.length > 0" class="row q-col-gutter-md q-mb-lg">
+    <!-- Filtros de Evento -->
+    <div class="row q-col-gutter-md q-mb-lg">
       <!-- Input de Pesquisa de Data -->
       <div class="col-12 col-sm-6">
         <q-input
@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 import CardEventoComponent from 'src/components/CardEventoComponent.vue';
@@ -144,7 +144,7 @@ interface Evento {
 
 const eventos = ref<Evento[]>([]);
 const searchQuery = ref('');
-const selectedFilter = ref('proximos');
+const selectedFilter = ref('todos');
 
 const filterOptions = [
   { label: 'Próximos eventos', value: 'proximos' },
@@ -166,9 +166,9 @@ const filteredEventos = computed(() => {
 
   return eventos.value.filter((evento) => {
     // 1. Filtragem por Status (Futuro / Passado / Todos)
-    if (selectedFilter.value === 'futuros') {
+    if (selectedFilter.value === 'proximos') {
       if (evento.data < hojeStr) return false;
-    } else if (selectedFilter.value === 'passados') {
+    } else if (selectedFilter.value === 'realizados') {
       if (evento.data >= hojeStr) return false;
     }
 
@@ -222,7 +222,7 @@ const loadEventos = async () => {
     customClass: 'loading-varandao',
   });
   try {
-    const { data } = await api.get('/eventos', {
+    const { data } = await api.get(`/eventos?periodo=${selectedFilter.value}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -242,6 +242,10 @@ const loadEventos = async () => {
     }, 500);
   }
 };
+
+watch(selectedFilter, () => {
+  void loadEventos();
+});
 
 onMounted(loadEventos);
 </script>

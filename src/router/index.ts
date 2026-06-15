@@ -77,7 +77,14 @@ export default defineRouter((/* { store, ssrContext } */) => {
         if (parts.length === 3) {
           const payload = JSON.parse(atob(parts[1]!));
           if (payload && payload.role === 'padrao') {
-            const allowedNames = ['Listar Eventos', 'Visualizar Evento', 'Home', 'Perfil', 'Alterar Senha'];
+            const allowedNames = [
+              'Listar Eventos',
+              'Visualizar Evento',
+              'Editar Evento',
+              'Home',
+              'Perfil',
+              'Alterar Senha',
+            ];
             if (!allowedNames.includes(String(to.name))) {
               return { path: '/eventos' };
             }
