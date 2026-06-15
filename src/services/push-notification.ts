@@ -56,6 +56,7 @@ export function inicializarMensagensForeground() {
   try {
     const messaging = getMessaging(firebaseApp);
     onMessage(messaging, (payload) => {
+      alert('Mensagem recebida!');
       console.log('Mensagem push recebida em primeiro plano (foreground):', payload);
 
       if (Notification.permission === 'granted') {
