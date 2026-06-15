@@ -110,6 +110,18 @@ const $q = useQuasar();
 const paginaAtual = computed(() => route.path?.toString() || '');
 const pageName = computed(() => route.name?.toString() || 'Home');
 
+const obterTipoDispositivo = (): string => {
+  const p = $q.platform.is;
+  if (p.android) return 'Android';
+  if (p.ios) return 'iOS';
+  if (p.ipad) return 'iPad';
+  if (p.mobile) return 'Mobile';
+  if (p.win) return 'Windows';
+  if (p.mac) return 'Mac';
+  if (p.linux) return 'Linux';
+  return 'Web';
+};
+
 onMounted(async () => {
   inicializarMensagensForeground();
   try {
@@ -122,7 +134,10 @@ onMounted(async () => {
       // Enviar token de push para o backend
       await api.post(
         '/auth/push-token',
-        { token: pushToken },
+        {
+          token: pushToken,
+          deviceType: obterTipoDispositivo(),
+        },
         {
           headers: {
             'Content-Type': 'application/json',
