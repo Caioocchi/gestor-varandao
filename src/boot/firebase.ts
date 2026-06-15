@@ -1,8 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { boot } from 'quasar/wrappers';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,13 +14,4 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
-
-export { auth, db, firebaseApp };
-
-export default boot(({ app }) => {
-  app.config.globalProperties.$auth = auth;
-  app.config.globalProperties.$db = db;
-});
+export const firebaseApp = initializeApp(firebaseConfig);
