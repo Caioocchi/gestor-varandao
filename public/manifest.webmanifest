@@ -1,4 +1,7 @@
 {
+  "name": "Gestor Varandão",
+  "short_name": "Varandão",
+  "start_url": "/",
   "display": "standalone",
-  "gcm_sender_id": "308057602519"
+  "gcm_sender_id": "103953800507"
 }
