@@ -24,3 +24,25 @@ messaging.onBackgroundMessage((payload) => {
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// No final do seu firebase-messaging-sw.js, adicione:
+self.addEventListener('push', (event) => {
+  let payload = null;
+  try {
+    payload = event.data ? event.data.json() : null;
+  } catch (e) {
+    console.error('Erro ao converter payload para JSON', e);
+  }
+
+  if (payload) {
+    // No iOS, se for enviado via Console, o payload geralmente segue esta estrutura:
+    const notificationTitle = payload.notification?.title || 'Gestor Varandão';
+    const notificationOptions = {
+      body: payload.notification?.body || '',
+      icon: '/icons/icon-128x128.png',
+    };
+
+    // Força o iOS a exibir a notificação imediatamente
+    event.waitUntil(self.registration.showNotification(notificationTitle, notificationOptions));
+  }
+});
