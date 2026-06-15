@@ -1,4 +1,4 @@
-import { getMessaging, onMessage } from 'firebase/messaging';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { firebaseApp } from 'src/boot/firebase';
 
 export async function registrarPush() {
@@ -30,11 +30,14 @@ export async function registrarPush() {
     //   `&messagingSenderId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '')}` +
     //   `&appId=${encodeURIComponent(import.meta.env.VITE_FIREBASE_APP_ID || '')}`;
 
-    return {
-      provide: {
-        messaging,
-      },
-    };
+    const registration = await navigator.serviceWorker.ready;
+
+    const token = await getToken(messaging, {
+      serviceWorkerRegistration: registration,
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+    });
+
+    return token;
   } catch (error) {
     console.error('Erro ao obter token de push do Firebase:', error);
     return null;
