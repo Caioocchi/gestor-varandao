@@ -3,6 +3,7 @@
   "short_name": "Gestor Varandão",
   "description": "Aplicativo de gerenciamento do Varandão",
   "display": "standalone",
+  "gcm_sender_id": "103953800507",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#1976D2",
