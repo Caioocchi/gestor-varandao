@@ -20,10 +20,6 @@ export async function registrarPush() {
 
     const messaging = getMessaging(firebaseApp);
 
-    const registrations = await navigator.serviceWorker.getRegistrations();
-
-    alert(`SWs: ${registrations.length}`);
-
     // Registra o Service Worker explicitamente para evitar erros de resolução em desenvolvimento (Vite/Quasar)
     // const swUrl =
     //   `/firebase-messaging-sw.js` +
@@ -60,7 +56,6 @@ export function inicializarMensagensForeground() {
   try {
     const messaging = getMessaging(firebaseApp);
     onMessage(messaging, (payload) => {
-      alert('Mensagem recebida!');
       console.log('Mensagem push recebida em primeiro plano (foreground):', payload);
 
       if (Notification.permission === 'granted') {
