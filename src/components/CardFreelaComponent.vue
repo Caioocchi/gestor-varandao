@@ -11,7 +11,7 @@
               :src="
                 props.urlFoto === undefined || props.urlFoto === ''
                   ? avatar
-                  : urlApi + props.urlFoto
+                  : (props.urlFoto.startsWith('http') ? props.urlFoto : urlApi + props.urlFoto)
               "
               spinner-color="primary"
             />

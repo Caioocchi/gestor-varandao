@@ -373,9 +373,9 @@ const excluirArquivo = async () => {
 };
 
 const baixarArquivo = (arquivo: Arquivo) => {
-  // Constrói a URL de download correspondente à API do Railway/localhost
-  const baseUrl = api.defaults.baseURL || '';
-  const url = `${baseUrl}/${arquivo.urlArquivo}`;
+  const url = arquivo.urlArquivo.startsWith('http')
+    ? arquivo.urlArquivo
+    : `${api.defaults.baseURL || ''}/${arquivo.urlArquivo}`;
   window.open(url, '_blank');
 };
 
