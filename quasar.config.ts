@@ -144,7 +144,7 @@ export default defineConfig((/* ctx */) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'InjectManifest',
+      workboxMode: 'GenerateSW',
 
       manifest: {
         name: 'Gestor Varandão',

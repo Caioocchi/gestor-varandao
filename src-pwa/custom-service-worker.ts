@@ -1,15 +1,10 @@
-/// <reference types="vite/client" />
-import { initializeApp } from 'firebase/app';
-import { getMessaging, onBackgroundMessage } from 'firebase/messaging/sw';
-
 /*
  * This file (which will be your service worker)
  * is picked up by the build system ONLY if
  * quasar.config file > pwa > workboxMode is set to "InjectManifest"
  */
 
-declare const self: ServiceWorkerGlobalScope &
-  typeof globalThis & { skipWaiting: () => void; registration: ServiceWorkerRegistration };
+declare const self: ServiceWorkerGlobalScope & typeof globalThis & { skipWaiting: () => void };
 
 import { clientsClaim } from 'workbox-core';
 import {
@@ -21,27 +16,6 @@ import { registerRoute, NavigationRoute } from 'workbox-routing';
 
 void self.skipWaiting();
 clientsClaim();
-
-const firebaseApp = initializeApp({
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY!,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN!,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID!,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID!,
-});
-
-const messaging = getMessaging(firebaseApp);
-
-onBackgroundMessage(messaging, (payload) => {
-  console.log('Push recebida no Service Worker', payload);
-
-  void self.registration.showNotification(payload.notification?.title || 'Gestor Varandão', {
-    body: payload.notification?.body || '',
-    icon: '/icons/icon-128x128.png',
-    badge: '/icons/icon-128x128.png',
-  });
-});
 
 // Use with precache injection
 precacheAndRoute(self.__WB_MANIFEST);
