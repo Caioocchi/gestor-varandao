@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { initializeApp } from 'firebase/app';
 import { getMessaging, onBackgroundMessage } from 'firebase/messaging/sw';
 
@@ -7,7 +8,8 @@ import { getMessaging, onBackgroundMessage } from 'firebase/messaging/sw';
  * quasar.config file > pwa > workboxMode is set to "InjectManifest"
  */
 
-declare const self: ServiceWorkerGlobalScope & typeof globalThis & { skipWaiting: () => void; registration: ServiceWorkerRegistration };
+declare const self: ServiceWorkerGlobalScope &
+  typeof globalThis & { skipWaiting: () => void; registration: ServiceWorkerRegistration };
 
 import { clientsClaim } from 'workbox-core';
 import {
@@ -21,12 +23,12 @@ void self.skipWaiting();
 clientsClaim();
 
 const firebaseApp = initializeApp({
-  apiKey: process.env.VITE_FIREBASE_API_KEY!,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.VITE_FIREBASE_APP_ID!,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY!,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN!,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID!,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID!,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID!,
 });
 
 const messaging = getMessaging(firebaseApp);
