@@ -5,3 +5,7 @@ declare namespace NodeJS {
     PWA_SERVICE_WORKER_REGEX: string;
   }
 }
+
+interface ImportMeta {
+  readonly env: Record<string, string | undefined>;
+}
