@@ -12,8 +12,12 @@ export async function registrarPush() {
   }
 
   try {
-    const permission = await Notification.requestPermission();
+    if (!firebaseApp) {
+      console.warn('FCM não inicializado: firebaseApp está ausente.');
+      return null;
+    }
 
+    const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
       return null;
     }
@@ -50,6 +54,11 @@ export function inicializarMensagensForeground() {
     !('Notification' in window) ||
     !('serviceWorker' in navigator)
   ) {
+    return;
+  }
+
+  if (!firebaseApp) {
+    console.warn('FCM não inicializado: firebaseApp está ausente.');
     return;
   }
 

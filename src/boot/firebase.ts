@@ -1,6 +1,4 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-// TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
@@ -13,13 +11,19 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-console.log({
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY?.substring(0, 10),
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID?.substring(0, 20),
-  vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY?.substring(0, 20),
-});
+// Initialize Firebase safely
+import type { FirebaseApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
 
-// Initialize Firebase
-export const firebaseApp = initializeApp(firebaseConfig);
+let firebaseApp: FirebaseApp | null = null;
+if (firebaseConfig.apiKey) {
+  try {
+    firebaseApp = initializeApp(firebaseConfig);
+  } catch (error) {
+    console.error('Erro ao inicializar o Firebase App:', error);
+  }
+} else {
+  console.warn('Firebase não foi inicializado: apiKey está ausente nas variáveis de ambiente.');
+}
+
+export { firebaseApp };
