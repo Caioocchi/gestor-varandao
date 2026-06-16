@@ -154,27 +154,36 @@
               </q-card-section>
             </q-card>
 
-            <!-- Imagens Card -->
-            <q-card v-if="evento.imagens && evento.imagens.length > 0" class="card-base shadow-soft">
-              <q-card-section class="q-pa-lg">
-                <div class="row items-center q-mb-md">
-                  <q-icon name="image" color="primary" size="24px" class="q-mr-sm" />
-                  <div class="text-h6 text-weight-bold text-primary">Imagens do Evento</div>
-                </div>
+            <!-- Imagens Card (HTML puro) -->
+            <div
+              v-if="evento.imagens && evento.imagens.length > 0"
+              class="card-base shadow-soft q-pa-lg"
+            >
+              <div class="row items-center q-mb-md">
+                <q-icon name="image" color="primary" size="24px" class="q-mr-sm" />
+                <div class="text-h6 text-weight-bold text-primary">Imagens do Evento</div>
+              </div>
 
-                <div class="row q-col-gutter-sm">
+              <div class="row q-col-gutter-sm">
+                <div
+                  v-for="(img, idx) in evento.imagens"
+                  :key="idx"
+                  class="col-4 col-sm-3 col-md-2"
+                >
                   <div
-                    v-for="(img, idx) in evento.imagens"
-                    :key="idx"
-                    class="col-4 col-sm-3 col-md-2"
+                    class="overflow-hidden cursor-pointer image-hover-zoom"
+                    style="aspect-ratio: 1; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.12);"
+                    @click="abrirImagem(img)"
                   >
-                    <q-card flat bordered class="overflow-hidden cursor-pointer image-hover-zoom" style="aspect-ratio: 1; border-radius: 12px" @click="abrirImagem(img)">
-                      <q-img :src="img" class="full-height" style="object-fit: cover" />
-                    </q-card>
+                    <img
+                      :src="img"
+                      class="full-width full-height"
+                      style="object-fit: cover; display: block;"
+                    />
                   </div>
                 </div>
-              </q-card-section>
-            </q-card>
+              </div>
+            </div>
 
             <!-- Items Card -->
             <q-card class="card-base shadow-soft">
@@ -569,7 +578,11 @@
     <q-dialog v-model="dialogImagem" backdrop-filter="blur(4px)">
       <q-card style="max-width: 90vw; background: transparent; box-shadow: none">
         <q-card-section class="q-pa-none relative-position">
-          <q-img :src="imagemSelecionada" style="max-height: 80vh; border-radius: 12px" fit="contain" />
+          <q-img
+            :src="imagemSelecionada"
+            style="max-height: 80vh; border-radius: 12px"
+            fit="contain"
+          />
           <q-btn
             icon="close"
             flat
@@ -577,7 +590,7 @@
             dense
             color="white"
             class="absolute-top-right q-ma-md text-white"
-            style="background: rgba(0,0,0,0.4)"
+            style="background: rgba(0, 0, 0, 0.4)"
             v-close-popup
           />
         </q-card-section>
@@ -1058,7 +1071,9 @@ onMounted(carregarEvento);
 }
 
 .image-hover-zoom {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);

@@ -313,17 +313,21 @@
 
         <!-- Event Images Card -->
         <q-card class="card-base shadow-soft" bordered>
-          <q-card-section class="q-pa-lg">
+          <q-card-section class="q-pa-lg q-pb-xl">
             <div class="text-h6 text-weight-bold text-primary q-mb-md">Imagens do Evento</div>
 
             <!-- Grid de Imagens já enviadas -->
-            <div v-if="evento.imagens && evento.imagens.length > 0" class="row q-col-gutter-sm q-mb-md">
-              <div
-                v-for="(img, idx) in evento.imagens"
-                :key="idx"
-                class="col-4 col-sm-3 col-md-2"
-              >
-                <q-card flat bordered class="relative-position overflow-hidden" style="aspect-ratio: 1; border-radius: 12px">
+            <div
+              v-if="evento.imagens && evento.imagens.length > 0"
+              class="row q-col-gutter-sm q-mb-md"
+            >
+              <div v-for="(img, idx) in evento.imagens" :key="idx" class="col-4 col-sm-3 col-md-2">
+                <q-card
+                  flat
+                  bordered
+                  class="relative-position overflow-hidden"
+                  style="aspect-ratio: 1; border-radius: 12px"
+                >
                   <q-img :src="img" class="full-height" style="object-fit: cover" />
                   <div class="absolute-top-right q-pa-xs">
                     <q-btn
@@ -369,14 +373,14 @@
         </div>
 
         <!-- Submit Button -->
-        <div class="q-pt-md">
+        <div class="fixed-submit-container">
           <q-btn
             label="Criar Evento"
             type="submit"
             color="primary"
             unelevated
             class="full-width btn-primary shadow-elevated"
-            size="lg"
+            size="md"
             :loading="submitting"
             :disable="submitting"
           />
@@ -385,7 +389,7 @@
     </div>
 
     <!-- Hidden padding to avoid footer/fab overlap -->
-    <div style="height: 40px"></div>
+    <div style="height: 120px"></div>
   </q-page>
 </template>
 
@@ -943,3 +947,21 @@ const onSubmit = async () => {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.btn-primary {
+  border-radius: 12px;
+  font-weight: 600;
+  height: 44px;
+}
+
+.fixed-submit-container {
+  position: fixed;
+  bottom: 86px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 800px;
+  z-index: 999;
+}
+</style>

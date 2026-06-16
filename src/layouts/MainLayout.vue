@@ -158,10 +158,15 @@ const alterarRota = (pageName: string): string => {
     return '/home';
   } else if (pageName === 'Adicionar Freela' || pageName === 'Editar Freela') {
     return '/freelas';
+  } else if (pageName === 'Editar Evento') {
+    const backPath = window.history.state?.back;
+    if (typeof backPath === 'string' && backPath.includes('/eventos/visualizar/')) {
+      return backPath;
+    }
+    return '/eventos';
   } else if (
     pageName === 'Adicionar Evento' ||
-    pageName === 'Visualizar Evento' ||
-    pageName === 'Editar Evento'
+    pageName === 'Visualizar Evento'
   ) {
     return '/eventos';
   } else if (pageName === 'Adicionar Produto' || pageName === 'Editar Produto') {

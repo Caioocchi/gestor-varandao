@@ -144,7 +144,7 @@ interface Evento {
 
 const eventos = ref<Evento[]>([]);
 const searchQuery = ref('');
-const selectedFilter = ref('todos');
+const selectedFilter = ref('proximos');
 
 const filterOptions = [
   { label: 'Próximos eventos', value: 'proximos' },
