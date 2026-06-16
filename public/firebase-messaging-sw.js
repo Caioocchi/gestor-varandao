@@ -15,24 +15,24 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+// const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+// messaging.onBackgroundMessage((payload) => {
+//   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-  // Se a mensagem já contiver a propriedade 'notification', o SDK do Firebase
-  // exibe a notificação automaticamente em segundo plano. Chamar showNotification
-  // aqui causaria notificações duplicadas.
-  if (payload.notification) {
-    return;
-  }
+//   // Se a mensagem já contiver a propriedade 'notification', o SDK do Firebase
+//   // exibe a notificação automaticamente em segundo plano. Chamar showNotification
+//   // aqui causaria notificações duplicadas.
+//   if (payload.notification) {
+//     return;
+//   }
 
-  const notificationTitle = payload.data?.title || 'Gestor Varandão';
-  const notificationOptions = {
-    body: payload.data?.body || '',
-    icon: '/icons/icon-128x128.png',
-    tag: payload.data?.title || 'gestor-varandao-notification',
-  };
+//   const notificationTitle = payload.data?.title || 'Gestor Varandão';
+//   const notificationOptions = {
+//     body: payload.data?.body || '',
+//     icon: '/icons/icon-128x128.png',
+//     tag: payload.data?.title || 'gestor-varandao-notification',
+//   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
-});
+//   self.registration.showNotification(notificationTitle, notificationOptions);
+// });
