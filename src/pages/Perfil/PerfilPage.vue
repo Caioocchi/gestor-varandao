@@ -35,7 +35,7 @@
       </q-card-section>
 
       <!-- Seção de Notificações Push -->
-      <q-card-section class="q-pt-none">
+      <!-- <q-card-section class="q-pt-none">
         <q-separator class="q-mb-md" />
         <div class="text-subtitle2 text-grey-7 q-mb-xs text-left">Notificações Push</div>
         <div
@@ -74,7 +74,7 @@
           :loading="testandoPush"
           @click="testarPush"
         />
-      </q-card-section>
+      </q-card-section> -->
 
       <q-card-actions align="center" class="q-pt-md column q-gutter-y-sm">
         <!-- Alterar Senha Button -->
@@ -109,7 +109,7 @@ import { ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
-import { registrarPush } from 'src/services/push-notification';
+// import { registrarPush } from 'src/services/push-notification';
 
 const $q = useQuasar();
 const router = useRouter();
@@ -124,70 +124,70 @@ const user = ref<UserProfile>({
   email: '',
 });
 const loading = ref(true);
-const pushToken = ref('');
-const testandoPush = ref(false);
+// const pushToken = ref('');
+// const testandoPush = ref(false);
 
-const copiarToken = () => {
-  if (pushToken.value) {
-    navigator.clipboard
-      .writeText(pushToken.value)
-      .then(() => {
-        $q.notify({
-          color: 'positive',
-          message: 'Token copiado com sucesso!',
-          icon: 'check',
-        });
-      })
-      .catch((err) => {
-        console.error('Erro ao copiar token:', err);
-      });
-  }
-};
+// const copiarToken = () => {
+//   if (pushToken.value) {
+//     navigator.clipboard
+//       .writeText(pushToken.value)
+//       .then(() => {
+//         $q.notify({
+//           color: 'positive',
+//           message: 'Token copiado com sucesso!',
+//           icon: 'check',
+//         });
+//       })
+//       .catch((err) => {
+//         console.error('Erro ao copiar token:', err);
+//       });
+//   }
+// };
 
-const testarPush = async () => {
-  testandoPush.value = true;
-  try {
-    const token = await registrarPush();
-    if (!token) {
-      $q.notify({
-        color: 'warning',
-        textColor: 'grey-9',
-        icon: 'warning',
-        message: 'Permissão de notificação negada ou não suportada.',
-      });
-      return;
-    }
+// const testarPush = async () => {
+//   testandoPush.value = true;
+//   try {
+//     const token = await registrarPush();
+//     if (!token) {
+//       $q.notify({
+//         color: 'warning',
+//         textColor: 'grey-9',
+//         icon: 'warning',
+//         message: 'Permissão de notificação negada ou não suportada.',
+//       });
+//       return;
+//     }
 
-    pushToken.value = token;
+//     pushToken.value = token;
 
-    const userToken = localStorage.getItem('token');
-    await api.post(
-      '/eventos/teste-notificacao',
-      { token },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userToken}`,
-        },
-      },
-    );
+//     const userToken = localStorage.getItem('token');
+//     await api.post(
+//       '/eventos/teste-notificacao',
+//       { token },
+//       {
+//         headers: {
+//           'Content-Type': 'application/json',
+//           Authorization: `Bearer ${userToken}`,
+//         },
+//       },
+//     );
 
-    $q.notify({
-      color: 'positive',
-      icon: 'check',
-      message: 'Notificação de teste solicitada! Verifique seu dispositivo.',
-    });
-  } catch (error) {
-    console.error('Erro ao testar notificação push:', error);
-    $q.notify({
-      color: 'negative',
-      icon: 'error',
-      message: 'Falha ao enviar notificação de teste.',
-    });
-  } finally {
-    testandoPush.value = false;
-  }
-};
+//     $q.notify({
+//       color: 'positive',
+//       icon: 'check',
+//       message: 'Notificação de teste solicitada! Verifique seu dispositivo.',
+//     });
+//   } catch (error) {
+//     console.error('Erro ao testar notificação push:', error);
+//     $q.notify({
+//       color: 'negative',
+//       icon: 'error',
+//       message: 'Falha ao enviar notificação de teste.',
+//     });
+//   } finally {
+//     testandoPush.value = false;
+//   }
+// };
 
 const loadProfile = async () => {
   loading.value = true;
