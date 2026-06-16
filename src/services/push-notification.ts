@@ -29,7 +29,7 @@ export async function registrarPush() {
     const token = await getToken(messaging, {
       serviceWorkerRegistration: registration,
       vapidKey:
-        import.meta.env.VITE_FIREBASE_VAPID_KEY ||
+        process.env.FIREBASE_VAPID_KEY ||
         'BDGWDuVF5I1B6NlvpQhLBFkO4bqqL09SqO9vmPbyFqAzu9lN7_sdcXalb3UpZfjNbDNfvZpcQ8YVnVZjz_tagTE',
     });
 

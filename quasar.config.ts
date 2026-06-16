@@ -1,7 +1,21 @@
-// Configuration for your app
-// https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
-
 import { defineConfig } from '#q-app/wrappers';
+import dotenv from 'dotenv';
+import fs from 'fs';
+
+// Load environment variables from .env
+dotenv.config();
+
+// Load environment variables from .env.local if it exists (for local overrides)
+if (fs.existsSync('.env.local')) {
+  try {
+    const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
+    for (const k in envConfig) {
+      process.env[k] = envConfig[k];
+    }
+  } catch (err) {
+    console.error('Error loading .env.local:', err);
+  }
+}
 
 export default defineConfig((/* ctx */) => {
   return {
@@ -52,7 +66,15 @@ export default defineConfig((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        FIREBASE_API_KEY: process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY || '',
+        FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN || process.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+        FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID || '',
+        FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET || process.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+        FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+        FIREBASE_APP_ID: process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID || '',
+        FIREBASE_VAPID_KEY: process.env.FIREBASE_VAPID_KEY || process.env.VITE_FIREBASE_VAPID_KEY || '',
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
