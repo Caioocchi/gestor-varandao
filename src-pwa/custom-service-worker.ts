@@ -35,11 +35,18 @@ const messaging = getMessaging(firebaseApp);
 onBackgroundMessage(messaging, (payload) => {
   console.log('Push recebida no Service Worker', payload);
 
-  void self.registration.showNotification(payload.notification?.title || 'Gestor Varandão', {
-    body: payload.notification?.body || '',
+  // Se a mensagem já contiver a propriedade 'notification', o SDK do Firebase
+  // exibe a notificação automaticamente em segundo plano. Chamar showNotification
+  // aqui causaria notificações duplicadas.
+  if (payload.notification) {
+    return;
+  }
+
+  void self.registration.showNotification(payload.data?.title || 'Gestor Varandão', {
+    body: payload.data?.body || '',
     icon: '/icons/icon-128x128.png',
     badge: '/icons/icon-128x128.png',
-    tag: payload.notification?.title || 'gestor-varandao-notification',
+    tag: payload.data?.title || 'gestor-varandao-notification',
   });
 });
 
