@@ -33,12 +33,6 @@ const messaging = getMessaging(firebaseApp);
 
 onBackgroundMessage(messaging, (payload) => {
   console.log('Push recebida no Service Worker', payload);
-
-  void self.registration.showNotification(payload.notification?.title || 'Gestor Varandão', {
-    body: payload.notification?.body || '',
-    icon: '/icons/icon-128x128.png',
-    badge: '/icons/icon-128x128.png',
-  });
 });
 
 // Use with precache injection
