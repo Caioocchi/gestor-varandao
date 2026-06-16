@@ -38,6 +38,7 @@ onBackgroundMessage(messaging, (payload) => {
     body: payload.notification?.body || '',
     icon: '/icons/icon-128x128.png',
     badge: '/icons/icon-128x128.png',
+    tag: payload.notification?.title || 'gestor-varandao-notification',
   });
 });
 

@@ -23,6 +23,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationOptions = {
     body: payload.notification?.body || '',
     icon: '/icons/icon-128x128.png',
+    tag: payload.notification?.title || 'gestor-varandao-notification',
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
