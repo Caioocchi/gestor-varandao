@@ -154,6 +154,28 @@
               </q-card-section>
             </q-card>
 
+            <!-- Imagens Card -->
+            <q-card v-if="evento.imagens && evento.imagens.length > 0" class="card-base shadow-soft">
+              <q-card-section class="q-pa-lg">
+                <div class="row items-center q-mb-md">
+                  <q-icon name="image" color="primary" size="24px" class="q-mr-sm" />
+                  <div class="text-h6 text-weight-bold text-primary">Imagens do Evento</div>
+                </div>
+
+                <div class="row q-col-gutter-sm">
+                  <div
+                    v-for="(img, idx) in evento.imagens"
+                    :key="idx"
+                    class="col-4 col-sm-3 col-md-2"
+                  >
+                    <q-card flat bordered class="overflow-hidden cursor-pointer image-hover-zoom" style="aspect-ratio: 1; border-radius: 12px" @click="abrirImagem(img)">
+                      <q-img :src="img" class="full-height" style="object-fit: cover" />
+                    </q-card>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+
             <!-- Items Card -->
             <q-card class="card-base shadow-soft">
               <q-card-section class="q-pa-lg">
@@ -543,6 +565,25 @@
       </q-fab>
     </div>
 
+    <!-- Dialog de visualização de imagem (Lightbox) -->
+    <q-dialog v-model="dialogImagem" backdrop-filter="blur(4px)">
+      <q-card style="max-width: 90vw; background: transparent; box-shadow: none">
+        <q-card-section class="q-pa-none relative-position">
+          <q-img :src="imagemSelecionada" style="max-height: 80vh; border-radius: 12px" fit="contain" />
+          <q-btn
+            icon="close"
+            flat
+            round
+            dense
+            color="white"
+            class="absolute-top-right q-ma-md text-white"
+            style="background: rgba(0,0,0,0.4)"
+            v-close-popup
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <div style="height: 100px"></div>
   </q-page>
 </template>
@@ -623,6 +664,7 @@ interface Evento {
   sugestao_qtd: string;
   itens: Item[];
   freelas: Freela[];
+  imagens?: string[];
 }
 
 const evento = ref<Evento>({
@@ -651,7 +693,15 @@ const evento = ref<Evento>({
   bebidas: null,
   itens: [],
   freelas: [],
+  imagens: [],
 });
+
+const dialogImagem = ref(false);
+const imagemSelecionada = ref('');
+const abrirImagem = (url: string) => {
+  imagemSelecionada.value = url;
+  dialogImagem.value = true;
+};
 
 const copyToClipboard = async (text: string) => {
   try {
@@ -787,6 +837,18 @@ const carregarEvento = async () => {
             ? item.quantidade_retornada
             : 0,
       }));
+    }
+
+    if (data && data.freelas) {
+      data.freelas.sort((a: Freela, b: Freela) => {
+        const comp = (b.funcao || '').localeCompare(a.funcao || '');
+        if (comp !== 0) return comp;
+        return (a.nome || '').localeCompare(b.nome || '');
+      });
+    }
+
+    if (data) {
+      data.imagens = data.imagens || [];
     }
     evento.value = data;
 
@@ -993,5 +1055,13 @@ onMounted(carregarEvento);
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.image-hover-zoom {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
 }
 </style>

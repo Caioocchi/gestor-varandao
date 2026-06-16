@@ -311,6 +311,53 @@
           </q-card-section>
         </q-card>
 
+        <!-- Event Images Card -->
+        <q-card class="card-base shadow-soft" bordered>
+          <q-card-section class="q-pa-lg">
+            <div class="text-h6 text-weight-bold text-primary q-mb-md">Imagens do Evento</div>
+
+            <!-- Grid de Imagens já enviadas -->
+            <div v-if="evento.imagens && evento.imagens.length > 0" class="row q-col-gutter-sm q-mb-md">
+              <div
+                v-for="(img, idx) in evento.imagens"
+                :key="idx"
+                class="col-4 col-sm-3 col-md-2"
+              >
+                <q-card flat bordered class="relative-position overflow-hidden" style="aspect-ratio: 1; border-radius: 12px">
+                  <q-img :src="img" class="full-height" style="object-fit: cover" />
+                  <div class="absolute-top-right q-pa-xs">
+                    <q-btn
+                      round
+                      dense
+                      color="negative"
+                      icon="close"
+                      size="sm"
+                      @click="removerImagem(idx)"
+                    />
+                  </div>
+                </q-card>
+              </div>
+            </div>
+
+            <!-- Upload input -->
+            <q-file
+              v-model="arquivoImagem"
+              label="Adicionar Imagem"
+              outlined
+              dense
+              bg-color="white"
+              accept="image/*"
+              class="input-rounded"
+              @update:model-value="uploadImagem"
+              :loading="uploading"
+            >
+              <template v-slot:prepend>
+                <q-icon name="image" color="primary" />
+              </template>
+            </q-file>
+          </q-card-section>
+        </q-card>
+
         <freela-card titulo="Freelas" :freelas="freelasDisponiveis" :funcoes="funcoes" />
 
         <div v-for="categoria in categoriasProdutos" :key="categoria.slug">
@@ -399,6 +446,7 @@ interface Evento {
   sugestao_qtd: string;
   freelas: Freelas[];
   itens: Item[];
+  imagens?: string[];
 }
 
 interface Produto {
@@ -448,6 +496,7 @@ const evento = ref<Evento>({
   bebidas: null,
   freelas: [],
   itens: [],
+  imagens: [],
 });
 
 const options = ['Menu Premium', 'Menu Exclusivo', 'Menu VIP', 'Menu Mar e Terra'];
@@ -728,6 +777,58 @@ const cepErro = ref('');
 const enderecoValidado = ref(false);
 const verificado = ref(false);
 const submitting = ref(false);
+
+const arquivoImagem = ref<File | null>(null);
+const uploading = ref(false);
+
+const uploadImagem = async (file: File | null) => {
+  if (!file) return;
+
+  uploading.value = true;
+  $q.loading.show({ message: 'Fazendo upload da imagem...' });
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const { data } = await api.post('/eventos/upload-imagem', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    if (!evento.value.imagens) {
+      evento.value.imagens = [];
+    }
+    evento.value.imagens.push(data.url);
+
+    $q.notify({
+      color: 'positive',
+      textColor: 'white',
+      icon: 'check',
+      message: 'Imagem carregada com sucesso!',
+    });
+  } catch (error) {
+    console.error('Erro ao fazer upload da imagem:', error);
+    $q.notify({
+      color: 'negative',
+      textColor: 'white',
+      icon: 'error',
+      message: 'Erro ao fazer upload da imagem.',
+    });
+  } finally {
+    arquivoImagem.value = null;
+    uploading.value = false;
+    $q.loading.hide();
+  }
+};
+
+const removerImagem = (idx: number) => {
+  if (evento.value.imagens) {
+    evento.value.imagens.splice(idx, 1);
+  }
+};
 
 const limparEndereco = () => {
   evento.value.endereco.cep = '';
