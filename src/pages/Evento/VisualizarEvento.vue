@@ -18,7 +18,9 @@
               </div>
               <div class="row items-center q-mb-md">
                 <q-icon name="mdi-chef-hat" color="grey-6" size="20px" class="q-mr-sm" />
-                <div class="text-body1 text-weight-medium">{{ evento.responsavel }}</div>
+                <div class="text-body1 text-weight-medium">
+                  {{ evento.responsavel ? evento.responsavel : 'Não definido' }}
+                </div>
               </div>
 
               <q-separator class="q-my-lg" />
@@ -172,13 +174,17 @@
                 >
                   <div
                     class="overflow-hidden cursor-pointer image-hover-zoom"
-                    style="aspect-ratio: 1; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.12);"
+                    style="
+                      aspect-ratio: 1;
+                      border-radius: 12px;
+                      border: 1px solid rgba(0, 0, 0, 0.12);
+                    "
                     @click="abrirImagem(img)"
                   >
                     <img
                       :src="img"
                       class="full-width full-height"
-                      style="object-fit: cover; display: block;"
+                      style="object-fit: cover; display: block"
                     />
                   </div>
                 </div>

@@ -44,14 +44,16 @@
         <!-- Principais Informações do Evento -->
         <div class="row items-center q-gutter-x-md q-gutter-y-xs">
           <div class="row items-center text-caption text-grey-8 no-wrap">
-            <div class="row items-center q-gutter-x-xs">
-              <q-icon name="event" color="primary" size="14px" />
+            <div class="info-item row items-center">
+              <q-icon name="event" color="primary" size="14px" class="q-mr-xs" />
               <span>{{ formatarData(props.evento.data) }}</span>
             </div>
             <q-separator vertical class="q-mx-xs" />
             <div class="row items-center q-gutter-x-xs">
               <q-icon name="schedule" color="primary" size="14px" />
-              <span>{{ props.evento.hora_evento }}</span>
+              <span>{{
+                props.evento.hora_evento ? props.evento.hora_evento : 'Não definido'
+              }}</span>
             </div>
           </div>
 
@@ -67,24 +69,26 @@
 
         <div class="info-item text-grey-9 text-weight-bold text-caption q-my-xs">
           <q-icon name="mdi-chef-hat" color="primary" size="16px" class="q-mr-xs" />
-          <span style="word-break: break-word">{{ props.evento.responsavel }}</span>
+          <span style="word-break: break-word">{{
+            props.evento.responsavel ? props.evento.responsavel : 'Não atribuído'
+          }}</span>
         </div>
 
         <!-- Informações Secundárias -->
         <div class="grid-info">
-          <div class="row items-center q-col-gutter-sm">
+          <div v-if="props.evento.menu" class="row items-center q-col-gutter-sm">
             <div class="col-12 col-md-auto">
               <div
                 class="row items-center q-gutter-x-xs text-subtitle2 text-secondary text-weight-bold"
               >
-                <q-icon name="menu_book" size="16px" />
+                <q-icon name="menu_book" size="16px" class="q-mr-xs" />
                 <span>{{ props.evento.menu }}</span>
               </div>
             </div>
           </div>
 
           <div class="info-item">
-            <q-icon name="local_bar" color="grey-6" size="16px" />
+            <q-icon name="local_bar" color="grey-6" size="16px" class="q-mr-xs" />
             <span class="text-grey-8 text-caption"
               >Terá bebidas?
               <span class="text-weight-bold text-secondary">{{
@@ -93,8 +97,8 @@
             >
           </div>
 
-          <div class="info-item">
-            <q-icon name="phone" color="grey-6" size="16px" />
+          <div v-if="props.evento.telefone" class="info-item">
+            <q-icon name="phone" color="grey-6" size="16px" class="q-mr-xs" />
             <span class="text-grey-8 text-caption">{{ props.evento.telefone }}</span>
           </div>
 
@@ -105,7 +109,7 @@
             class="info-item"
             @click="abrirMapa"
           >
-            <q-icon name="place" color="grey-6" size="16px" />
+            <q-icon name="place" color="grey-6" size="16px" class="q-mr-xs" />
             <span class="text-grey-8 text-caption">
               <span class="text-secondary text-caption text-weight-bold">
                 {{ formatarEndereco(props.evento.endereco) }}

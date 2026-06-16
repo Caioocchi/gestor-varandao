@@ -11,6 +11,15 @@
           :to="alterarRota(pageName)"
           class="q-mr-sm"
         />
+        <q-btn
+          v-else
+          flat
+          dense
+          round
+          icon="menu"
+          @click="leftDrawerOpen = !leftDrawerOpen"
+          class="q-mr-sm"
+        />
 
         <q-toolbar-title class="row items-center no-wrap">
           <q-avatar size="38px" class="q-mr-sm">
@@ -25,6 +34,138 @@
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
+
+    <q-drawer
+      v-model="leftDrawerOpen"
+      side="left"
+      overlay
+      behavior="mobile"
+      class="bg-dark text-white"
+      :width="280"
+    >
+      <div class="column full-height bg-primary text-white">
+        <!-- Drawer Header -->
+        <div class="row items-center q-pa-md bg-dark text-white q-mb-sm border-bottom-nav">
+          <q-avatar size="36px" class="q-mr-sm">
+            <img :src="varandaoLogo" style="object-fit: contain" />
+          </q-avatar>
+          <div>
+            <div class="text-subtitle2 text-weight-bold text-white">Varandão</div>
+            <div class="text-caption text-grey-5" style="font-size: 0.7rem;">Painel de Gestão</div>
+          </div>
+        </div>
+
+        <!-- Drawer Navigation Items -->
+        <q-list class="q-px-sm">
+          <q-item
+            clickable
+            v-close-popup
+            to="/home"
+            active-class="drawer-item-active"
+            class="drawer-item q-my-xs"
+          >
+            <q-item-section avatar>
+              <q-icon name="home" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Início</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-close-popup
+            to="/eventos"
+            active-class="drawer-item-active"
+            class="drawer-item q-my-xs"
+          >
+            <q-item-section avatar>
+              <q-icon name="event" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Eventos</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            v-if="isAdmin"
+            clickable
+            v-close-popup
+            to="/freelas"
+            active-class="drawer-item-active"
+            class="drawer-item q-my-xs"
+          >
+            <q-item-section avatar>
+              <q-icon name="groups" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Freelas</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            v-if="isAdmin"
+            clickable
+            v-close-popup
+            to="/produtos"
+            active-class="drawer-item-active"
+            class="drawer-item q-my-xs"
+          >
+            <q-item-section avatar>
+              <q-icon name="shopping_basket" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Produtos</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            v-if="isAdmin"
+            clickable
+            v-close-popup
+            to="/arquivos"
+            active-class="drawer-item-active"
+            class="drawer-item q-my-xs"
+          >
+            <q-item-section avatar>
+              <q-icon name="archive" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Arquivos e Mensagens</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-close-popup
+            to="/perfil"
+            active-class="drawer-item-active"
+            class="drawer-item q-my-xs"
+          >
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Perfil</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+
+        <q-space />
+
+        <!-- Logout Drawer Section -->
+        <q-list class="q-px-sm q-mb-md">
+          <q-item clickable class="drawer-item text-negative-drawer q-my-xs" @click="confirmSair = true">
+            <q-item-section avatar>
+              <q-icon name="logout" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Sair</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </div>
+    </q-drawer>
 
     <q-page-container>
       <router-view v-slot="{ Component }">
@@ -103,12 +244,26 @@ import { registrarPush, inicializarMensagensForeground } from 'src/services/push
 import { api } from 'src/boot/axios';
 
 const confirmSair = ref(false);
+const leftDrawerOpen = ref(false);
 
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 const paginaAtual = computed(() => route.path?.toString() || '');
 const pageName = computed(() => route.name?.toString() || 'Home');
+
+const isAdmin = computed(() => {
+  const tokenVal = localStorage.getItem('token');
+  if (tokenVal) {
+    try {
+      const payload = JSON.parse(atob(tokenVal.split('.')[1]!));
+      return payload.role !== 'padrao';
+    } catch (e) {
+      console.error('Error checking admin role in layout', e);
+    }
+  }
+  return true;
+});
 
 const obterTipoDispositivo = (): string => {
   const p = $q.platform.is;
@@ -241,5 +396,35 @@ const sair = () => {
   width: 100%;
   max-width: 380px;
   border-radius: 20px;
+}
+
+.drawer-item {
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  margin-left: 8px;
+  margin-right: 8px;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+}
+
+.drawer-item-active {
+  background-color: #8b7355 !important;
+  color: #ffffff !important;
+}
+
+.text-negative-drawer {
+  color: rgba(255, 255, 255, 0.7);
+  &:hover {
+    color: #ff5252 !important;
+    background-color: rgba(255, 82, 82, 0.1) !important;
+  }
+}
+
+.border-bottom-nav {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 </style>
