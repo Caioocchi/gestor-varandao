@@ -51,7 +51,7 @@
           </q-avatar>
           <div>
             <div class="text-subtitle2 text-weight-bold text-white">Varandão</div>
-            <div class="text-caption text-grey-5" style="font-size: 0.7rem;">Painel de Gestão</div>
+            <div class="text-caption text-grey-5" style="font-size: 0.7rem">Painel de Gestão</div>
           </div>
         </div>
 
@@ -120,7 +120,6 @@
           </q-item>
 
           <q-item
-            v-if="isAdmin"
             clickable
             v-close-popup
             to="/arquivos"
@@ -155,7 +154,11 @@
 
         <!-- Logout Drawer Section -->
         <q-list class="q-px-sm q-mb-md">
-          <q-item clickable class="drawer-item text-negative-drawer q-my-xs" @click="confirmSair = true">
+          <q-item
+            clickable
+            class="drawer-item text-negative-drawer q-my-xs"
+            @click="confirmSair = true"
+          >
             <q-item-section avatar>
               <q-icon name="logout" />
             </q-item-section>
@@ -319,10 +322,7 @@ const alterarRota = (pageName: string): string => {
       return backPath;
     }
     return '/eventos';
-  } else if (
-    pageName === 'Adicionar Evento' ||
-    pageName === 'Visualizar Evento'
-  ) {
+  } else if (pageName === 'Adicionar Evento' || pageName === 'Visualizar Evento') {
     return '/eventos';
   } else if (pageName === 'Adicionar Produto' || pageName === 'Editar Produto') {
     return '/produtos';

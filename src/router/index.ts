@@ -78,6 +78,9 @@ export default defineRouter((/* { store, ssrContext } */) => {
           const payload = JSON.parse(atob(parts[1]!));
           if (payload && payload.role === 'padrao') {
             const allowedNames = [
+              'Arquivos e Mensagens',
+              'Arquivos Salvos',
+              'Mensagens WhatsApp',
               'Listar Eventos',
               'Visualizar Evento',
               'Editar Evento',
