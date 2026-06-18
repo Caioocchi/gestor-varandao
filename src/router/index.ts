@@ -81,6 +81,7 @@ export default defineRouter((/* { store, ssrContext } */) => {
               'Arquivos e Mensagens',
               'Arquivos Salvos',
               'Mensagens WhatsApp',
+              'Lista de Compras',
               'Listar Eventos',
               'Visualizar Evento',
               'Editar Evento',

@@ -137,6 +137,21 @@
           <q-item
             clickable
             v-close-popup
+            to="/notepad"
+            active-class="drawer-item-active"
+            class="drawer-item q-my-xs"
+          >
+            <q-item-section avatar>
+              <q-icon name="edit_note" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Lista de Compras</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-close-popup
             to="/perfil"
             active-class="drawer-item-active"
             class="drawer-item q-my-xs"
@@ -326,7 +341,7 @@ const alterarRota = (pageName: string): string => {
     return '/eventos';
   } else if (pageName === 'Adicionar Produto' || pageName === 'Editar Produto') {
     return '/produtos';
-  } else if (pageName === 'Arquivos e Mensagens') {
+  } else if (pageName === 'Arquivos e Mensagens' || pageName === 'Lista de Compras') {
     return '/home';
   } else if (pageName === 'Arquivos Salvos' || pageName === 'Mensagens WhatsApp') {
     return '/arquivos';

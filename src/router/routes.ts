@@ -168,6 +168,17 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/notepad',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/notepad',
+        component: () => import('pages/Notepad/NotepadPage.vue'),
+        name: 'Lista de Compras',
+      },
+    ],
+  },
+  {
     path: '/perfil',
     component: () => import('layouts/MainLayout.vue'),
     children: [
