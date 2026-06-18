@@ -766,8 +766,6 @@ const formatarCategoria = (slug: string) => {
   return cats[slug] || slug;
 };
 
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
 const abrirMapa = () => {
   const fullAddress = `${formatarEndereco(evento.value.endereco)}, CEP: ${evento.value.endereco?.cep}`;
 
@@ -815,11 +813,7 @@ const compartilharWhatsApp = () => {
     });
   }
 
-  if (isIOS) {
-    window.location.href = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
-  } else {
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, '_blank');
-  }
+  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, '_blank');
 };
 
 const groupedItems = computed(() => {
