@@ -104,7 +104,7 @@
                   :class="{ 'swipe-transition': !item.isDragging }"
                   :style="{ transform: `translateX(${item.offsetX || 0}px)` }"
                   @touchstart="(e) => onTouchStart(e, item)"
-                  @touchmove.prevent="onTouchMove"
+                  @touchmove="onTouchMove"
                   @touchend="onTouchEnd"
                   @mousedown="(e) => onMouseDown(e, item)"
                 >
@@ -197,7 +197,10 @@ const activeSwipeId = ref<string | null>(null);
 
 // Variáveis de controle de arrasto
 let startX = 0;
+let startY = 0;
 let isDragging = false;
+let isScrolling = false;
+let hasCheckedDirection = false;
 let currentSwipingItem: NotepadItem | null = null;
 
 // Texto auxiliar de contador de itens
@@ -487,13 +490,43 @@ const onDragEnd = async () => {
 const onTouchStart = (e: TouchEvent, item: NotepadItem) => {
   const touch = e.touches[0];
   if (touch) {
+    startY = touch.clientY;
+    isScrolling = false;
+    hasCheckedDirection = false;
     onDragStart(touch.clientX, item);
   }
 };
 
 const onTouchMove = (e: TouchEvent) => {
   const touch = e.touches[0];
-  if (touch) {
+  if (touch && isDragging && currentSwipingItem) {
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+
+    if (!hasCheckedDirection) {
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+      if (absX > 5 || absY > 5) {
+        if (absY > absX) {
+          isScrolling = true;
+          isDragging = false;
+          currentSwipingItem.isDragging = false;
+          currentSwipingItem.offsetX = currentSwipingItem.isSwiped ? -60 : 0;
+          currentSwipingItem = null;
+        }
+        hasCheckedDirection = true;
+      } else {
+        return;
+      }
+    }
+
+    if (isScrolling) {
+      return;
+    }
+
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     onDragMove(touch.clientX);
   }
 };
