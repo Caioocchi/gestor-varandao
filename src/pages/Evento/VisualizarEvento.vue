@@ -853,7 +853,7 @@ const compartilharWhatsApp = () => {
 const ordenadosItens = computed(() => {
   if (!evento.value.itens) return [];
   let itens = [...evento.value.itens];
-  const query = filtroTexto.value.trim().toLowerCase();
+  const query = (filtroTexto.value || '').trim().toLowerCase();
   if (query.length >= 3) {
     itens = itens.filter((item) => (item.nome || '').toLowerCase().includes(query));
   }
