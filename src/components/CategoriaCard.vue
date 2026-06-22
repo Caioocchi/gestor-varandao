@@ -33,9 +33,9 @@
               <transition name="fade">
                 <div v-if="produto.selected" class="q-ml-sm">
                   <q-input
-                    v-model="produto.quantidade"
+                    v-model.number="produto.quantidade"
                     type="number"
-                    min="0"
+                    step="any"
                     outlined
                     dense
                     :suffix="produto.unidade || 'un'"

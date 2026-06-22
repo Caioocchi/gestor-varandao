@@ -233,126 +233,151 @@
                   </div>
                 </div>
 
-                <div v-if="groupedItems.length > 0" class="column q-gutter-y-md">
-                  <div v-for="group in groupedItems" :key="group.categoria" class="item-group">
-                    <div class="text-subtitle2 text-weight-bold text-secondary q-mb-sm">
-                      {{ formatarCategoria(group.categoria) }}
-                    </div>
-                    <q-list bordered separator class="rounded-borders overflow-hidden">
-                      <q-item
-                        v-for="item in group.itens"
-                        :key="item.produtoId || item.nome"
-                        class="q-py-md column items-stretch"
-                        :clickable="!modoPosEvento"
-                        @click="!modoPosEvento && toggleItem(item)"
-                      >
-                        <!-- Linha Superior: Checkbox/Icone + Nome + Badge de Status/Consumo -->
-                        <div class="row items-center no-wrap full-width">
-                          <div v-if="!modoPosEvento" @click.stop class="col-auto">
-                            <q-checkbox
-                              v-model="checkedItems[item.produtoId || item.nome]"
-                              dense
-                              class="q-mr-sm"
-                              color="secondary"
-                            />
-                          </div>
+                <!-- Filtro de busca -->
+                <div v-if="evento.itens && evento.itens.length > 0" class="q-mb-md">
+                  <q-input
+                    v-model="filtroTexto"
+                    outlined
+                    dense
+                    placeholder="Buscar item"
+                    clearable
+                    clear-icon="close"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                </div>
 
-                          <!-- Nome do Item -->
-                          <div
-                            class="text-weight-medium text-grey-9 ellipsis col"
-                            :class="{
-                              'text-strike text-grey-5':
-                                !modoPosEvento && checkedItems[item.produtoId || item.nome],
-                            }"
+                <div v-if="ordenadosItens.length > 0" class="column q-gutter-y-md">
+                  <q-list bordered separator class="rounded-borders overflow-hidden">
+                    <q-item
+                      v-for="item in ordenadosItens"
+                      :key="item.produtoId || item.nome"
+                      class="q-py-md column items-stretch"
+                      :clickable="!modoPosEvento"
+                      @click="!modoPosEvento && toggleItem(item)"
+                    >
+                      <!-- Linha Superior: Checkbox/Icone + Nome + Badge de Status/Consumo -->
+                      <div class="row items-center no-wrap full-width justify-between">
+                        <div v-if="!modoPosEvento" @click.stop class="col-auto">
+                          <q-checkbox
+                            v-model="checkedItems[item.produtoId || item.nome]"
+                            dense
+                            color="secondary"
                           >
-                            {{ item.nome }}
-                          </div>
+                            <div
+                              class="text-weight-medium text-grey-9"
+                              :class="{
+                                'text-strike text-grey-5':
+                                  !modoPosEvento && checkedItems[item.produtoId || item.nome],
+                              }"
+                            >
+                              {{ item.nome }}
+                            </div>
+                          </q-checkbox>
+                        </div>
 
-                          <!-- Badge de Status Geral/Quantidade original ou cálculo de consumo -->
-                          <div class="q-ml-sm">
-                            <template v-if="modoPosEvento">
-                              <q-badge
-                                v-if="
-                                  item.categoria === 'proteina' ||
-                                  item.categoria === 'acompanhamento' ||
-                                  item.nome === 'Carvão'
-                                "
-                                :color="calcularConsumo(item) > 0 ? 'accent-light' : 'grey-3'"
-                                :text-color="calcularConsumo(item) > 0 ? 'primary' : 'grey-6'"
-                                class="q-pa-xs text-caption text-weight-bold"
-                              >
-                                Usado: {{ calcularConsumo(item) }} {{ item.unidade }}
-                              </q-badge>
-                              <q-badge
-                                v-else
-                                :color="calcularFalta(item) > 0 ? 'red-1' : 'green-1'"
-                                :text-color="calcularFalta(item) > 0 ? 'negative' : 'positive'"
-                                class="q-pa-xs text-caption text-weight-bold"
-                              >
-                                {{
-                                  calcularFalta(item) > 0
-                                    ? `Falta: ${calcularFalta(item)} ${item.unidade}`
-                                    : 'Completo'
-                                }}
-                              </q-badge>
-                            </template>
+                        <!-- Nome do Item -->
+                        <div
+                          v-else
+                          class="text-weight-medium text-grey-9"
+                          :class="{
+                            'text-strike text-grey-5':
+                              !modoPosEvento && checkedItems[item.produtoId || item.nome],
+                          }"
+                        >
+                          {{ item.nome }}
+                        </div>
+
+                        <!-- Badge de Status Geral/Quantidade original ou cálculo de consumo -->
+                        <div class="q-ml-sm">
+                          <template v-if="modoPosEvento">
+                            <q-badge
+                              v-if="
+                                item.categoria === 'proteina' ||
+                                item.categoria === 'acompanhamento' ||
+                                item.nome === 'Carvão'
+                              "
+                              :color="calcularConsumo(item) > 0 ? 'accent-light' : 'grey-3'"
+                              :text-color="calcularConsumo(item) > 0 ? 'primary' : 'grey-6'"
+                              class="q-pa-xs text-caption text-weight-bold"
+                            >
+                              Usado: {{ formatarNumero(calcularConsumo(item)) }}
+                              {{ item.unidade }}
+                            </q-badge>
                             <q-badge
                               v-else
-                              :color="
-                                checkedItems[item.produtoId || item.nome]
-                                  ? 'grey-3'
-                                  : 'accent-light'
-                              "
-                              :text-color="
-                                checkedItems[item.produtoId || item.nome] ? 'grey-6' : 'primary'
-                              "
-                              class="q-pa-sm text-body2"
+                              :color="calcularFalta(item) > 0 ? 'red-1' : 'green-1'"
+                              :text-color="calcularFalta(item) > 0 ? 'negative' : 'positive'"
+                              class="q-pa-xs text-caption text-weight-bold"
                             >
-                              {{ item.quantidade }} {{ item.unidade }}
+                              {{
+                                calcularFalta(item) > 0
+                                  ? `Falta: ${formatarNumero(calcularFalta(item))} ${item.unidade}`
+                                  : 'Completo'
+                              }}
                             </q-badge>
-                          </div>
+                          </template>
+                          <q-badge
+                            v-else
+                            :color="
+                              checkedItems[item.produtoId || item.nome] ? 'grey-3' : 'accent-light'
+                            "
+                            :text-color="
+                              checkedItems[item.produtoId || item.nome] ? 'grey-6' : 'primary'
+                            "
+                            class="q-pa-sm text-body2"
+                          >
+                            {{ formatarNumero(item.quantidade) }} {{ item.unidade }}
+                          </q-badge>
+                        </div>
+                      </div>
+
+                      <!-- Linha Inferior (Controles pós-evento): Quantidade Levada e Controles de Retorno -->
+                      <div
+                        v-if="modoPosEvento"
+                        class="row items-center justify-between full-width q-mt-sm"
+                      >
+                        <div class="text-caption text-grey-6">
+                          Levado:
+                          <span class="text-weight-bold text-grey-8"
+                            >{{ formatarNumero(item.quantidade) }}
+                            {{ item.unidade === 'unidade' ? 'un' : item.unidade }}</span
+                          >
                         </div>
 
-                        <!-- Linha Inferior (Controles pós-evento): Quantidade Levada e Controles de Retorno -->
-                        <div
-                          v-if="modoPosEvento"
-                          class="row items-center justify-between full-width q-mt-sm"
-                        >
-                          <div class="text-caption text-grey-6">
-                            Levado:
-                            <span class="text-weight-bold text-grey-8"
-                              >{{ item.quantidade }} {{ item.unidade }}</span
-                            >
-                          </div>
-
-                          <div class="row no-wrap items-center q-gutter-x-sm">
-                            <!-- Botão de preenchimento completo -->
-                            <div class="text-caption text-grey-6">Retornou:</div>
-                            <q-input
-                              v-model.number="item.quantidade_retornada"
-                              type="number"
-                              borderless
-                              dense
-                              class="text-center bg-grey-2 rounded-borders q-mx-xs"
-                              style="width: 30px; height: 35px"
-                              input-class="text-center text-weight-bold text-grey-9 text-caption"
-                              @change="validaRetorno(item)"
-                              @click.stop
-                            />
-                            <span
-                              class="text-caption text-grey-7 q-ml-xs text-weight-bold"
-                              style="min-width: 20px"
-                              >{{ item.unidade }}</span
-                            >
-                          </div>
+                        <div class="row no-wrap items-center q-gutter-x-sm">
+                          <!-- Botão de preenchimento completo -->
+                          <div class="text-caption text-grey-6">Retornou:</div>
+                          <q-input
+                            v-model.number="item.quantidade_retornada"
+                            type="number"
+                            step="any"
+                            borderless
+                            dense
+                            class="text-center bg-grey-2 rounded-borders q-mx-xs"
+                            style="width: 30px; height: 35px"
+                            input-class="text-center text-weight-bold text-grey-9 text-caption"
+                            @change="validaRetorno(item)"
+                            @click.stop
+                          />
+                          <span
+                            class="text-caption text-grey-7 q-ml-xs text-weight-bold"
+                            style="min-width: 20px"
+                            >{{ item.unidade === 'unidade' ? 'un' : item.unidade }}</span
+                          >
                         </div>
-                      </q-item>
-                    </q-list>
-                  </div>
+                      </div>
+                    </q-item>
+                  </q-list>
                 </div>
                 <div v-else class="text-center q-pa-xl text-grey-5">
                   <q-icon name="info" size="48px" class="q-mb-md" />
-                  <div>Nenhum item selecionado para este evento.</div>
+                  <div v-if="evento.itens && evento.itens.length > 0">
+                    Nenhum item corresponde à busca.
+                  </div>
+                  <div v-else>Nenhum item selecionado para este evento.</div>
                 </div>
               </q-card-section>
             </q-card>
@@ -401,13 +426,14 @@
                               item.nome
                             }}</q-item-label>
                             <q-item-label caption
-                              >Levou: {{ item.quantidade }} {{ item.unidade }} | Retornou:
-                              {{ item.quantidade_retornada ?? 0 }} {{ item.unidade }}</q-item-label
+                              >Levou: {{ formatarNumero(item.quantidade) }} {{ item.unidade }} |
+                              Retornou: {{ formatarNumero(item.quantidade_retornada ?? 0) }}
+                              {{ item.unidade }}</q-item-label
                             >
                           </q-item-section>
                           <q-item-section side>
                             <q-badge color="primary" class="q-pa-sm text-body2">
-                              {{ calcularConsumo(item) }} {{ item.unidade }}
+                              {{ formatarNumero(calcularConsumo(item)) }} {{ item.unidade }}
                             </q-badge>
                           </q-item-section>
                         </q-item>
@@ -440,8 +466,8 @@
                               item.nome
                             }}</q-item-label>
                             <q-item-label caption
-                              >Levou: {{ item.quantidade }} | Retornou:
-                              {{ item.quantidade_retornada ?? 0 }}</q-item-label
+                              >Levou: {{ formatarNumero(item.quantidade) }} | Retornou:
+                              {{ formatarNumero(item.quantidade_retornada ?? 0) }}</q-item-label
                             >
                           </q-item-section>
                           <q-item-section side>
@@ -450,7 +476,7 @@
                               text-color="negative"
                               class="q-pa-sm text-body2 text-weight-bold"
                             >
-                              Faltando: {{ calcularFalta(item) }} {{ item.unidade }}
+                              Faltando: {{ formatarNumero(calcularFalta(item)) }} {{ item.unidade }}
                             </q-badge>
                           </q-item-section>
                         </q-item>
@@ -623,6 +649,7 @@ const fabRight = ref(false);
 const checkedItems = ref<Record<string, boolean>>({});
 const expandidoSugestao = ref(false);
 const modoPosEvento = ref(false);
+const filtroTexto = ref('');
 
 // Salvar no localStorage sempre que houver mudança
 watch(
@@ -653,7 +680,7 @@ interface Item {
   categoria: string;
   quantidade: number;
   unidade: string;
-  quantidade_retornada?: number;
+  quantidade_retornada?: number | null;
 }
 
 interface Freela {
@@ -766,6 +793,13 @@ const formatarCategoria = (slug: string) => {
   return cats[slug] || slug;
 };
 
+const formatarNumero = (valor: number | string | undefined | null) => {
+  if (valor === undefined || valor === null) return '0';
+  const num = Number(valor);
+  if (isNaN(num)) return valor.toString();
+  return Number(num.toFixed(2)).toString().replace('.', ',');
+};
+
 const abrirMapa = () => {
   const fullAddress = `${formatarEndereco(evento.value.endereco)}, CEP: ${evento.value.endereco?.cep}`;
 
@@ -798,7 +832,7 @@ const compartilharWhatsApp = () => {
   mensagem += `*Lista de itens para levar:*\n`;
   e.itens?.forEach((item) => {
     if (item.quantidade) {
-      mensagem += `- ${item.nome}: ${item.quantidade} ${item.unidade}\n`;
+      mensagem += `- ${item.nome}: ${formatarNumero(item.quantidade)} ${item.unidade}\n`;
     }
   });
 
@@ -816,20 +850,14 @@ const compartilharWhatsApp = () => {
   window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, '_blank');
 };
 
-const groupedItems = computed(() => {
+const ordenadosItens = computed(() => {
   if (!evento.value.itens) return [];
-  const groups: Record<string, Item[]> = {};
-  evento.value.itens.forEach((item) => {
-    if (!groups[item.categoria]) {
-      groups[item.categoria] = [];
-    }
-    const group = groups[item.categoria];
-    if (group) group.push(item);
-  });
-  return Object.entries(groups).map(([categoria, itens]) => ({
-    categoria,
-    itens,
-  }));
+  let itens = [...evento.value.itens];
+  const query = filtroTexto.value.trim().toLowerCase();
+  if (query.length >= 3) {
+    itens = itens.filter((item) => (item.nome || '').toLowerCase().includes(query));
+  }
+  return itens.sort((a, b) => a.nome.localeCompare(b.nome));
 });
 
 const carregarEvento = async () => {
@@ -843,13 +871,16 @@ const carregarEvento = async () => {
     });
 
     if (data && data.itens) {
-      data.itens = data.itens.map((item: Item) => ({
-        ...item,
-        quantidade_retornada:
+      data.itens = data.itens.map((item: Item) => {
+        const val =
           item.quantidade_retornada !== undefined && item.quantidade_retornada !== null
-            ? item.quantidade_retornada
-            : 0,
-      }));
+            ? Number(item.quantidade_retornada)
+            : null;
+        return {
+          ...item,
+          quantidade_retornada: val === 0 ? null : val,
+        };
+      });
     }
 
     if (data && data.freelas) {
@@ -925,28 +956,26 @@ const carregarEvento = async () => {
 };
 
 const validaRetorno = (item: Item) => {
-  if (item.quantidade_retornada === undefined || item.quantidade_retornada === null) {
-    item.quantidade_retornada = 0;
+  if (
+    item.quantidade_retornada === undefined ||
+    item.quantidade_retornada === null ||
+    (typeof item.quantidade_retornada === 'number' && item.quantidade_retornada <= 0) ||
+    (item.quantidade_retornada as any) === ''
+  ) {
+    item.quantidade_retornada = null;
     return;
-  }
-  if (item.quantidade_retornada < 0) {
-    item.quantidade_retornada = 0;
   }
 };
 
 const calcularConsumo = (item: Item) => {
-  if (item.quantidade_retornada === null || item.quantidade_retornada === undefined) {
-    return 0;
-  }
-  const consumo = item.quantidade - item.quantidade_retornada;
+  const ret = item.quantidade_retornada ?? 0;
+  const consumo = item.quantidade - ret;
   return Number(consumo.toFixed(2));
 };
 
 const calcularFalta = (item: Item) => {
-  if (item.quantidade_retornada === null || item.quantidade_retornada === undefined) {
-    return item.quantidade;
-  }
-  const falta = item.quantidade - item.quantidade_retornada;
+  const ret = item.quantidade_retornada ?? 0;
+  const falta = item.quantidade - ret;
   return falta > 0 ? Number(falta.toFixed(2)) : 0;
 };
 
@@ -972,7 +1001,7 @@ const salvarConferencia = async () => {
   const payload = {
     itens: evento.value.itens.map((item: Item) => ({
       nome: item.nome,
-      quantidade_retornada: item.quantidade_retornada,
+      quantidade_retornada: item.quantidade_retornada ?? 0,
     })),
   };
 
@@ -1016,7 +1045,7 @@ const compartilharWhatsAppFechamento = () => {
   if (proteinasConsumidas.value.length > 0) {
     proteinasConsumidas.value.forEach((p) => {
       const consumido = calcularConsumo(p);
-      mensagem += `- *${p.nome}:* Levou ${p.quantidade} ${p.unidade} | Retornou ${p.quantidade_retornada ?? 0} ${p.unidade} -> *Consumiu ${consumido} ${p.unidade}*\n`;
+      mensagem += `- *${p.nome}:* Levou ${formatarNumero(p.quantidade)} ${p.unidade} | Retornou ${formatarNumero(p.quantidade_retornada ?? 0)} ${p.unidade} -> *Consumiu ${formatarNumero(consumido)} ${p.unidade}*\n`;
     });
   } else {
     mensagem += `_Nenhuma proteína registrada._\n`;
@@ -1027,7 +1056,7 @@ const compartilharWhatsAppFechamento = () => {
   if (itensDivergentes.value.length > 0) {
     itensDivergentes.value.forEach((d) => {
       const falta = calcularFalta(d);
-      mensagem += `- *${d.nome}:* Levou ${d.quantidade} ${d.unidade} | Retornou ${d.quantidade_retornada ?? 0} ${d.unidade} -> *Falta ${falta} ${d.unidade}*\n`;
+      mensagem += `- *${d.nome}:* Levou ${formatarNumero(d.quantidade)} ${d.unidade} | Retornou ${formatarNumero(d.quantidade_retornada ?? 0)} ${d.unidade} -> *Falta ${formatarNumero(falta)} ${d.unidade}*\n`;
     });
   } else {
     mensagem += `_Tudo completo! Nenhuma divergência de retorno._\n`;
