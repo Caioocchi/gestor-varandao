@@ -260,11 +260,12 @@
                     >
                       <!-- Linha Superior: Checkbox/Icone + Nome + Badge de Status/Consumo -->
                       <div class="row items-center no-wrap full-width justify-between">
-                        <div v-if="!modoPosEvento" @click.stop class="col-auto">
+                        <div v-if="!modoPosEvento" @click.stop class="col">
                           <q-checkbox
                             v-model="checkedItems[item.produtoId || item.nome]"
                             dense
                             color="secondary"
+                            class="full-width"
                           >
                             <div
                               class="text-weight-medium text-grey-9"
@@ -272,6 +273,7 @@
                                 'text-strike text-grey-5':
                                   !modoPosEvento && checkedItems[item.produtoId || item.nome],
                               }"
+                              style="word-break: break-word"
                             >
                               {{ item.nome }}
                             </div>
@@ -281,11 +283,12 @@
                         <!-- Nome do Item -->
                         <div
                           v-else
-                          class="text-weight-medium text-grey-9"
+                          class="text-weight-medium text-grey-9 col"
                           :class="{
                             'text-strike text-grey-5':
                               !modoPosEvento && checkedItems[item.produtoId || item.nome],
                           }"
+                          style="word-break: break-word"
                         >
                           {{ item.nome }}
                         </div>
@@ -329,7 +332,8 @@
                             "
                             class="q-pa-sm text-body2"
                           >
-                            {{ formatarNumero(item.quantidade) }} {{ item.unidade }}
+                            {{ formatarNumero(item.quantidade) }}
+                            {{ item.unidade === 'unidade' ? 'un' : item.unidade }}
                           </q-badge>
                         </div>
                       </div>
