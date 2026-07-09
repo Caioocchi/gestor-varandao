@@ -24,6 +24,22 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/forgot-password',
+    children: [
+      {
+        path: '/forgot-password',
+        component: () => import('layouts/MainLayout.vue'),
+        children: [
+          {
+            path: '/forgot-password',
+            component: () => import('src/pages/Login/ForgotPassword.vue'),
+            name: 'Recuperar Senha',
+          },
+        ],
+      },
+    ],
+  },
+  {
     path: '/home',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '/home', component: () => import('pages/HomePage.vue'), name: 'Home' }],

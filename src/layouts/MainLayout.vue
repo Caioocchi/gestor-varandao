@@ -193,7 +193,11 @@
       </router-view>
     </q-page-container>
 
-    <q-footer v-if="paginaAtual !== '/cadastrar'" class="bg-transparent q-px-md q-pb-md" borderless>
+    <q-footer
+      v-if="paginaAtual !== '/cadastrar' && paginaAtual !== '/forgot-password'"
+      class="bg-transparent q-px-md q-pb-md"
+      borderless
+    >
       <div class="glass-nav row items-center justify-around q-py-xs shadow-soft">
         <router-link
           to="/home"

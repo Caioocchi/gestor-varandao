@@ -1,8 +1,8 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
 
-const urlAPI = 'https://gestor-varandao-api.up.railway.app';
-// const urlAPI = 'http://localhost:3000';
+// const urlAPI = 'https://gestor-varandao-api.up.railway.app';
+const urlAPI = 'http://localhost:3000';
 
 const api = axios.create({
   baseURL: urlAPI,

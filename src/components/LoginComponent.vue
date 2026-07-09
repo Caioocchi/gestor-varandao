@@ -70,6 +70,7 @@
               color="secondary"
               class="text-caption"
               style="text-transform: none"
+              to="/forgot-password"
             />
           </div>
 
